@@ -103,16 +103,15 @@
     <!-- Out of Stock Table -->
     <div class="card mt-4 p-4">
         <h5>Out of Stock</h5>
-        <small class="text-muted">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</small>
         <table class="table mt-3">
             <thead>
                 <tr>
                     <th>ID</th>
-                    <th>Drug Name</th>
-                    <th>Expire Date</th>
-                    <th>Manufacture Date</th>
+                    <th>Medicine Name</th>
+                    <th>Expiry Date</th>
+                    <th>Manufacturing Date</th>
                     <th>Price</th>
-                    <th>QTY</th>
+                    <th>Quantity</th>
                     <th>Status</th>
                 </tr>
             </thead>

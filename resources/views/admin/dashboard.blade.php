@@ -239,7 +239,7 @@
         <div class="row mt-4">
             <div class="col-md-12">
                 <div class="card p-3">
-                    <h5>Out of Stock</h5>
+                    <h5>Pharmacy - Out of Stock</h5>
                     <table class="table">
                         <thead>
                             <tr>

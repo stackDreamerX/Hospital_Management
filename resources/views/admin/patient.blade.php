@@ -147,14 +147,13 @@
     <!-- Recent Patients Table -->
     <div class="card mt-4 p-4">
         <h5>Recent Patients</h5>
-        <small class="text-muted">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</small>
         <table class="table mt-3">
             <thead>
                 <tr>
                     <th>Patient ID</th>
                     <th>First Name</th>
                     <th>Last Name</th>
-                    <th>CCCD</th>
+                    <th>National ID</th>
                     <th>Email</th>
                     <th>Mobile Number</th>
                     <th>Date of Birth</th>

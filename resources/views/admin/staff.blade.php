@@ -37,8 +37,7 @@
 
 <section class="container mt-4">
     <!-- Staff Management Title -->
-    <h3 class="mb-3">Staff Management</h3>
-    
+    <h3 class="mb-3">Staff Management</h3>    
     <!-- Form Section -->
     <div class="card p-4">
         <div class="row">
@@ -72,13 +71,13 @@
                             <input type="email" class="form-control" placeholder="Email">
                         </div>
                         <div class="col-md-6 mb-3">
-                            <input type="text" class="form-control" placeholder="Mobile Number">
+                            <input type="text" class="form-control" placeholder="Phone Number">
                         </div>
                         <div class="col-md-12 mb-3">
                             <input type="text" class="form-control" placeholder="Address">
                         </div>
                         <div class="col-md-6 mb-3">
-                            <input type="text" class="form-control" placeholder="CCCD">
+                            <input type="text" class="form-control" placeholder="National ID">
                         </div>
                         <div class="col-md-6 mb-3">
                             <input type="date" class="form-control" placeholder="Date of Birth">
@@ -121,7 +120,6 @@
     <!-- Recent Doctors Table -->
     <div class="card mt-4 p-4">
         <h5>Recent Doctors</h5>
-        <small class="text-muted">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</small>
         <table class="table mt-3">
             <thead>
                 <tr>
@@ -130,7 +128,7 @@
                     <th>Role</th>
                     <th>Gender</th>
                     <th>Email</th>
-                    <th>Mobile Number</th>
+                    <th>Phone Number</th>
                     <th>NIC</th>
                     <th>DOB</th>
                     <th>Status</th>
@@ -231,5 +229,4 @@
         }
     }
 </script>
-
 @endsection

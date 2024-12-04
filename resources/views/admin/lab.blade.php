@@ -38,17 +38,17 @@
 
 <section class="container mt-4">
     <!-- Lab Management Title -->
-    <h3 class="mb-3">Lab Management</h3>
+    <h3 class="mb-3">Laboratory Management</h3>
 
     <!-- View All Lab Details and Generate Report -->
     <div class="d-flex justify-content-between align-items-center mb-3">
-        <a href="#" class="text-decoration-none">View All Lab Details</a>
+        <a href="#" class="text-decoration-none">View All Laboratory Details</a>
         <button class="btn btn-primary">Generate Report</button>
     </div>
     
     <!-- Assign Lab For Patient Section -->
     <div class="card p-4">
-        <h5 class="mb-4">Assign Lab For Patient</h5>
+        <h5 class="mb-4">Laboratory Assignment</h5>
 
         <!-- Lab ID with Search -->
         <div class="row mb-3">
@@ -110,8 +110,7 @@
 
     <!-- Recent Assign Lab For Patient -->
     <div class="card mt-4 p-4">
-        <h5>Recent Assign Lab For Patient</h5>
-        <small class="text-muted">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</small>
+        <h5>Assigned Laboratory</h5>    
         <table class="table mt-3">
             <thead>
                 <tr>
@@ -183,5 +182,4 @@
         </table>
     </div>
 </section>
-
 @endsection

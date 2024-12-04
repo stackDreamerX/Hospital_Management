@@ -39,7 +39,6 @@
 <section class="container mt-4">
     <!-- Title -->
     <h3 class="mb-3">Treatment Management</h3>
-
     <!-- Form Section -->
     <div class="card p-4">
         <div class="row">
@@ -55,7 +54,7 @@
                             <input type="text" class="form-control" placeholder="Doctor Name">
                         </div>
                         <div class="col-md-6 mb-3">
-                            <input type="text" class="form-control" placeholder="Lab Name">
+                            <input type="text" class="form-control" placeholder="Laboratory Name">
                         </div>
                         <div class="col-md-6 mb-3">
                             <input type="number" class="form-control" placeholder="Number of nurses">
@@ -92,7 +91,6 @@
     <!-- Recent Treatments Table -->
     <div class="card mt-4 p-4">
         <h5>Recent Treatment</h5>
-        <small class="text-muted">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</small>
         <table class="table mt-3">
             <thead>
                 <tr>
@@ -101,7 +99,7 @@
                     <th>Patient Name</th>
                     <th>Doctor Name</th>
                     <th>Number of Nurses</th>
-                    <th>Lab Name</th>
+                    <th>Laboratory Name</th>
                     <th>Total Ward Charge</th>
                     <th>Action</th>
                 </tr>
