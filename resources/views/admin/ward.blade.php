@@ -97,7 +97,6 @@
     <!-- Recent Wards -->
     <div class="card mt-4 p-4">
         <h5>Recent Wards</h5>
-        <small class="text-muted">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</small>
         <table class="table mt-3">
             <thead>
                 <tr>
