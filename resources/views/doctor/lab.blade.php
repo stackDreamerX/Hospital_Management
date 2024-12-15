@@ -1,187 +1,201 @@
-@extends('admin_layout')
-@section('admin_content') 
+@extends('doctor_layout');
+@section('content')
 
-
-
-<style>
-    input::placeholder,
-    select::placeholder {
-        color: #6c757d !important; /* Added !important to override any other styles */
-        opacity: 1 !important;
-    }
-
-    /* Add this to ensure placeholder text in select elements is visible */
-    select option:first-child {
-        color: #6c757d;
-    }
-
-    /* Reset autofill styles */
-    input:-webkit-autofill,
-    input:-webkit-autofill:hover,
-    input:-webkit-autofill:focus {
-        -webkit-text-fill-color: inherit !important;
-        -webkit-box-shadow: 0 0 0px 1000px white inset;
-        transition: background-color 5000s ease-in-out 0s;
-    }
-
-    /* Make empty password input show placeholder */
-    input[type="password"]:placeholder-shown {
-        font-family: inherit !important;
-    }
-
-    /* Keep the dots when user starts typing */
-    input[type="password"]:not(:placeholder-shown) {
-        font-family: password !important;
-    }
-</style>
-
-
-<section class="container mt-4">
-    <!-- Lab Management Title -->
-    <h3 class="mb-3">Lab Management</h3>
-
-    <!-- View All Lab Details and Generate Report -->
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <a href="#" class="text-decoration-none">View All Lab Details</a>
-        <button class="btn btn-primary">Generate Report</button>
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h3>Lab Management</h3>
+        <button class="btn btn-primary" onclick="generateReport()">
+            <i class="fas fa-file-pdf"></i> Generate Report
+        </button>
     </div>
-    
-    <!-- Assign Lab For Patient Section -->
-    <div class="card p-4">
-        <h5 class="mb-4">Assign Lab For Patient</h5>
 
-        <!-- Lab ID with Search -->
-        <div class="row mb-3">
-            <div class="col-md-6">
-                <div class="input-group">
-                    <input type="text" class="form-control" placeholder="Lab ID">
-                    <button class="btn btn-primary" type="button">Search</button>
+    <!-- Assign New Lab Test -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-header bg-white py-3">
+            <h5 class="mb-0">Assign New Lab Test</h5>
+        </div>
+        <div class="card-body">
+            <form id="labAssignForm">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Lab Test Type</label>
+                        <select class="form-select" id="lab_type" required>
+                            <option value="">Select Lab Test</option>
+                            @foreach($labTypes as $type)
+                                <option value="{{ $type['LaboratoryTypeID'] }}" 
+                                        data-price="{{ $type['Price'] }}">
+                                    {{ $type['LaboratoryTypeName'] }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Patient</label>
+                        <select class="form-select" id="patient_id" required>
+                            <option value="">Select Patient</option>
+                            @foreach($patients as $patient)
+                                <option value="{{ $patient['PatientID'] }}">
+                                    {{ $patient['FullName'] }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
                 </div>
-            </div>
-        </div>
 
-        <!-- Lab and Patient Name -->
-        <div class="row mb-3">
-            <div class="col-md-6">
-                <select class="form-control">
-                    <option selected disabled>Lab</option>
-                    <option>Blood</option>
-                    <option>Urine</option>
-                    <option>X-Ray</option>
-                </select>
-            </div>
-            <div class="col-md-6">
-                <select class="form-control">
-                    <option selected disabled>Patient Name</option>
-                    <option>John Doe</option>
-                    <option>Jane Smith</option>
-                    <option>Michael Lee</option>
-                </select>
-            </div>
-        </div>
-
-        <!-- Date and Time -->
-        <div class="row mb-3">
-            <div class="col-md-6">
-                <input type="date" class="form-control">
-            </div>
-            <div class="col-md-6">
-                <input type="time" class="form-control">
-            </div>
-        </div>
-
-        <!-- Price -->
-        <div class="row mb-3">
-            <div class="col-md-6">
-                <div class="input-group">
-                    <span class="input-group-text bg-dark text-white">RS:</span>
-                    <input type="text" class="form-control" placeholder="Price">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Date</label>
+                        <input type="date" class="form-control" id="lab_date" required>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Time</label>
+                        <input type="time" class="form-control" id="lab_time" required>
+                    </div>
                 </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Price (RS)</label>
+                        <input type="text" class="form-control" id="price" readonly>
+                    </div>
+                </div>
+
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-plus"></i> Assign Lab Test
+                    </button>
+                    <button type="reset" class="btn btn-secondary">
+                        <i class="fas fa-redo"></i> Reset
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Assigned Lab Tests -->
+    <div class="card shadow-sm">
+        <div class="card-header bg-white py-3">
+            <div class="d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Assigned Lab Tests</h5>
+                <input type="text" class="form-control w-auto" 
+                       placeholder="Search..." id="searchInput">
             </div>
         </div>
-
-        <!-- Action Buttons -->
-        <div class="d-flex justify-content-start">
-            <button type="button" class="btn btn-success me-2">Add</button>
-            <button type="button" class="btn btn-primary me-2">Update</button>
-            <button type="button" class="btn btn-danger">Delete</button>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Test Type</th>
+                            <th>Patient</th>
+                            <th>Date</th>
+                            <th>Time</th>
+                            <th>Price</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse($assignedLabs as $lab)
+                        <tr>
+                            <td>{{ $lab['LaboratoryID'] }}</td>
+                            <td>{{ $lab['LaboratoryTypeName'] }}</td>
+                            <td>{{ $lab['PatientName'] }}</td>
+                            <td>{{ $lab['LaboratoryDate'] }}</td>
+                            <td>{{ $lab['LaboratoryTime'] }}</td>
+                            <td>{{ number_format($lab['TotalPrice']) }}</td>
+                            <td>
+                                <span class="badge bg-{{ 
+                                    $lab['Status'] == 'Completed' ? 'success' : 
+                                    ($lab['Status'] == 'Pending' ? 'warning' : 'info') 
+                                }}">
+                                    {{ $lab['Status'] }}
+                                </span>
+                            </td>
+                            <td>
+                                <div class="btn-group btn-group-sm">
+                                    @if($lab['Status'] == 'Pending')
+                                        <button class="btn btn-outline-primary" 
+                                                onclick="editLab({{ $lab['LaboratoryID'] }})">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                    @endif
+                                    @if($lab['Status'] == 'Completed')
+                                        <button class="btn btn-outline-info" 
+                                                onclick="viewResults({{ $lab['LaboratoryID'] }})">
+                                            <i class="fas fa-file-medical"></i>
+                                        </button>
+                                    @endif
+                                </div>
+                            </td>
+                        </tr>
+                        @empty
+                        <tr>
+                            <td colspan="8" class="text-center">No lab tests assigned yet</td>
+                        </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
+</div>
 
-    <!-- Recent Assign Lab For Patient -->
-    <div class="card mt-4 p-4">
-        <h5>Recent Assign Lab For Patient</h5>
-        <small class="text-muted">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</small>
-        <table class="table mt-3">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Lab</th>
-                    <th>Patient</th>
-                    <th>Date</th>
-                    <th>Time</th>
-                    <th>Price</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>1</td>
-                    <td>Blood</td>
-                    <td>John Doe</td>
-                    <td>2022-02-15</td>
-                    <td>1:25 PM</td>
-                    <td>2500.00</td>
-                    <td>
-                        <button class="btn btn-danger btn-sm">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </td>
-                </tr>
-                <tr>
-                    <td>2</td>
-                    <td>Urine</td>
-                    <td>Jane Smith</td>
-                    <td>2022-02-16</td>
-                    <td>10:30 AM</td>
-                    <td>1500.00</td>
-                    <td>
-                        <button class="btn btn-danger btn-sm">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </td>
-                </tr>
+@endsection
 
-                <tr>
-                    <td>3</td>
-                    <td>Urine</td>
-                    <td>Jane Smith</td>
-                    <td>2022-02-16</td>
-                    <td>10:30 AM</td>
-                    <td>1500.00</td>
-                    <td>
-                        <button class="btn btn-danger btn-sm">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </td>
-                </tr>
+@section('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Update price when lab type changes
+    document.getElementById('lab_type').addEventListener('change', function() {
+        const price = this.options[this.selectedIndex].dataset.price || '';
+        document.getElementById('price').value = price;
+    });
 
-                <tr>
-                    <td>4</td>
-                    <td>Urine</td>
-                    <td>Jane Smith</td>
-                    <td>2022-02-16</td>
-                    <td>10:30 AM</td>
-                    <td>1500.00</td>
-                    <td>
-                        <button class="btn btn-danger btn-sm">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-</section>
+    // Form submission
+    document.getElementById('labAssignForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const formData = {
+            lab_type: document.getElementById('lab_type').value,
+            patient_id: document.getElementById('patient_id').value,
+            date: document.getElementById('lab_date').value,
+            time: document.getElementById('lab_time').value,
+        };
 
+        // Send to server
+        Swal.fire({
+            icon: 'success',
+            title: 'Success',
+            text: 'Lab test assigned successfully!'
+        }).then(() => {
+            this.reset();
+            window.location.reload();
+        });
+    });
+
+    // Search functionality
+    document.getElementById('searchInput').addEventListener('keyup', function() {
+        const searchTerm = this.value.toLowerCase();
+        const rows = document.querySelectorAll('tbody tr');
+
+        rows.forEach(row => {
+            const text = row.textContent.toLowerCase();
+            row.style.display = text.includes(searchTerm) ? '' : 'none';
+        });
+    });
+});
+
+function editLab(id) {
+    // Edit lab test logic
+}
+
+function viewResults(id) {
+    // View lab results logic
+}
+
+function generateReport() {
+    // Generate report logic
+}
+</script>
 @endsection

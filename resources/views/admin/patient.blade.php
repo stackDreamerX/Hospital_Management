@@ -1,259 +1,220 @@
 @extends('admin_layout')
 @section('admin_content')
 
-
-<style>
-    /* Base placeholder styles */
-    input::placeholder,
-    textarea::placeholder,
-    select::placeholder {
-        color: #6c757d !important;
-        opacity: 1 !important;
-    }
-
-    /* Specific email input styles */
-    input[type="email"] {
-        color: #212529;  /* Default text color */
-    }
-    input[type="email"]::placeholder {
-        color: #6c757d !important;
-        opacity: 1 !important;
-    }
-
-    /* Password specific styles */
-    input[type="password"] {
-        font-family: inherit;
-    }
-    input[type="password"]::placeholder {
-        color: #6c757d !important;
-        opacity: 1 !important;
-        font-family: inherit !important;
-    }
-    input[type="password"]:not(:placeholder-shown) {
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial !important;
-    }
-
-    /* Add this to ensure placeholder text in select elements is visible */
-    select option:first-child {
-        color: #6c757d;
-    }
-
-    /* Reset autofill styles */
-    input:-webkit-autofill,
-    input:-webkit-autofill:hover,
-    input:-webkit-autofill:focus {
-        -webkit-text-fill-color: inherit !important;
-        -webkit-box-shadow: 0 0 0px 1000px white inset;
-        transition: background-color 5000s ease-in-out 0s;
-    }
-
-    /* Make empty password input show placeholder */
-    input[type="password"]:placeholder-shown {
-        font-family: inherit !important;
-    }
-
-    /* Keep the dots when user starts typing */
-    input[type="password"]:not(:placeholder-shown) {
-        font-family: password !important;
-    }
-
-    /* Make all form control placeholders visible */
-    .form-control::placeholder,
-    .form-select::placeholder {
-        color: #6c757d !important;
-        opacity: 1 !important;
-    }
-
-    /* Specific style for textarea placeholder */
-    textarea.form-control::placeholder {
-        color: #6c757d !important;
-        opacity: 1 !important;
-    }
-
-    /* Ensure email input placeholder is visible */
-    input[type="email"]::placeholder {
-        color: #6c757d !important;
-        opacity: 1 !important;
-    }
-
-    /* Update password placeholder styles */
-    input[type="password"]::placeholder {
-        color: #6c757d !important;
-        opacity: 1 !important;
-        font-family: inherit !important;
-    }
-</style>
-
-<section class="container mt-4">
-    <!-- Title -->
-    <h3 class="mb-3">Patient Management</h3>
-
-    <!-- Search and Generate Report Section -->
-    <div class="d-flex justify-content-between mb-4">
-        <button class="btn btn-primary">Generate Report</button>
-        <div class="input-group" style="width: 300px;">
-            <input type="text" class="form-control" placeholder="Patient ID" aria-label="Patient ID">
-            <button class="btn btn-warning" type="button">Search</button>
+<div class="container" style="padding: 20px;">
+    <h2 style="color: #333; margin-bottom: 20px;">Patient Management</h2>
+    
+    <!-- Create New Patient Form -->
+    <div class="card mb-4" style="box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+        <div class="card-header" style="background-color: #f8f9fa; padding: 15px;">Create New Patient</div>
+        <div class="card-body" style="padding: 20px;">
+            <form id="createPatientForm">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label style="font-weight: bold; margin-bottom: 5px;">Full Name</label>
+                        <input type="text" name="fullname" class="form-control" required style="padding: 8px;">
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label style="font-weight: bold; margin-bottom: 5px;">Username</label>
+                        <input type="text" name="username" class="form-control" required 
+                               pattern="^[a-zA-Z0-9._-]{3,50}$" style="padding: 8px;">
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label style="font-weight: bold; margin-bottom: 5px;">Email</label>
+                        <input type="email" name="email" class="form-control" required style="padding: 8px;">
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label style="font-weight: bold; margin-bottom: 5px;">Phone Number</label>
+                        <input type="tel" name="phone" class="form-control" required 
+                               pattern="^0[0-9]{9}$" style="padding: 8px;">
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label style="font-weight: bold; margin-bottom: 5px;">Date of Birth</label>
+                        <input type="date" name="date_of_birth" class="form-control" required style="padding: 8px;">
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label style="font-weight: bold; margin-bottom: 5px;">Gender</label>
+                        <select name="gender" class="form-control" required style="padding: 8px;">
+                            <option value="">Select Gender</option>
+                            <option value="male">Male</option>
+                            <option value="female">Female</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label style="font-weight: bold; margin-bottom: 5px;">Address</label>
+                        <textarea name="address" class="form-control" rows="3" style="padding: 8px;"></textarea>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label style="font-weight: bold; margin-bottom: 5px;">Password</label>
+                        <div class="input-group">
+                            <input type="password" name="password" class="form-control" required 
+                                   pattern="^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$" 
+                                   style="padding: 8px;">
+                            <button class="btn btn-outline-secondary" type="button" onclick="togglePasswordVisibility(this)">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary" style="padding: 8px 20px;">Create Patient</button>
+            </form>
         </div>
     </div>
 
-    <!-- Patient Form -->
-    <div class="card p-4">
-        <form>
-            <div class="row">
-                <div class="col-md-6 mb-3">
-                    <input type="text" class="form-control" placeholder="First Name" required>
-                </div>
-                <div class="col-md-6 mb-3">
-                    <input type="text" class="form-control" placeholder="Last Name" required>
-                </div>
-                <div class="col-md-6 mb-3">
-                    <input type="email" class="form-control" placeholder="Email" required>
-                </div>
-                <div class="col-md-6 mb-3">
-                    <input type="text" class="form-control" placeholder="Mobile Number" required>
-                </div>
-                <div class="col-md-6 mb-3">
-                    <input type="text" class="form-control" placeholder="CCCD" required>
-                </div>
-                <div class="col-md-6 mb-3">
-                    <input type="date" class="form-control" placeholder="Date of Birth" required>
-                </div>
-                <div class="col-md-12 mb-3">
-                    <textarea class="form-control" placeholder="Address" rows="3" required></textarea>
-                </div>
-                <div class="col-md-6 mb-3">
-                    <select class="form-select">
-                        <option value="" disabled selected>Gender</option>
-                        <option value="male">Male</option>
-                        <option value="female">Female</option>
-                    </select>
-                </div>
-                <div class="col-md-6 mb-3">
-                    <input type="password" class="form-control" placeholder="Password" required>
-                </div>
-                <div class="col-md-6 mb-3">
-                    <input type="password" class="form-control" placeholder="Confirm Password" required>
+    <!-- Patient List -->
+    <div class="card" style="box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+        <div class="card-header" style="background-color: #f8f9fa; padding: 15px;">Patient List</div>
+        <div class="card-body" style="padding: 20px;">
+            <div class="mb-3">
+                <div class="input-group" style="width: 300px;">
+                    <input type="text" id="searchInput" class="form-control" placeholder="Search patients...">
+                    <button class="btn btn-outline-secondary">
+                        <i class="fas fa-search"></i>
+                    </button>
                 </div>
             </div>
-            <div class="d-flex justify-content-end">
-                <button type="button" class="btn btn-success me-2">Add</button>
-                <button type="button" class="btn btn-primary me-2">Update</button>
-                <button type="button" class="btn btn-danger">Delete</button>
-            </div>
-        </form>
+            <table class="table" style="width: 100%; border-collapse: collapse;">
+                <thead style="background-color: #f8f9fa;">
+                    <tr>
+                        <th style="padding: 12px;">ID</th>
+                        <th style="padding: 12px;">Full Name</th>
+                        <th style="padding: 12px;">Email</th>
+                        <th style="padding: 12px;">Phone</th>
+                        <th style="padding: 12px;">Gender</th>
+                        <th style="padding: 12px;">Age</th>
+                        <th style="padding: 12px;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($patients as $patient)
+                    <tr style="border-bottom: 1px solid #dee2e6;">
+                        <td style="padding: 12px;">{{ $patient['PatientID'] }}</td>
+                        <td style="padding: 12px;">{{ $patient['FullName'] }}</td>
+                        <td style="padding: 12px;">{{ $patient['Email'] }}</td>
+                        <td style="padding: 12px;">{{ $patient['PhoneNumber'] }}</td>
+                        <td style="padding: 12px;">{{ ucfirst($patient['Gender']) }}</td>
+                        <td style="padding: 12px;">
+                            @php
+                                $birthDate = new DateTime($patient['DateOfBirth']);
+                                $today = new DateTime();
+                                $age = $today->diff($birthDate)->y;
+                            @endphp
+                            {{ $age }}
+                        </td>
+                        <td style="padding: 12px;">
+                            <button onclick="editPatient({{ json_encode($patient) }})" 
+                                    class="btn btn-primary btn-sm" style="margin-right: 5px;">
+                                <i class="fa fa-edit"></i> Edit
+                            </button>
+                            <button onclick="deletePatient({{ $patient['PatientID'] }})" 
+                                    class="btn btn-danger btn-sm">
+                                <i class="fa fa-trash"></i> Delete
+                            </button>
+                        </td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
     </div>
+</div>
 
-    <!-- Recent Patients Table -->
-    <div class="card mt-4 p-4">
-        <h5>Recent Patients</h5>
-        <table class="table mt-3">
-            <thead>
-                <tr>
-                    <th>Patient ID</th>
-                    <th>First Name</th>
-                    <th>Last Name</th>
-                    <th>National ID</th>
-                    <th>Email</th>
-                    <th>Mobile Number</th>
-                    <th>Date of Birth</th>
-                    <th>Gender</th>
-                    <th>Address</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>1</td>
-                    <td>Sam</td>
-                    <td>Sapooht</td>
-                    <td>61622626V</td>
-                    <td>hsn@gmail.com</td>
-                    <td>0774596005</td>
-                    <td>2022-01-13</td>
-                    <td>Male</td>
-                    <td>Galle</td>
-                    <td>
-                        <button class="btn btn-outline-secondary btn-sm">
-                            <i class="bi bi-pencil-square"></i>
-                        </button>
-                        <button class="btn btn-outline-danger btn-sm">
-                            <i class="bi bi-trash"></i>
-                        </button>
-                    </td>
-                </tr>
+<!-- Include Edit Modal -->
+@include('admin.modals.patient_modal')
 
+@endsection
 
-                <tr>
-                    <td>2</td>
-                    <td>Sam</td>
-                    <td>Sapooht</td>
-                    <td>61622626V</td>
-                    <td>hsn@gmail.com</td>
-                    <td>0774596005</td>
-                    <td>2022-01-13</td>
-                    <td>Male</td>
-                    <td>Galle</td>
-                    <td>
-                        <button class="btn btn-outline-secondary btn-sm">
-                            <i class="bi bi-pencil-square"></i>
-                        </button>
-                        <button class="btn btn-outline-danger btn-sm">
-                            <i class="bi bi-trash"></i>
-                        </button>
-                    </td>
-                </tr>
+@section('scripts')
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    let editModal;
+    
+    document.addEventListener('DOMContentLoaded', function() {
+        editModal = new bootstrap.Modal(document.getElementById('patientModal'));
+        
+        // Add form submit handler
+        document.getElementById('createPatientForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            Swal.fire({
+                icon: 'success',
+                title: 'Success',
+                text: 'Patient created successfully!'
+            }).then(() => {
+                window.location.reload();
+            });
+        });
 
+        // Add search functionality
+        const searchInput = document.getElementById('searchInput');
+        const tableBody = document.querySelector('.table tbody');
+        const rows = tableBody.querySelectorAll('tr');
 
+        searchInput.addEventListener('keyup', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
 
-                <tr>
-                    <td>3</td>
-                    <td>Sam</td>
-                    <td>Sapooht</td>
-                    <td>61622626V</td>
-                    <td>hsn@gmail.com</td>
-                    <td>0774596005</td>
-                    <td>2022-01-13</td>
-                    <td>Male</td>
-                    <td>Galle</td>
-                    <td>
-                        <button class="btn btn-outline-secondary btn-sm">
-                            <i class="bi bi-pencil-square"></i>
-                        </button>
-                        <button class="btn btn-outline-danger btn-sm">
-                            <i class="bi bi-trash"></i>
-                        </button>
-                    </td>
-                </tr>
+            rows.forEach(row => {
+                const fullName = row.querySelector('td:nth-child(2)').textContent.toLowerCase();
+                const email = row.querySelector('td:nth-child(3)').textContent.toLowerCase();
+                const phone = row.querySelector('td:nth-child(4)').textContent.toLowerCase();
 
+                if (fullName.includes(searchTerm) || 
+                    email.includes(searchTerm) || 
+                    phone.includes(searchTerm)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        });
+    });
 
+    function editPatient(patient) {
+        document.getElementById('edit_id').value = patient.PatientID;
+        document.getElementById('edit_fullname').value = patient.FullName;
+        document.getElementById('edit_username').value = patient.Username;
+        document.getElementById('edit_email').value = patient.Email;
+        document.getElementById('edit_phone').value = patient.PhoneNumber;
+        document.getElementById('edit_dob').value = patient.DateOfBirth;
+        document.getElementById('edit_gender').value = patient.Gender;
+        document.getElementById('edit_address').value = patient.Address;
+        document.getElementById('edit_password').value = '';
+        
+        editModal.show();
+    }
 
-                <tr>
-                    <td>4</td>
-                    <td>Sam</td>
-                    <td>Sapooht</td>
-                    <td>61622626V</td>
-                    <td>hsn@gmail.com</td>
-                    <td>0774596005</td>
-                    <td>2022-01-13</td>
-                    <td>Male</td>
-                    <td>Galle</td>
-                    <td>
-                        <button class="btn btn-outline-secondary btn-sm">
-                            <i class="bi bi-pencil-square"></i>
-                        </button>
-                        <button class="btn btn-outline-danger btn-sm">
-                            <i class="bi bi-trash"></i>
-                        </button>
-                    </td>
-                </tr>
-                <!-- Repeat rows as needed -->
-            </tbody>
-        </table>
-    </div>
-</section>
+    function deletePatient(id) {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Yes, delete it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                Swal.fire('Deleted!', 'Patient has been deleted.', 'success')
+                .then(() => {
+                    window.location.reload();
+                });
+            }
+        });
+    }
 
-<!-- Optional Bootstrap Icons -->
-<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
-
+    function togglePasswordVisibility(button) {
+        const input = button.previousElementSibling;
+        const icon = button.querySelector('i');
+        
+        if (input.type === 'password') {
+            input.type = 'text';
+            icon.classList.remove('fa-eye');
+            icon.classList.add('fa-eye-slash');
+        } else {
+            input.type = 'password';
+            icon.classList.remove('fa-eye-slash');
+            icon.classList.add('fa-eye');
+        }
+    }
+</script>
 @endsection
