@@ -66,235 +66,154 @@
 
     </style>
 
-    <div class="container my-4">
-        <!-- Row 1: Statistics -->
-        <div class="row text-center mb-4">
-            <div class="col-md-3">
-                <div class="card p-3">
-                    <i class="fas fa-user-injured fa-3x mb-2"></i>
-                    <h5>Total Patients</h5>
-                    <p>20</p>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card p-3">
-                    <i class="fas fa-user-md fa-3x mb-2"></i>
-                    <h5>Total Doctors</h5>
-                    <p>20</p>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card p-3">
-                    <i class="fas fa-hospital fa-3x mb-2"></i>
-                    <h5>Total Wards</h5>
-                    <p>20</p>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card p-3">
-                    <i class="fas fa-flask fa-3x mb-2"></i>
-                    <h5>Total Labs</h5>
-                    <p>20</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Row 2: Patients Chart and Appointments -->
+    <div class="container-fluid">
+        <!-- Statistics Cards -->
         <div class="row mb-4">
-            <div class="col-md-6">
-                    <div class="card p-3">
-                        <h5>Patients Chart</h5>
-                        <!-- Chart Placeholder -->
-                        <div class="chart-placeholder d-flex justify-content-center align-items-center position-relative">
-                            <img src="public/BackEnd/images/chart.png" alt="chart" class="w-100 h-100">
-                            <!-- Axes Labels -->
-                            <div class="position-absolute bottom-0 start-50 translate-middle-x">
-                                <p class="mb-0">X</p>
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-primary shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                    Total Doctors</div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800">{{ count($doctors ?? []) }}</div>
                             </div>
-                            <div class="position-absolute top-50 start-0 translate-middle-y">
-                                <p class="mb-0 rotate-text">Y</p>
+                            <div class="col-auto">
+                                <i class="fas fa-user-md fa-2x text-gray-300"></i>
                             </div>
-                        </div>
-                        <!-- Chart Info -->
-                        <div class="mt-3 d-flex justify-content-between">
-                            <p>All Time: 41,234</p>
-                            <p>30 Days: 41,234</p>
-                            <p>7 Days: 41,234</p>
                         </div>
                     </div>
-
+                </div>
             </div>
-            <div class="col-md-6">
-                <div class="card p-3">
-                    <h5>Appointments</h5>
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>Name</th>
-                                <th>Date</th>
-                                <th>Status</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>Chence Vaccarp</td>
-                                <td>19/01/2023</td>
-                                <td><span class="badge bg-primary">Pending</span></td>
-                            </tr>
-                            <tr>
-                                <td>Destinee Kenter</td>
-                                <td>04/12/2023</td>
-                                <td><span class="badge bg-danger">Rejected</span></td>
-                            </tr>
-                            <tr>
-                                <td>Paitlyn Lubin</td>
-                                <td>19/01/2023</td>
-                                <td><span class="badge bg-success">Accepted</span></td>
-                            </tr>
 
-                            <tr>
-                                <td>Paitlyn Lubin</td>
-                                <td>19/01/2023</td>
-                                <td><span class="badge bg-success">Accepted</span></td>
-                            </tr>
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-success shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                    Total Patients</div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800">{{ count($patients ?? []) }}</div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-users fa-2x text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-                            <tr>
-                                <td>Paitlyn Lubin</td>
-                                <td>19/01/2023</td>
-                                <td><span class="badge bg-success">Accepted</span></td>
-                            </tr>
-                        </tbody>
-                    </table>
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-info shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                    Today's Appointments</div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $todayAppointments ?? 0 }}</div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-calendar-check fa-2x text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-warning shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                    Available Beds</div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $availableBeds ?? 0 }}</div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-bed fa-2x text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- Row 3: Recent Doctors  -->
+        <!-- Content Row -->
         <div class="row">
-            <div class="col-md-12">
-                <div class="card p-3">
-                    <h5>Recent Doctors</h5>
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Name</th>
-                                <th>Mobile</th>
-                                <th>Address</th>
-                                <th>Consultancy Charge</th>
-                                <th>Education</th>
-                                <th>DOB</th>
-                                <th>Status</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>1</td>
-                                <td>Sam</td>
-                                <td>+1234567890</td>
-                                <td>123 Main Street, City</td>
-                                <td>$500</td>
-                                <td>MBBS</td>
-                                <td>01/01/1980</td>
-                                <td><span class="status-online">Online</span></td>
-                            </tr>
-                            <tr>
-                                <td>2</td>
-                                <td>John</td>
-                                <td>+0987654321</td>
-                                <td>456 Elm Street, City</td>
-                                <td>$450</td>
-                                <td>MD</td>
-                                <td>02/02/1985</td>
-                                <td><span class="status-offline">Offline</span></td>
-                            </tr>
+            <!-- Recent Appointments -->
+            <div class="col-xl-8 col-lg-7">
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                        <h6 class="m-0 font-weight-bold text-primary">Recent Appointments</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Patient</th>
+                                        <th>Doctor</th>
+                                        <th>Date</th>
+                                        <th>Time</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @forelse($recentAppointments ?? [] as $appointment)
+                                    <tr>
+                                        <td>{{ $appointment['PatientName'] }}</td>
+                                        <td>{{ $appointment['DoctorName'] }}</td>
+                                        <td>{{ $appointment['AppointmentDate'] }}</td>
+                                        <td>{{ $appointment['AppointmentTime'] }}</td>
+                                        <td>
+                                            <span class="badge bg-{{ $appointment['Status'] == 'pending' ? 'warning' : 
+                                                ($appointment['Status'] == 'approved' ? 'success' : 
+                                                ($appointment['Status'] == 'completed' ? 'info' : 'danger')) }}">
+                                                {{ ucfirst($appointment['Status']) }}
+                                            </span>
+                                        </td>
+                                    </tr>
+                                    @empty
+                                    <tr>
+                                        <td colspan="5" class="text-center">No recent appointments</td>
+                                    </tr>
+                                    @endforelse
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-                            <tr>
-                                <td>3</td>
-                                <td>John</td>
-                                <td>+0987654321</td>
-                                <td>456 Elm Street, City</td>
-                                <td>$450</td>
-                                <td>MD</td>
-                                <td>02/02/1985</td>
-                                <td><span class="status-offline">Offline</span></td>
-                            </tr>
-
-                            <tr>
-                                <td>4</td>
-                                <td>John</td>
-                                <td>+0987654321</td>
-                                <td>456 Elm Street, City</td>
-                                <td>$450</td>
-                                <td>MD</td>
-                                <td>02/02/1985</td>
-                                <td><span class="status-offline">Offline</span></td>
-                            </tr>
-                        </tbody>
-                    </table>
+            <!-- Ward Status -->
+            <div class="col-xl-4 col-lg-5">
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">Ward Status</h6>
+                    </div>
+                    <div class="card-body">
+                        @forelse($wards ?? [] as $ward)
+                        <div class="mb-3">
+                            <h4 class="small font-weight-bold">
+                                {{ $ward['WardName'] }} 
+                                <span class="float-end">{{ floor(($ward['CurrentOccupancy'] / $ward['Capacity']) * 100) }}%</span>
+                            </h4>
+                            <div class="progress">
+                                <div class="progress-bar bg-{{ 
+                                    $ward['CurrentOccupancy'] >= $ward['Capacity'] ? 'danger' : 
+                                    ($ward['CurrentOccupancy'] >= $ward['Capacity'] * 0.8 ? 'warning' : 'success') 
+                                }}" 
+                                role="progressbar" 
+                                style="width: {{ ($ward['CurrentOccupancy'] / $ward['Capacity']) * 100 }}%"></div>
+                            </div>
+                        </div>
+                        @empty
+                        <p class="text-center">No ward information available</p>
+                        @endforelse
+                    </div>
                 </div>
             </div>
         </div>
-        <!-- Row 4: out of stocks  -->
-        <div class="row mt-4">
-            <div class="col-md-12">
-                <div class="card p-3">
-                    <h5>Out of Stock</h5>
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Drug Name</th>
-                                <th>Expire Date</th>
-                                <th>Manufacture Date</th>
-                                <th>Price</th>
-                                <th>Quantity</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>1</td>
-                                <td>Vitamin C</td>
-                                <td>01/01/2024</td>
-                                <td>01/01/2022</td>
-                                <td>$10</td>
-                                <td>0</td>
-                            </tr>
-                            <tr>
-                                <td>2</td>
-                                <td>Paracetamol</td>
-                                <td>01/01/2025</td>
-                                <td>01/01/2023</td>
-                                <td>$5</td>
-                                <td>0</td>
-                            </tr>
-
-                            <tr>
-                                <td>3</td>
-                                <td>Paracetamol</td>
-                                <td>01/01/2025</td>
-                                <td>01/01/2023</td>
-                                <td>$5</td>
-                                <td>0</td>
-                            </tr>
-
-                            <tr>
-                                <td>4</td>
-                                <td>Paracetamol</td>
-                                <td>01/01/2025</td>
-                                <td>01/01/2023</td>
-                                <td>$5</td>
-                                <td>0</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-
     </div>
-
-    
-
 
 @endsection

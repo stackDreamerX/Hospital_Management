@@ -34,6 +34,8 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 <script src="public/BackEnd/js/raphael-min.js"></script>
 <script src="public/BackEnd/js/morris.js"></script>
 
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
 <style>
 
     .sidebar-menu li.active a {
@@ -198,6 +200,13 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
                     </a>
                 </li>
 
+                <li class="{{ Request::is('appointment') ? 'active' : '' }}">
+                    <a href="{{ url('/appointment') }}">
+                        <i class="fa fa-calendar"></i>
+                        <span>Appointment</span>
+                    </a>
+                </li>
+
                 <li class="{{ Request::is('treatment') ? 'active' : '' }}">
                     <a href="{{ url('/treatment') }}">
                         <i class="fa fa-medkit"></i>
@@ -239,6 +248,8 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 </section>
 <!--main content end-->
 </section>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="public/BackEnd/js/bootstrap.js"></script>
 <script src="public/BackEnd/js/jquery.dcjqaccordion.2.7.js"></script>
 <script src="public/BackEnd/js/scripts.js"></script>
@@ -304,7 +315,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 	</script>
 <!-- calendar -->
 	<script type="text/javascript" src="public/BackEnd/js/monthly.js"></script>
-	<script type="text/javascript">
+   	<script type="text/javascript">
 		$(window).load( function() {
 
 			$('#mycalendar').monthly({
@@ -333,6 +344,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 
 		});
 	</script>
+    @yield('scripts')
 	<!-- //calendar -->
 </body>
 </html>
