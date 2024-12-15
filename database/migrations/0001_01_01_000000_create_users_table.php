@@ -12,12 +12,13 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('users', function (Blueprint $table) {
-            $table->id();
-            $table->string('name');
-            $table->string('email');
-            $table->timestamp('email_verified_at')->nullable();
-            $table->string('password');
-            $table->rememberToken();
+            $table->id('UserID'); // Khóa chính
+            $table->enum('RoleID', ['patient', 'doctor', 'administrator'])->nullable(false);
+            $table->string('Username', 50)->nullable(false);
+            $table->string('Password', 255)->nullable(false);
+            $table->string('FullName', 100)->nullable(false);
+            $table->string('Email', 100)->unique()->nullable(false);
+            $table->string('PhoneNumber', 15)->nullable(false);
             $table->timestamps();
         });
 
