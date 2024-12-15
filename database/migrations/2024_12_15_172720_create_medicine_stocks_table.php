@@ -11,11 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('tbl_rooms', function (Blueprint $table) {
-            $table->id();  // Mã định danh duy nhất
-            $table->string('name', 15);  // Tên phòng
-            $table->string('location');  // Vị trí phòng
-            $table->timestamps();  // Thời gian tạo và cập nhật
+        Schema::create('medicine_stock', function (Blueprint $table) {
+            $table->id(); // Primary Key
+            $table->foreignId('MedicineID')->constrained('medicines', 'MedicineID')->onDelete('cascade');
+            $table->integer('Quantity');
+            $table->timestamps();
         });
     }
 
@@ -24,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        //
+        Schema::dropIfExists('medicine_stocks');
     }
 };

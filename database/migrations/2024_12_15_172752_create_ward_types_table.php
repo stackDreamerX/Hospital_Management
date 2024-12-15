@@ -11,10 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('tbl_drugs', function (Blueprint $table) {
-            $table->id();  // Mã định danh duy nhất
-            $table->string('name');  // Tên thuốc
-            $table->timestamps();  // Thời gian tạo và cập nhật
+        Schema::create('ward_types', function (Blueprint $table) {
+            $table->id('WardTypeID');
+            $table->string('TypeName', 100);
+            $table->text('Description');
+            $table->timestamps();
         });
     }
 
@@ -23,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        //
+        Schema::dropIfExists('ward_types');
     }
 };
