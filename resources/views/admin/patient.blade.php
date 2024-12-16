@@ -1,88 +1,13 @@
 @extends('admin_layout')
+
+@push('styles')
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+@endpush
+
 @section('admin_content')
 
 
-<style>
-    /* Base placeholder styles */
-    input::placeholder,
-    textarea::placeholder,
-    select::placeholder {
-        color: #6c757d !important;
-        opacity: 1 !important;
-    }
-
-    /* Specific email input styles */
-    input[type="email"] {
-        color: #212529;  /* Default text color */
-    }
-    input[type="email"]::placeholder {
-        color: #6c757d !important;
-        opacity: 1 !important;
-    }
-
-    /* Password specific styles */
-    input[type="password"] {
-        font-family: inherit;
-    }
-    input[type="password"]::placeholder {
-        color: #6c757d !important;
-        opacity: 1 !important;
-        font-family: inherit !important;
-    }
-    input[type="password"]:not(:placeholder-shown) {
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial !important;
-    }
-
-    /* Add this to ensure placeholder text in select elements is visible */
-    select option:first-child {
-        color: #6c757d;
-    }
-
-    /* Reset autofill styles */
-    input:-webkit-autofill,
-    input:-webkit-autofill:hover,
-    input:-webkit-autofill:focus {
-        -webkit-text-fill-color: inherit !important;
-        -webkit-box-shadow: 0 0 0px 1000px white inset;
-        transition: background-color 5000s ease-in-out 0s;
-    }
-
-    /* Make empty password input show placeholder */
-    input[type="password"]:placeholder-shown {
-        font-family: inherit !important;
-    }
-
-    /* Keep the dots when user starts typing */
-    input[type="password"]:not(:placeholder-shown) {
-        font-family: password !important;
-    }
-
-    /* Make all form control placeholders visible */
-    .form-control::placeholder,
-    .form-select::placeholder {
-        color: #6c757d !important;
-        opacity: 1 !important;
-    }
-
-    /* Specific style for textarea placeholder */
-    textarea.form-control::placeholder {
-        color: #6c757d !important;
-        opacity: 1 !important;
-    }
-
-    /* Ensure email input placeholder is visible */
-    input[type="email"]::placeholder {
-        color: #6c757d !important;
-        opacity: 1 !important;
-    }
-
-    /* Update password placeholder styles */
-    input[type="password"]::placeholder {
-        color: #6c757d !important;
-        opacity: 1 !important;
-        font-family: inherit !important;
-    }
-</style>
 
 <section class="container mt-4">
     <!-- Title -->
@@ -258,3 +183,8 @@
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
 
 @endsection
+
+
+@push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
+@endpush

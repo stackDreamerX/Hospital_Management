@@ -1,39 +1,12 @@
 @extends('admin_layout')
+
+@push('styles')
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+@endpush
+
+
 @section('admin_content') 
-
-
-<style>
-    input::placeholder,
-    select::placeholder {
-        color: #6c757d !important; /* Added !important to override any other styles */
-        opacity: 1 !important;
-    }
-
-    /* Add this to ensure placeholder text in select elements is visible */
-    select option:first-child {
-        color: #6c757d;
-    }
-
-    /* Reset autofill styles */
-    input:-webkit-autofill,
-    input:-webkit-autofill:hover,
-    input:-webkit-autofill:focus {
-        -webkit-text-fill-color: inherit !important;
-        -webkit-box-shadow: 0 0 0px 1000px white inset;
-        transition: background-color 5000s ease-in-out 0s;
-    }
-
-    /* Make empty password input show placeholder */
-    input[type="password"]:placeholder-shown {
-        font-family: inherit !important;
-    }
-
-    /* Keep the dots when user starts typing */
-    input[type="password"]:not(:placeholder-shown) {
-        font-family: password !important;
-    }
-</style>
-
 
 <section class="container mt-4">
     <!-- Staff Management Title -->
@@ -233,3 +206,8 @@
 </script>
 
 @endsection
+
+
+@push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
+@endpush

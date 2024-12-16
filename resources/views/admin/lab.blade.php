@@ -1,42 +1,13 @@
 @extends('admin_layout')
+
+@push('styles')
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+@endpush
+
 @section('admin_content') 
 
-
-
-<style>
-    input::placeholder,
-    select::placeholder {
-        color: #6c757d !important; /* Added !important to override any other styles */
-        opacity: 1 !important;
-    }
-
-    /* Add this to ensure placeholder text in select elements is visible */
-    select option:first-child {
-        color: #6c757d;
-    }
-
-    /* Reset autofill styles */
-    input:-webkit-autofill,
-    input:-webkit-autofill:hover,
-    input:-webkit-autofill:focus {
-        -webkit-text-fill-color: inherit !important;
-        -webkit-box-shadow: 0 0 0px 1000px white inset;
-        transition: background-color 5000s ease-in-out 0s;
-    }
-
-    /* Make empty password input show placeholder */
-    input[type="password"]:placeholder-shown {
-        font-family: inherit !important;
-    }
-
-    /* Keep the dots when user starts typing */
-    input[type="password"]:not(:placeholder-shown) {
-        font-family: password !important;
-    }
-</style>
-
-
-<section class="container mt-4">
+<section class="container mt-4 mb-4">
     <!-- Lab Management Title -->
     <h3 class="mb-3">Lab Management</h3>
 
@@ -63,7 +34,7 @@
         <!-- Lab and Patient Name -->
         <div class="row mb-3">
             <div class="col-md-6">
-                <select class="form-control">
+                <select class="form-select">
                     <option selected disabled>Lab</option>
                     <option>Blood</option>
                     <option>Urine</option>
@@ -71,7 +42,7 @@
                 </select>
             </div>
             <div class="col-md-6">
-                <select class="form-control">
+                <select class="form-select">
                     <option selected disabled>Patient Name</option>
                     <option>John Doe</option>
                     <option>Jane Smith</option>
@@ -111,8 +82,8 @@
     <!-- Recent Assign Lab For Patient -->
     <div class="card mt-4 p-4">
         <h5>Recent Assign Lab For Patient</h5>
-        <small class="text-muted">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</small>
-        <table class="table mt-3">
+        <small class="text-muted">List of recently assigned labs for patients.</small>
+        <table class="table table-striped table-hover mt-3">
             <thead>
                 <tr>
                     <th>ID</th>
@@ -151,28 +122,13 @@
                         </button>
                     </td>
                 </tr>
-
                 <tr>
                     <td>3</td>
-                    <td>Urine</td>
-                    <td>Jane Smith</td>
-                    <td>2022-02-16</td>
-                    <td>10:30 AM</td>
-                    <td>1500.00</td>
-                    <td>
-                        <button class="btn btn-danger btn-sm">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </td>
-                </tr>
-
-                <tr>
-                    <td>4</td>
-                    <td>Urine</td>
-                    <td>Jane Smith</td>
-                    <td>2022-02-16</td>
-                    <td>10:30 AM</td>
-                    <td>1500.00</td>
+                    <td>X-Ray</td>
+                    <td>Michael Lee</td>
+                    <td>2022-02-17</td>
+                    <td>2:15 PM</td>
+                    <td>3500.00</td>
                     <td>
                         <button class="btn btn-danger btn-sm">
                             <i class="fas fa-trash"></i>
@@ -185,3 +141,7 @@
 </section>
 
 @endsection
+
+@push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
+@endpush
