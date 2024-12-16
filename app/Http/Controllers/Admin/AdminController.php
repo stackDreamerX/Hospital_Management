@@ -87,6 +87,8 @@ class AdminController extends Controller
     }
 
     public function show_dashboard() {
+        
+
         // Calculate available beds
         $totalBeds = collect($this->sampleWards)->sum('Capacity');
         $occupiedBeds = collect($this->sampleWards)->sum('CurrentOccupancy');

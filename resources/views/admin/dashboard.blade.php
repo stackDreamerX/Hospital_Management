@@ -1,70 +1,14 @@
 @extends('admin_layout');
+
+@push('styles')
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+@endpush
+
+
 @section('admin_content')
 
-    <style>
-        .card {
-            border-radius: 15px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-        .status-online {
-            color: green;
-        }
-        .status-offline {
-            color: red;
-        }
-        .chart-placeholder {
-            background: #f5f5f5;
-            border: 1px dashed #ddd;
-            height: 200px;
-            position: relative;
-            width: 100%;      
-            height: 300px;     
-            overflow: hidden;  
-        }
-
-        .chart-placeholder img {
-            object-fit: cover; 
-            width: 100%;
-            height: 100%;
-        }
-
-        .rotate-text {
-            transform: rotate(-90deg);
-            white-space: nowrap; 
-            transform-origin: left bottom;
-        }
-
-        input::placeholder,
-    select::placeholder {
-        color: #6c757d !important; 
-        opacity: 1 !important;
-    }
-
-   
-    select option:first-child {
-        color: #6c757d;
-    }
-
-  
-    input:-webkit-autofill,
-    input:-webkit-autofill:hover,
-    input:-webkit-autofill:focus {
-        -webkit-text-fill-color: inherit !important;
-        -webkit-box-shadow: 0 0 0px 1000px white inset;
-        transition: background-color 5000s ease-in-out 0s;
-    }
-
-   
-    input[type="password"]:placeholder-shown {
-        font-family: inherit !important;
-    }
-
     
-    input[type="password"]:not(:placeholder-shown) {
-        font-family: password !important;
-    }
-
-    </style>
 
     <div class="container-fluid">
         <!-- Statistics Cards -->
@@ -217,3 +161,7 @@
     </div>
 
 @endsection
+
+@push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
+@endpush
