@@ -61,7 +61,7 @@
                     </div>
 
                     <div class="mt-3">
-                        <a href="{{ route('doctor.patients.show', $patient['PatientID']) }}" 
+                        <a href="{{ route('doctor.patients.show', ['id' => $patient['PatientID']]) }}" 
                            class="btn btn-primary btn-sm">
                             View Details
                         </a>

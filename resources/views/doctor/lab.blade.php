@@ -97,7 +97,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse($assignedLabs as $lab)
+                        @forelse($laboratories as $lab)
                         <tr>
                             <td>{{ $lab['LaboratoryID'] }}</td>
                             <td>{{ $lab['LaboratoryTypeName'] }}</td>

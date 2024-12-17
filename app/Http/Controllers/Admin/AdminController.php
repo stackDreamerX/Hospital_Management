@@ -126,7 +126,7 @@ class AdminController extends Controller
         if ($result) {
             Session::put('admin_name', $result->admin_name);
             Session::put('admin_id', $result->admin_id);
-            return Redirect::to('/dashboard');
+            return Redirect::to('/admin/dashboard');
         } else {
             Session::put('message', 'Mật khẩu hoặc tài khoản sai. vui lòng nhập lại');
             return Redirect::to('/admin');
