@@ -82,7 +82,7 @@
     <!--logo start-->
     <div class="brand">
         <a href="{{ route('patient.dashboard') }}" class="logo">
-            <img src="{{ asset('public/BackEnd/images/logo.png') }}" alt="Logo" height="40">
+            <img src="{{ asset('public/BackEnd/images/logo.ico') }}" alt="Logo" height="40">
             <span>Patient</span>
         </a>
         <div class="sidebar-toggle-box">

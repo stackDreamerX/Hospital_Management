@@ -17,6 +17,7 @@ class HomeController extends Controller
     public function index()
     {
         return view('pages.home');
+        // return view('patient_layout');
     }
 
     public function sign_in() {

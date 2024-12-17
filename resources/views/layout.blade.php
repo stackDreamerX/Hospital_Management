@@ -13,8 +13,6 @@
     <link rel="stylesheet" href="public/FrontEnd/css/styles.css">
     <link rel="shortcut icon" href="public/FrontEnd/images/logo.ico" type="image/x-icon">
 
-
-    
         <title>Medic Hospital</title>
     <script type="text/javascript" async="" src="public/FrontEnd/js/invoca-latest.min.js"></script><script async="" src="public/FrontEnd/js/beacon.js"></script><script type="text/javascript" async="" src="public/FrontEnd/js/heap-1538774254.js"></script><script defer="" src="public/FrontEnd/js/gtm.js"></script><script src="public/FrontEnd/js/28007920049.js"></script>
     <!-- Google Tag Manager -->
@@ -98,6 +96,37 @@ j = d.createElement(s), dl = l != 'dataLayer' ? '&l=' + l : ''; j.defer = true; 
     border: 1px solid #ccc;
 }
 
+.nav--utility {
+    font-size: 0.875rem;
+}
+
+.header .nav-link {
+    color: #333;
+    font-weight: 500;
+    transition: color 0.2s;
+}
+
+.header .nav-link:hover {
+    color: #0078BF;
+}
+
+.navbar-toggler {
+    border: none;
+    padding: 0;
+}
+
+@media (max-width: 991px) {
+    .header .navbar-collapse {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: white;
+        padding: 1rem;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+}
+
 </style>
 
 
@@ -159,71 +188,41 @@ j = d.createElement(s), dl = l != 'dataLayer' ? '&l=' + l : ''; j.defer = true; 
 
 
     
-
+<!-- header start -->
 
 <header id="site-header" class="header js-site-header site-header__has-banner">
 
-    <nav class="nav--utility js-nav--utility">
-        <ul>
-            <li>
-                <a href="/#notification-banner__lightbox-popup" class="nav--utility__link nav--utility__link--emergency-notification js-nav--utility__link--emergency-notification js-lightbox-popup">
-                    <img src="public/FrontEnd/images/icon-alert--blue.svg" alt="exclamation icon">
-                </a>
-            </li>
-                <li>
-                    <a class="nav--utility__link nav--utility__link--phone" href="tel:037.864.9957">
-                        Hotline:037.864.9957
+    <nav class="nav--utility js-nav--utility bg-light py-2">
+        <div class="container">
+            <ul class="nav justify-content-end align-items-center mb-0">
+                <li class="nav-item">
+                    <a href="/#notification-banner__lightbox-popup" class="nav-link text-dark">
+                        <i class="fas fa-exclamation-circle text-warning"></i>
+                    </a>
+                </li>
+                
+                <li class="nav-item">
+                    <a class="nav-link text-dark" href="tel:037.864.9957">
+                        <i class="fas fa-phone-alt me-1"></i> Hotline: 037.864.9957
                     </a>
                 </li>
 
-                <li>
-                    <a class="nav--utility__link " href="/about/history" disablewebedit="True">10 Years of Medic Hospital</a>
-                </li>                
-                <li>
-                    <a class="nav--utility__link " title="Need help?" href="/help" disablewebedit="True">Need help?</a>
+                <li class="nav-item"><a class="nav-link text-dark" href="/about/history">10 Years of Medic Hospital</a></li>
+                <li class="nav-item"><a class="nav-link text-dark" title="Need help?" href="/help">Need help?</a></li>
+                <li class="nav-item"><a class="nav-link text-dark" href="/search" aria-label="Search" aria-controls="search-box">Search</a></li>
+
+                <li class="nav-item ms-2">
+                    <a class="btn btn-outline-primary btn-sm" href="{{ url('/sign-in') }}">
+                        <i class="fas fa-sign-in-alt me-1"></i> Sign In
+                    </a>
                 </li>
-               
-                <li>
-                    <a href="/search" aria-label="Search" aria-controls="search-box" class="button--small button--search" disablewebedit="True" aria-expanded="false">Search</a>
+                <li class="nav-item ms-2">
+                    <a class="btn btn-primary btn-sm" href="{{ url('/sign-up') }}">
+                        Sign Up
+                    </a>
                 </li>
-
-                <li class="nav--utility__separator"></li>
-
-                                
-                <!-- Add these items -->
-
-                
-
-
-                @if(Session::has('name'))
-                    <li class="dropdown">
-                        <a data-bs-toggle="dropdown" class="dropdown-toggle" href="#">
-                            <img alt="" src="public/BackEnd/images/2.png">
-                            <span class="username">
-                                {{ Session::get('name') }}
-                            </span>
-                            <b class="caret"></b>
-                        </a>
-                        <ul class="dropdown-menu extended logout">
-                            <li><a href="{{ url('/profile') }}"><i class="fa fa-suitcase"></i> Profile</a></li>
-                            <li><a href{{ url('/profile') }}i class="fa fa-cog"></i> Settings</a></li>
-                            <li><a href="{{ url('/home-logout') }}"><i class="fa fa-key"></i> Đăng xuất</a></li>
-                        </ul>
-                    </li>
-                @else
-                    <li>
-                        <a class="btn btn-yellow btn-sm" href="{{ url('/sign-in') }}">
-                            <i class="fa fa-sign-in"></i> Sign In
-                        </a>
-                    </li>
-                    <li>
-                        <a class="btn btn-success btn-sm" href="{{ url('/sign-up') }}">
-                            Sign Up
-                        </a>
-                    </li>
-                @endif
-
-        </ul>
+            </ul>
+        </div>
     </nav>
 
 
@@ -258,7 +257,6 @@ j = d.createElement(s), dl = l != 'dataLayer' ? '&l=' + l : ''; j.defer = true; 
                     </div>
 
                     <nav>
-
 
                         <ul class="nav--primary ">
                                 <li class="nav--primary__link">
@@ -328,7 +326,7 @@ j = d.createElement(s), dl = l != 'dataLayer' ? '&l=' + l : ''; j.defer = true; 
 
 </header>
 
-
+<!-- header end -->
     
 
             <style>

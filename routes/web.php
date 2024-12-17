@@ -71,16 +71,44 @@ Route::prefix('doctor')->group(function () {
     Route::get('/patients',[App\Http\Controllers\Doctor\PatientController::class,'index']) -> name('doctor.patients');   
     Route::get('/patients-details/{id}',[App\Http\Controllers\Doctor\PatientController::class,'show']) -> name('doctor.patients.show');
     
-
-
     Route::get('/pharmacy',[App\Http\Controllers\Doctor\PharmacyController::class,'index']) -> name('doctor.pharmacy');
-
-    Route::get('/staff',[App\Http\Controllers\Doctor\LabController::class,'index']) -> name('doctor.staff');
-
+  
     Route::get('/treatments',[App\Http\Controllers\Doctor\TreatmentController::class,'index']) -> name('doctor.treatments');
+   
 
-    Route::get('/ward',[App\Http\Controllers\Doctor\LabController::class,'index']) -> name('doctor.ward');
+    Route::get('/profile', function() { return 1; })->name('doctor.profile');
+    Route::get('/settings', function() { return 1; })->name('doctor.settings');
+    Route::get('/logout', function() { return 1; })->name('doctor.logout');
+
 
 });
 // ->middleware('auth')
 
+
+
+
+// Patient - UI
+Route::prefix('patient')->group(function () {
+
+    Route::get('/', [App\Http\Controllers\Patient\PatientController::class, 'index'])->name('patient.dashboard');
+    Route::get('/dashboard', [App\Http\Controllers\Patient\PatientController::class, 'index'])->name('patient.dashboard');
+
+    Route::get('/profile', [App\Http\Controllers\Patient\PatientController::class, 'profile'])->name('patient.profile');
+    Route::get('/settings', [App\Http\Controllers\Patient\PatientController::class, 'settings'])->name('patient.settings');
+    Route::get('/logout', [App\Http\Controllers\Patient\PatientController::class, 'logout'])->name('patient.logout');
+
+    Route::get('/appointments', [App\Http\Controllers\Patient\AppointmentController::class, 'index']) ->name('patient.appointments');
+
+    Route::get('/treatments',[App\Http\Controllers\Patient\TreatmentController::class,'index']) -> name('patient.treatments');
+
+    Route::get('/lab',[App\Http\Controllers\Patient\LabController::class,'index']) -> name('patient.lab');
+
+    Route::get('/pharmacy*',[App\Http\Controllers\Patient\PharmacyController::class,'index']) -> name('patient.pharmacy');
+
+
+});
+// ->middleware('auth')
+
+
+  
+// ->middleware('auth')
