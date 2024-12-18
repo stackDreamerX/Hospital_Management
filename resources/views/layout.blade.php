@@ -127,6 +127,29 @@ j = d.createElement(s), dl = l != 'dataLayer' ? '&l=' + l : ''; j.defer = true; 
     }
 }
 
+.navbar {
+    border-radius: 5px;
+    background-color: #f8f9fa;
+}
+
+.nav-link {
+    font-weight: 500;
+    color: #495057; /* Text màu trung tính */
+}
+
+.nav-link.active {
+    background-color: #0d6efd;
+    color: white;
+    border-radius: 5px;
+}
+
+.nav-link:hover {
+    color: #0d6efd;
+    text-decoration: none;
+}
+
+
+
 </style>
 
 
@@ -300,29 +323,36 @@ j = d.createElement(s), dl = l != 'dataLayer' ? '&l=' + l : ''; j.defer = true; 
                     </div>
             </div>
         </div>
-        <nav class="nav--secondary js-nav--secondary">
-            <ul>
-                    <li class="nav--secondary__link--primary"><a class="nav--secondary__link" href="/" disablewebedit="True">MedicHospital.org</a></li>
-                                        <li>
-                            <a class="nav--secondary__link " href="/staff" disablewebedit="True">Find a Doctor</a>
-                        </li>
-                        <li>
-                            <a class="nav--secondary__link " href="/locations" disablewebedit="True">Locations &amp; Directions</a>
-                        </li>
-                        <li>
-                            <a class="nav--secondary__link " href="/patients" disablewebedit="True">Patients &amp; Visitors</a>
-                        </li>
-                        <li>
-                            <a class="nav--secondary__link " href="/health" disablewebedit="True">Health Library</a>
-                        </li>
-                        <li>
-                            <a class="nav--secondary__link " href="/departments" disablewebedit="True">Institutes &amp; Departments</a>
-                        </li>
-                        <li>
-                            <a class="nav--secondary__link " href="/patients/information/access" disablewebedit="True">Appointments</a>
-                        </li>
-                                            </ul>
+        <nav class="navbar bg-light shadow-sm p-3 mb-3">
+            <ul class="nav nav-pills justify-content-center">
+                <!-- Phần tử Find a Doctor -->
+                <li class="nav-item border-end">
+                    <a class="nav-link {{ request()->is('staff') ? 'active' : '' }}" href="/staff">Find a Doctor</a>
+                </li>
+                <!-- Phần tử Locations & Directions -->
+                <li class="nav-item border-end">
+                    <a class="nav-link {{ request()->is('locations') ? 'active' : '' }}" href="/locations">Locations &amp; Directions</a>
+                </li>
+                <!-- Phần tử Patients & Visitors -->
+                <li class="nav-item border-end">
+                    <a class="nav-link {{ request()->is('patients') ? 'active' : '' }}" href="/patients">Patients &amp; Visitors</a>
+                </li>
+                <!-- Phần tử Health Library -->
+                <li class="nav-item border-end">
+                    <a class="nav-link {{ request()->is('health') ? 'active' : '' }}" href="/health">Health Library</a>
+                </li>
+                <!-- Phần tử Institutes & Departments -->
+                <li class="nav-item border-end">
+                    <a class="nav-link {{ request()->is('departments') ? 'active' : '' }}" href="/departments">Institutes &amp; Departments</a>
+                </li>
+                <!-- Phần tử Appointments -->
+                <li class="nav-item">
+                    <a class="nav-link {{ request()->is('patients/information/access') ? 'active' : '' }}" href="/patients/information/access">Appointments</a>
+                </li>
+            </ul>
         </nav>
+        
+        
 
 </header>
 
