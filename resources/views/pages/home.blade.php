@@ -1,4 +1,5 @@
 @extends('layout')
+
 @section('content')
 
 
@@ -23,28 +24,28 @@
         <li class="story-layout">
             <div class="story-panel__card js-story-panel__card" style="height: 443.513px;">
                 <div class="story-panel__card-content story-panel__no-selection ">
-                         <a class="story-panel__image-link" href="/staff">
+                         <a class="story-panel__image-link" href="{{ route('users.staff') }}">
                             <div class="story-panel__image-overlay">
                                 <img class="js-story-panel__image" src="public/FrontEnd/images/find-a-doctor-card-new.jpg" width="634" height="356" alt="Find a Doctor">
                             </div>
                         </a>
                         <a class="story-panel__title-link" href="/staff"><h3 class="story-panel__title">Our Doctors</h3></a>
                         <p class="story-panel__description">Search by name, specialty, location and more.</p>
-                        <a class="story-panel__button button" href="/staff">Find a doctor</a>
+                        <a class="story-panel__button button" href="{{ route('users.staff') }}">Find a doctor</a>
                 </div>
             </div>
         </li>
         <li class="story-layout">
             <div class="story-panel__card js-story-panel__card" style="height: 443.513px;">
                 <div class="story-panel__card-content story-panel__no-selection ">
-                                            <a class="story-panel__image-link" href="/locations">
+                                            <a class="story-panel__image-link" href="{{ route('users.locations') }}">
                             <div class="story-panel__image-overlay">
                                 <img class="js-story-panel__image" src="public/FrontEnd/images/locations-card-new.png" width="634" height="356" alt="Locations">
                             </div>
                         </a>
-                                <a class="story-panel__title-link" href="/locations"><h3 class="story-panel__title">Locations &amp; Directions</h3></a>
+                                <a class="story-panel__title-link" href="{{ route('users.locations') }}"><h3 class="story-panel__title">Locations &amp; Directions</h3></a>
                                 <p class="story-panel__description">Find any of our 300+ locations.</p>
-                                <a class="story-panel__button button" href="/locations">Get directions</a>
+                                <a class="story-panel__button button" href="{{ route('users.locations') }}">Get directions</a>
                 </div>
             </div>
         </li>
@@ -58,7 +59,7 @@
                         </a>
                                             <a class="story-panel__title-link" href="/patients/information/access"><h3 class="story-panel__title">Appointments</h3></a>
                                             <p class="story-panel__description">Get the in person or virtual care you need.</p>
-                                            <a class="story-panel__button button" href="/patients/information/access">Schedule now</a>
+                                            <a class="story-panel__button button" href="{{ route('users.appointments') }}">Schedule now</a>
                 </div>
             </div>
         </li>
@@ -67,7 +68,7 @@
         <a class="story-panel__nav-button story-panel__nav-button--prev js-story-panel__nav-button--prev story-panel__hide"><img src="public/FrontEnd/images/icon-arrow-left.svg"></a>
         <a class="story-panel__nav-button story-panel__nav-button--next js-story-panel__nav-button--next story-panel__hide"><img src="public/FrontEnd/images/icon-arrow-right.svg"></a>
         <div class="story-panel__pagination js-story-panel__pagination"></div>
-    </section>
+     </section>
 
   <section class="care-widget js-care-widget js-care-widget--care-pages care-widget--care-pages" id="call-out-panel">
     <div class="care-widget__header">

@@ -117,49 +117,49 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
         <!-- sidebar menu start-->
         <div class="leftside-navigation">
             <ul class="sidebar-menu" id="nav-accordion">
-                <li class="{{ Request::is('dashboard') ? 'active' : '' }}">
+                <li class="{{ Request::is('admin/dashboard') ? 'active' : '' }}">
                     <a href="{{ url('/admin/dashboard') }}">
                         <i class="fa fa-dashboard"></i>
                         <span>Dashboard</span>
                     </a>
                 </li>
                 
-                <li class="{{ Request::is('staff') ? 'active' : '' }}">
+                <li class="{{ Request::is('admin/staff') ? 'active' : '' }}">
                     <a href="{{ url('/admin/staff') }}">
                         <i class="fa fa-users"></i>
                         <span>Staff</span>
                     </a>
                 </li>
 
-                <li class="{{ Request::is('lab') ? 'active' : '' }}">
+                <li class="{{ Request::is('admin/lab') ? 'active' : '' }}">
                     <a href="{{ url('/admin/lab') }}">
                         <i class="fa fa-flask"></i>
                         <span>Lab</span>
                     </a>
                 </li>
 
-                <li class="{{ Request::is('ward') ? 'active' : '' }}">
+                <li class="{{ Request::is('admin/ward') ? 'active' : '' }}">
                     <a href="{{ url('/admin/ward') }}">
                         <i class="fa fa-hospital-o"></i>
                         <span>Ward</span>
                     </a>
                 </li>
 
-                <li class="{{ Request::is('treatment') ? 'active' : '' }}">
+                <li class="{{ Request::is('admin/treatment') ? 'active' : '' }}">
                     <a href="{{ url('/admin/treatment') }}">
                         <i class="fa fa-medkit"></i>
                         <span>Treatment</span>
                     </a>
                 </li>
 
-                <li class="{{ Request::is('pharmacy') ? 'active' : '' }}">
+                <li class="{{ Request::is('admin/pharmacy') ? 'active' : '' }}">
                     <a href="{{ url('/admin/pharmacy') }}">
                         <i class="fa fa-plus-square"></i>
                         <span>Pharmacy</span>
                     </a>
                 </li>
 
-                <li class="{{ Request::is('patient') ? 'active' : '' }}">
+                <li class="{{ Request::is('admin/patient') ? 'active' : '' }}">
                     <a href="{{ url('/admin/patient') }}">
                         <i class="fa fa-user"></i>
                         <span>Patient</span>
