@@ -141,7 +141,7 @@
 	</section>
 
   <section class="spotlight-panel" id="aenterprise_home-page_why-choose">
-    <h2 class="container--md">Why Choose Medic Hospital?</h2>
+    <h2 class="container--md text-center">Why Choose Medic Hospital?</h2>
   <div class="spotlight-panel__container js-spotlight-panel__container container">
         <div class="spotlight-panel__card js-spotlight-panel__card spotlight-layout spotlight-layout--1">
 
@@ -187,7 +187,7 @@
 
 
     <section class="story-panel js-story-panel story-panel__white-background" id="aenterprise_home-page-care-near-you">
-            <h2 class="story-panel__heading container container--md">Medic Hospital Care Near You</h2>
+            <h2 class="story-panel__heading container container--md text-center">Medic Hospital Care Near You</h2>
         <div class="story-panel__carousel js-story-panel__carousel container story-panel__has-slider" style="height: 290.675px;">
             <ul class="story-panel__cards-container js-story-panel__cards-container" style="margin-left: 0%; width: 200%;">
 

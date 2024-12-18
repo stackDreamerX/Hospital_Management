@@ -89,9 +89,12 @@ class HomeController extends Controller
     }
 
     public function appointments()
-    {
-        return view('pages.appointments');
-     
+    {        
+        if (!Session::has('id')) {
+            return redirect('/sign-in')->with('message', 'Please login to access appointments');
+        }
+        
+        return redirect('/patient/dashboard');
     }
 
 }

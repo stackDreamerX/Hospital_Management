@@ -15,18 +15,24 @@
 <link href="public/BackEnd/css/font-awesome.css" rel="stylesheet"> 
 <!-- jQuery -->
 <script src="js/jquery2.0.3.min.js"></script>
+
+<style>    
+</style>
 </head>
 <body class="login-body">
 <div class="log-w3">
     <div class="w3layouts-main">
-        <h2>Đăng nhập</h2>
-        <?php
-            $message = Session::get("message");
-            if ($message) {
-                echo '<span class="text-alert">'.$message. '</span>';
-                Session::put('message',null);
-            }
-        ?>
+        <h2>Đăng nhập</h2>      
+        @if(Session::has('message'))
+            <div class="alert text-danger alert-dismissable">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                {{ Session::get('message') }}
+            </div>
+            <div>
+                {{ Session::put('message',null);}}
+            </div>
+        @endif
+        
         <form action="{{ url('/home-dashboard') }}" method="post">
                 @csrf
                 <!-- {{ csrf_field() }} -->

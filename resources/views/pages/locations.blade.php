@@ -14,7 +14,7 @@
                     <h5 class="card-title">Medic Hospital Thong Nhat</h5>
                     <p class="card-text">1 Lý Thường Kiệt, Phường 7, Tân Bình, Hồ Chí Minh 700000, Việt Nam
                     </p>
-                    <a href="https://maps.app.goo.gl/KQguonZejpjuxxhJA" target="_blank" class="btn btn-primary">Get Directions</a>
+                    <a href="https://maps.app.goo.gl/KQguonZejpjuxxhJA" target="_blank" class="btn btn-primary">Get Direction</a>
                 </div>
             </div>
         </div>
@@ -27,7 +27,7 @@
                     <h5 class="card-title">Medic Hospital Cho Ray</h5>
                     <p class="card-text">201B Đ. Nguyễn Chí Thanh, Phường 12, Quận 5, Hồ Chí Minh 700000
                     </p>
-                    <a href="https://maps.app.goo.gl/CBHjiyWks5MUQC4JA" target="_blank" class="btn btn-primary">Get Directions</a>
+                    <a href="https://maps.app.goo.gl/CBHjiyWks5MUQC4JA" target="_blank" class="btn btn-primary">Get Direction</a>
                 </div>
             </div>
         </div>
@@ -40,7 +40,7 @@
                     <h5 class="card-title">Medic Hospital Da Khoa Thu Duc</h5>
                     <p class="card-text">64 Lê Văn Chí, Phường Linh Trung, Thủ Đức, Hồ Chí Minh, Việt Nam
                     </p>
-                    <a href="https://maps.app.goo.gl/8XgAZ6jFdpw3Ex696" target="_blank" class="btn btn-primary">Get Directions</a>
+                    <a href="https://maps.app.goo.gl/8XgAZ6jFdpw3Ex696" target="_blank" class="btn btn-primary">Get Direction</a>
                 </div>
             </div>
         </div>
