@@ -28,17 +28,22 @@
             }
         ?>
         <form action="{{ url('/home-dashboard') }}" method="post">
-            @csrf
-            <!-- {{ csrf_field() }}   -->
-            <input type="text" class="form-control" name="email" placeholder="E-MAIL" required="">
-            <input type="password" class="form-control" name="password" placeholder="PASSWORD" required="">
-            <div class="d-flex justify-content-between">
-                <span><input type="checkbox" /> Nhớ đăng nhập</span>
-                <h6><a href="#">Quên mật khẩu?</a></h6>
-            </div>
-            <div class="clearfix"></div>
-            <input type="submit" value="Đăng nhập" name="sign-in" class="btn btn-success btn-block">
-        </form>
+                @csrf
+                <!-- {{ csrf_field() }} -->
+                <div class="form-group">
+                    <input type="text" class="form-control" name="email" placeholder="E-MAIL" required="">
+                </div>
+                <div class="form-group">
+                    <input type="password" class="form-control" name="password" placeholder="PASSWORD" required="">
+                </div>
+                <div class="checkbox">
+                    <label><input type="checkbox"> Nhớ đăng nhập</label>
+                </div>
+                <div class="form-group text-right">
+                    <a href="#">Quên mật khẩu?</a>
+                </div>
+                <button type="submit" class="btn btn-success btn-block" name="sign-in">Đăng nhập</button>
+            </form>
         <div class="text-center mt-3">
             <p>Không có tài khoản? <a href="{{ url('/sign-up') }}" class="btn btn-yellow btn-sm">Đăng ký</a></p>
         </div>

@@ -73,6 +73,26 @@ class HomeController extends Controller
         return redirect('/sign-in')->with('success', 'Account created successfully! Please log in.');
     }
 
+    public function staff()
+    {
+        return view('pages.staff');
+    }
+
+    public function locations()
+    {
+        return view('pages.locations');
+    }
+
+    public function patients()
+    {
+        return view('pages.patients');    
+    }
+
+    public function appointments()
+    {
+        return view('pages.appointments');
+     
+    }
 
 }
 // php artisan make:controller HomeController 

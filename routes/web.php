@@ -15,13 +15,19 @@ use Illuminate\Support\Facades\Route;
 
 
 //FrontEnd - users 
-Route::get('/', [HomeController::class, 'index'])->name('index');
+Route::get('/dashboard', [HomeController::class, 'index'])->name(name: 'users.dashboard');
 Route::get('/trang-chu', [HomeController::class, 'index'])->name('trang-chu');
 Route::get('/sign-in', [HomeController::class, 'sign_in'])->name('sign_in');
 Route::get('/home-logout', [HomeController::class, 'home_logout'])->name('home_logout');
 Route::post('/home-dashboard', [HomeController::class,'home_dashboard'])->name('home_dashboard'); 
 Route::get('/sign-up', [HomeController::class, 'sign_up'])->name('sign_up');
 Route::post('/sign-up', [HomeController::class, 'register']);
+
+//Nav 
+Route::get('/staff', [HomeController::class, 'staff'])->name('users.staff');
+Route::get('/locations', [HomeController::class, 'locations'])->name('users.locations');
+Route::get('/patients', [HomeController::class, 'patients'])->name('users.patients');
+Route::get('/appointments', [HomeController::class, 'appointments'])->name('users.appointments');
 
 
 Route::prefix('admin')->group(function () {

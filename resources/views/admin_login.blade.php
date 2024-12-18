@@ -37,7 +37,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 			Session::put('message',null);
 	 	}
 	?>
-		<form action="{{ url('/admin-dashboard') }}" method="post">
+		<form action="{{ url('/admin/dashboard') }}" method="post">
 			@csrf
 			<!-- {{ csrf_field() }}   -->
 			<input type="text" class="ggg" name="admin_email" placeholder="E-MAIL" required="">
