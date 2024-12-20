@@ -19,8 +19,11 @@ Route::get('/dashboard', [HomeController::class, 'index'])->name(name: 'users.da
 Route::get('/trang-chu', [HomeController::class, 'index'])->name('trang-chu');
 Route::get('/sign-in', [HomeController::class, 'sign_in'])->name('sign_in');
 Route::get('/home-logout', [HomeController::class, 'home_logout'])->name('home_logout');
-Route::post('/home-dashboard', [HomeController::class,'home_dashboard'])->name('home_dashboard'); 
+
+Route::get('/login', [HomeController::class, 'sign_in'])->name('login');
 Route::get('/sign-up', [HomeController::class, 'sign_up'])->name('sign_up');
+Route::post('/home-dashboard', [HomeController::class,'home_dashboard'])->name('home_dashboard'); 
+
 Route::post('/sign-up', [HomeController::class, 'register']);
 
 //Nav 
@@ -96,8 +99,7 @@ Route::prefix('doctor')->group(function () {
 // Patient - UI
 Route::prefix('patient')->group(function () {
 
-    Route::get('/', [App\Http\Controllers\Patient\PatientController::class, 'index'])->name('patient.dashboard');
-    Route::get('/dashboard', [App\Http\Controllers\Patient\PatientController::class, 'index'])->name('patient.dashboard');
+    Route::get('/dashboard', [App\Http\Controllers\Patient\PatientController::class, 'index']) ->middleware('auth')->name('patient.dashboard');
 
     Route::get('/profile', [App\Http\Controllers\Patient\PatientController::class, 'profile'])->name('patient.profile');
     Route::get('/settings', [App\Http\Controllers\Patient\PatientController::class, 'settings'])->name('patient.settings');

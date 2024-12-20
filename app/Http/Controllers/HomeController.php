@@ -2,16 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\Log;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Requests;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Redirect;
-session_start();
 use Illuminate\Support\Facades\Validator;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash; 
-
+use Illuminate\Support\Facades\Auth;
 class HomeController extends Controller
 {
     public function index()
@@ -28,46 +28,70 @@ class HomeController extends Controller
         return view('pages.sign_up');
     }
   
-   public function home_dashboard(Request $request) {
-       $email = $request->email;
-       $password = md5($request->password);
+    public function home_dashboard(Request $request)
+    {      
+        // Validate dữ liệu đầu vào
+        $request->validate([
+            'username' => 'required|string',
+            'password' => 'required|string',
+        ]);
+     
+          
+       // dd(['Username' => $request->Username, 'Password' => $request->Password]);
 
-       $result = DB::table('users') ->  where('email',$email) -> where('password', $password) -> first();       
-       if ($result){
-           Session::put('name',$result -> name);
-           Session::put('id',$result -> id);
-           return Redirect ::to('/trang-chu');
-       }        
-       else {
-           Session::put('message','Mật khẩu hoặc tài khoản sai. vui lòng nhập lại');
-           return Redirect::to('/sign-in');
-       }
-   }
-   public function home_logout() {
-       Session::put('name',null);
-       Session::put('id',null);
-       return Redirect::to('/trang-chu'); 
-   }
+
+        if (Auth::attempt(['username' => $request->username, 'password' => $request->password])) {
+            // Điều hướng đến trang dashboard
+            $request->session()->regenerate();     
+            if ($user->RoleID === 'patient') {
+                return redirect()->route('patient.dashboard');
+            } elseif ($user->RoleID === 'doctor') {
+                return redirect()->route('doctor.dashboard');
+            } else {
+                return redirect()->route('admin.dashboard');
+            }              
+        }
+        else {  
+            // Đăng nhập thất bại                
+            return redirect()->back()->withErrors(['message' => 'Tài khoản hoặc mật khẩu không đúng.']);
+        }
+       
+    }
+
+    public function home_logout() {
+        // Đăng xuất người dùng
+        Auth::logout();
+        // Chuyển hướng về trang chủ
+        return redirect('/trang-chu')->withErrors(['message' => 'You have been logged out successfully']);      
+    }
 
    public function register(Request $request)
     {
         // Xác thực dữ liệu đầu vào
         $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email',
+            'FullName' => 'required|string|max:100',
+            'Email' => 'required|email|unique:users,Email',
             'password' => 'required|min:6|confirmed',
+            'PhoneNumber' => 'required|string|max:15',
+            'RoleID' => 'required|in:patient,doctor,administrator',
+            'username' => 'required|string|max:50|unique:users,username',
         ]);
-
+   
         if ($validator->fails()) {
             return redirect()->back()->withErrors($validator)->withInput();
         }
-
+        //dd($request->all());
         // Tạo user mới
         User::create([
-            'name' => $request->name,
-            'email' => $request->email,
+            'RoleID' => $request->RoleID,    
+            'username' => $request->username,
+            'FullName' => $request->FullName,
+            'Email' => $request->Email,
             'password' => Hash::make($request->password),
+            'PhoneNumber' => $request->PhoneNumber,
+                   
         ]);
+        
 
         // Chuyển hướng sau khi đăng ký thành công
         return redirect('/sign-in')->with('success', 'Account created successfully! Please log in.');
@@ -90,7 +114,7 @@ class HomeController extends Controller
 
     public function appointments()
     {        
-        if (!Session::has('id')) {
+        if (!Auth::check()) {
             return redirect('/sign-in')->with('message', 'Please login to access appointments');
         }
         

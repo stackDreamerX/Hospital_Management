@@ -16,10 +16,17 @@ class User extends Authenticatable
      *
      * @var array<int, string>
      */
-    protected $fillable = [
-        'name',
-        'email',
+    protected $primaryKey = 'UserID';
+    public $incrementing = true;
+    protected $keyType = 'int';
+
+    protected $fillable = [        
+        'RoleID',
+        'username',
+        'FullName',
+        'Email',
         'password',
+        'PhoneNumber',
     ];
 
     /**
@@ -42,6 +49,17 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'RoleID' => 'string', // Cast RoleID thành chuỗi
         ];
     }
+    public function getAuthIdentifierName()
+    {
+        // return 'username'; // Tên cột bạn muốn dùng
+        return 'UserID'; // Xác định khóa chính cho Laravel Guard
+    }      
+    public function getAuthPassword()
+    {
+        return $this->password; // Laravel sẽ dùng cột "password" cho xác thực
+    }
+    
 }

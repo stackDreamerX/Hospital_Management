@@ -11,29 +11,48 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
     <style>
         body {
-            background: linear-gradient(to right, #6a11cb, #2575fc); /* Gradient Background */
-            height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            background: linear-gradient(to right, #6a11cb, #2575fc);
+            min-height: 100vh;
             margin: 0;
+            padding: 20px 0;
+            overflow-y: auto;
         }
+
+        .container {
+            margin-top: 2rem;
+            margin-bottom: 2rem;
+            height: auto;
+        }
+
         .card {
             border: none;
             border-radius: 12px;
             box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
+            margin: 20px auto;
+            height: auto;
+            overflow: visible;
         }
+
         .card-header {
             background-color: #2575fc;
             color: white;
             text-align: center;
             border-radius: 12px 12px 0 0;
             padding: 1.5rem 1rem;
+            position: relative;
         }
-        .card-header h3 {
+
+        .card-header h3, 
+        .card-header p {
+            color: white !important;
             margin: 0;
-            font-weight: bold;
         }
+
+        .card-header h3 {
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
         .btn-primary {
             background-color: #2575fc;
             border-color: #2575fc;
@@ -46,7 +65,7 @@
         }
         .text-muted {
             color: #6c757d !important;
-        }
+        }       
     </style>
 </head>
 <body>
@@ -75,41 +94,67 @@
                         
                         <!-- Form -->
                         <form action="{{ url('/sign-up') }}" method="POST">
-                            @csrf
-                            <!-- Full Name -->
-                            <div class="mb-3">
-                                <label for="name" class="form-label">Full Name</label>
-                                <input type="text" name="name" id="name" class="form-control" placeholder="Enter your full name" value="{{ old('name') }}" required>
-                            </div>
-                            <!-- Email -->
-                            <div class="mb-3">
-                                <label for="email" class="form-label">Email Address</label>
-                                <input type="email" name="email" id="email" class="form-control" placeholder="Enter your email" value="{{ old('email') }}" required>
-                            </div>
-                            <!-- Password -->
-                            <div class="mb-3 position-relative">
-                                <label for="password" class="form-label">Password</label>
-                                <div class="input-group">
-                                    <input type="password" name="password" id="password" class="form-control" placeholder="Enter your password" required>
-                                    <span class="input-group-text toggle-password" data-target="#password" style="cursor: pointer;">
-                                        <i class="fa fa-eye-slash"></i>
-                                    </span>
+                                @csrf
+                                <!-- Role -->
+                                <div class="mb-3">
+                                    <label for="RoleID" class="form-label">Role</label>
+                                    <select name="RoleID" id="RoleID" class="form-select" required>
+                                        <option value="" disabled selected>Select Role</option>
+                                        <option value="patient">Patient</option>
+                                        <option value="doctor">Doctor</option>
+                                        <option value="administrator">Administrator</option>
+                                    </select>
                                 </div>
-                            </div>  
 
-                            <!-- Confirm Password -->
-                            <div class="mb-3 position-relative">
-                                <label for="password_confirmation" class="form-label">Confirm Password</label>
-                                <div class="input-group">
-                                    <input type="password" name="password_confirmation" id="password_confirmation" class="form-control" placeholder="Re-enter your password" required>
-                                    <span class="input-group-text toggle-password" data-target="#password_confirmation" style="cursor: pointer;">
-                                        <i class="fa fa-eye-slash"></i>
-                                    </span>
+                                <!-- Username -->
+                                <div class="mb-3">
+                                    <label for="username" class="form-label">Username</label>
+                                    <input type="text" name="username" id="username" class="form-control" placeholder="Enter your username" value="{{ old('username') }}" required>
                                 </div>
-                            </div>
-                            <!-- Submit Button -->
-                            <button type="submit" class="btn btn-primary w-100">Sign Up</button>
-                        </form>
+
+                                <!-- Full Name -->
+                                <div class="mb-3">
+                                    <label for="FullName" class="form-label">Full Name</label>
+                                    <input type="text" name="FullName" id="FullName" class="form-control" placeholder="Enter your full name" value="{{ old('FullName') }}" required>
+                                </div>
+
+                                <!-- Email -->
+                                <div class="mb-3">
+                                    <label for="Email" class="form-label">Email Address</label>
+                                    <input type="email" name="Email" id="Email" class="form-control" placeholder="Enter your email" value="{{ old('Email') }}" required>
+                                </div>
+
+                                <!-- Phone Number -->
+                                <div class="mb-3">
+                                    <label for="PhoneNumber" class="form-label">Phone Number</label>
+                                    <input type="tel" name="PhoneNumber" id="PhoneNumber" class="form-control" placeholder="Enter your phone number" value="{{ old('PhoneNumber') }}" required>
+                                </div>
+
+                                <!-- Password -->
+                                <div class="mb-3 position-relative">
+                                    <label for="password" class="form-label">Password</label>
+                                    <div class="input-group">
+                                        <input type="password" name="password" id="password" class="form-control" placeholder="Enter your password" required>
+                                        <span class="input-group-text toggle-password" data-target="#password">
+                                            <i class="fa fa-eye-slash"></i>
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <!-- Confirm Password -->
+                                <div class="mb-3 position-relative">
+                                    <label for="password_confirmation" class="form-label">Confirm Password</label>
+                                    <div class="input-group">
+                                        <input type="password" name="password_confirmation" id="password_confirmation" class="form-control" placeholder="Re-enter your password" required>
+                                        <span class="input-group-text toggle-password" data-target="#password_confirmation">
+                                            <i class="fa fa-eye-slash"></i>
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <!-- Submit Button -->
+                                <button type="submit" class="btn btn-primary w-100">Sign Up</button>
+                            </form>
                     </div>
 
                     <!-- Card Footer -->
@@ -125,24 +170,21 @@
     
     <!-- Add this script before closing body tag -->
     <script>
-        document.querySelectorAll('.toggle-password').forEach(button => {
-            button.addEventListener('click', function() {
-                const targetId = this.getAttribute('data-target');
-                const input = document.querySelector(targetId);
-                const icon = this.querySelector('i');
+    // Toggle Password Visibility
+    document.querySelectorAll('.toggle-password').forEach(item => {
+        item.addEventListener('click', function() {
+            const targetInput = document.querySelector(this.dataset.target);
+            const icon = this.querySelector('i');
 
-                // Toggle password visibility
-                if (input.type === 'password') {
-                    input.type = 'text';
-                    icon.classList.remove('fa-eye-slash');
-                    icon.classList.add('fa-eye');
-                } else {
-                    input.type = 'password';
-                    icon.classList.remove('fa-eye');
-                    icon.classList.add('fa-eye-slash');
-                }
-            });
+            if (targetInput.type === 'password') {
+                targetInput.type = 'text';
+                icon.classList.replace('fa-eye-slash', 'fa-eye');
+            } else {
+                targetInput.type = 'password';
+                icon.classList.replace('fa-eye', 'fa-eye-slash');
+            }
         });
-    </script>
+    });
+</script>
 </body>
 </html>

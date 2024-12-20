@@ -23,21 +23,25 @@
 <div class="log-w3">
     <div class="w3layouts-main">
         <h2>Đăng nhập</h2>      
-        @if(Session::has('message'))
-            <div class="alert text-danger alert-dismissable">
+        <!-- @if ($errors->has('message'))
+            <div class="alert alert-danger alert-dismissable">
                 <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-                {{ Session::get('message') }}
+                {{ $errors->first('message') }}
             </div>
-            <div>
-                {{ Session::put('message',null);}}
+        @endif -->
+        @if ($errors->any()) 
+            <div class="alert alert-danger alert-dismissable">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                {{ $errors->first() }} 
+               
             </div>
         @endif
         
-        <form action="{{ url('/home-dashboard') }}" method="post">
+        <form action="{{ route('home_dashboard') }}" method="post">
                 @csrf
                 <!-- {{ csrf_field() }} -->
                 <div class="form-group">
-                    <input type="text" class="form-control" name="email" placeholder="E-MAIL" required="">
+                    <input type="text" class="form-control" name="username" placeholder="USERNAME" required="">
                 </div>
                 <div class="form-group">
                     <input type="password" class="form-control" name="password" placeholder="PASSWORD" required="">
@@ -49,17 +53,20 @@
                     <a href="#">Quên mật khẩu?</a>
                 </div>
                 <button type="submit" class="btn btn-success btn-block" name="sign-in">Đăng nhập</button>
-            </form>
+        </form>
         <div class="text-center mt-3">
             <p>Không có tài khoản? <a href="{{ url('/sign-up') }}" class="btn btn-yellow btn-sm">Đăng ký</a></p>
         </div>
     </div>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
+<!-- 
 <script src="public/BackEnd/js/bootstrap.js"></script>
 <script src="public/BackEnd/js/jquery.dcjqaccordion.2.7.js"></script>
 <script src="public/BackEnd/js/scripts.js"></script>
 <script src="public/BackEnd/js/jquery.slimscroll.js"></script>
 <script src="public/BackEnd/js/jquery.nicescroll.js"></script>
-<script src="public/BackEnd/js/jquery.scrollTo.js"></script>
+<script src="public/BackEnd/js/jquery.scrollTo.js"></script> -->
 </body>
 </html>

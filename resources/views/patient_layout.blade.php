@@ -101,7 +101,16 @@
             <li class="dropdown">
                 <a data-bs-toggle="dropdown" class="dropdown-toggle" href="#">
                     <img alt="" src="{{ asset('public/BackEnd/images/avatar.jpg') }}">
-                    <span class="username">{{ Session::get('patient_name', 'Patient') }}</span>
+                    <!-- <span class="username">{{  session('Username', 'Patient') }}</span> -->
+                    <!-- <span class="username">{{ Auth::user()->FullName ?? 'PatientDefault'}}</span> -->
+
+                    <span class="username">{{ auth()->user()->FullName ?? 'Patient' }}</span>
+                    @if(Auth::check())
+                        
+                    @else
+                        <p>Người dùng chưa đăng nhập.</p>
+                        {{ dd(Auth::user()) }}
+                    @endif
                     <b class="caret"></b>
                 </a>
                 <ul class="dropdown-menu extended logout">
