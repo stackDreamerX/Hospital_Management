@@ -43,9 +43,9 @@ class HomeController extends Controller
         if (Auth::attempt(['username' => $request->username, 'password' => $request->password])) {
             // Điều hướng đến trang dashboard
             $request->session()->regenerate();     
-            if ($user->RoleID === 'patient') {
+            if (Auth::user()->RoleID === 'patient') {
                 return redirect()->route('patient.dashboard');
-            } elseif ($user->RoleID === 'doctor') {
+            } elseif (Auth::user()->RoleID === 'doctor') {
                 return redirect()->route('doctor.dashboard');
             } else {
                 return redirect()->route('admin.dashboard');

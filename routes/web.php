@@ -69,7 +69,7 @@ Route::prefix('admin')->group(function () {
 
 
 // Doctor - UI
-Route::prefix('doctor')->group(function () {
+Route::prefix('doctor')->middleware('auth')->group(function () {
 
     Route::get('/dashboard', [App\Http\Controllers\Doctor\DashboardController::class, 'index'])->name('doctor.dashboard');
 
@@ -97,9 +97,9 @@ Route::prefix('doctor')->group(function () {
 
 
 // Patient - UI
-Route::prefix('patient')->group(function () {
+Route::prefix('patient')->middleware('auth')->group(function () {
 
-    Route::get('/dashboard', [App\Http\Controllers\Patient\PatientController::class, 'index']) ->middleware('auth')->name('patient.dashboard');
+    Route::get('/dashboard', [App\Http\Controllers\Patient\PatientController::class, 'index']) ->name('patient.dashboard');
 
     Route::get('/profile', [App\Http\Controllers\Patient\PatientController::class, 'profile'])->name('patient.profile');
     Route::get('/settings', [App\Http\Controllers\Patient\PatientController::class, 'settings'])->name('patient.settings');

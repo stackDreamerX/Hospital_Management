@@ -31,13 +31,16 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 <div class="w3layouts-main">
 	<h2>Đăng nhập</h2>
 	<?php
-	 $message = Session::get("message");
-	 if ($message) {
-			echo '<span class="text-alert">'.$message. '</span>';
-			Session::put('message',null);
-	 	}
+	$message = Session::get("message");
+	if ($message) {
+		echo '<div class="alert alert-danger alert-dismissable" style="max-width: 100%; display: inline-block; margin-top: 10px;">';
+		echo '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>';
+		echo $message;
+		echo '</div>';
+		Session::put('message', null);
+	}
 	?>
-		<form action="{{ url('/admin/dashboard') }}" method="post">
+		<form action="{{ route('dashboard') }}" method="post">
 			@csrf
 			<!-- {{ csrf_field() }}   -->
 			<input type="text" class="ggg" name="admin_email" placeholder="E-MAIL" required="">
