@@ -41,6 +41,10 @@ Route::prefix('admin')->group(function () {
         
     //staff
     Route::get('/staff', [StaffController::class,'staff'])->name('staff');
+    Route::post('/staff/create', [StaffController::class, 'createDoctor'])->name('admin.createDoctor');
+    Route::put('/staff/edit/{id}', [StaffController::class, 'editDoctor'])->name('admin.editDoctor'); // Route chỉnh sửa
+    Route::delete('/staff/delete/{id}', [StaffController::class, 'deleteDoctor'])->name('admin.deleteDoctor'); // Route xóa
+    Route::get('/staff/doctors-list', [StaffController::class, 'getDoctorsList'])->name('admin.getDoctorsList');
 
     //appointment
     Route::get('/appointment', [AppointmentController::class,'appointment'])->name('appointment');
@@ -87,8 +91,8 @@ Route::prefix('doctor')->middleware('auth')->group(function () {
 
     Route::get('/profile', function() { return 1; })->name('doctor.profile');
     Route::get('/settings', function() { return 1; })->name('doctor.settings');
-    Route::get('/logout', function() { return 1; })->name('doctor.logout');
-
+    // Route::get('/logout', function() { return 1; })->name('doctor.logout');
+    Route::get('/logout', [HomeController::class, 'home_logout'])->name('doctor.logout');
 
 });
 // ->middleware('auth')
