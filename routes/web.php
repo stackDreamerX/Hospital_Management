@@ -55,9 +55,9 @@ Route::prefix('admin')->group(function () {
     //Lab
     Route::get('/lab', [LabController::class,'lab'])->name('lab');
     Route::get('/lab/details/{id}', [LabController::class, 'show'])->name('admin.lab.details');
-    Route::post('/lab-type/store', [LabController::class, 'storeLabType']);
-    Route::put('/lab-type/update/{id}', [LabController::class, 'updateLabType']);
-    Route::delete('/lab-type/delete/{id}', [LabController::class, 'deleteLabType']);
+    Route::post('/lab-type/store', [LabController::class, 'storeLabType']) -> name('admin.storeLabType');
+    Route::put('/lab-type/update/{id}', [LabController::class, 'updateLabType'])-> name('admin.updateLabType');
+    Route::delete('/lab-type/delete/{id}', [LabController::class, 'deleteLabType']) -> name('admin.deleteLabType');
 
     //ward
     Route::get('/ward', [WardController::class,'ward'])->name('ward');

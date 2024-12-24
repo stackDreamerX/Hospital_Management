@@ -421,31 +421,31 @@
     }
 
     function saveLabType() {
-    const id = document.getElementById('labTypeID').value;
-    const name = document.getElementById('labTypeName').value;
-    const description = document.getElementById('labTypeDescription').value;
-    const price = document.getElementById('labTypePrice').value;
+        const id = document.getElementById('labTypeID').value;
+        const name = document.getElementById('labTypeName').value;
+        const description = document.getElementById('labTypeDescription').value;
+        const price = document.getElementById('labTypePrice').value;
 
-    const url = id ? `/admin/lab-type/update/${id}` : '/admin/lab-type/store';
-    const method = id ? 'PUT' : 'POST';
+        const url = id ? `/admin/lab-type/update/${id}` : '/admin/lab-type/store';
+        const method = id ? 'PUT' : 'POST';
 
-    fetch(url, {
-        method: method,
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ name, description, price }),
-    })
-        .then(response => response.json())
-        .then(data => {
-            alert(data.message);
-            window.location.reload();
+        fetch(url, {
+            method: method,
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ name, description, price }),
         })
-        .catch(error => {
-            console.error(error);
-            alert('Failed to save lab type!');
-        });
-}
+            .then(response => response.json())
+            .then(data => {
+                alert(data.message);
+                window.location.reload();
+            })
+            .catch(error => {
+                console.error(error);
+                alert('Failed to save lab type!');
+            });
+    }
 
     function editLabType(type) {
         document.getElementById('labTypeID').value = type.LaboratoryTypeID;
