@@ -224,6 +224,17 @@ class LabController extends Controller
         }
     }
 
+    public function destroyLab($id)
+    {
+        try {
+            $lab = Laboratory::findOrFail($id); // Tìm Lab theo ID
+            $lab->delete(); // Xóa Lab
+            return response()->json(['message' => 'Laboratory assignment deleted successfully.']);
+        } catch (\Exception $e) {
+            \Log::error('Error deleting laboratory: ' . $e->getMessage());
+            return response()->json(['error' => 'Failed to delete laboratory.'], 500);
+        }
+    }
 
 
 }

@@ -556,6 +556,36 @@ const price = document.getElementById('edit_price')?.value || null;
                 });
         }
 
+    function deleteLab(id) {
+        if (confirm('Are you sure you want to delete this laboratory assignment?')) {
+            const url = `{{ route('admin.lab.delete', ['id' => '__id__']) }}`.replace('__id__', id);
+
+            fetch(url, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                },
+            })
+                .then(response => {
+                    if (response.ok) {
+                        return response.json();
+                    } else {
+                        throw new Error('Failed to delete laboratory assignment.');
+                    }
+                })
+                .then(data => {
+                    alert(data.message);
+                    window.location.reload(); // Làm mới trang sau khi xóa
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Failed to delete laboratory assignment.');
+                });
+        }
+    }
+
+
 
 
     function deleteLabType(id) {

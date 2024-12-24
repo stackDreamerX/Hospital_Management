@@ -60,6 +60,7 @@ Route::prefix('admin')->group(function () {
     Route::delete('/lab-type/delete/{id}', [LabController::class, 'deleteLabType']) -> name('admin.deleteLabType');
     Route::post('/lab/create', [LabController::class, 'store'])->name('admin.lab.create');
     Route::put('/lab/{id}/updateLab', [LabController::class, 'updateLab'])->name('admin.lab.updateLab');
+    Route::delete('/lab/{id}/delete', [LabController::class, 'destroyLab'])->name('admin.lab.delete');
 
 
 
