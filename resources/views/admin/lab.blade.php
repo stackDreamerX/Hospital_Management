@@ -189,6 +189,7 @@
                 </div>
                 <div class="modal-body">
                     <form id="labTypeForm">
+                        @csrf
                         <input type="hidden" id="labTypeID">
                         <div class="mb-3">
                             <label for="labTypeName" class="form-label">Name</label>
@@ -220,32 +221,45 @@
             <h5>Create New Laboratory Assignment</h5>
         </div>
         <div class="card-body">
-            <form id="createLabForm">
+            <form id="createLabForm" method="POST"">
+                @csrf
                 <div class="row">
                     <div class="col-md-4 mb-3">
                         <label for="lab_type" class="form-label">Laboratory Type</label>
-                        <select name="lab_type" id="lab_type" class="form-select" required>
+                        <!-- <select name="lab_type" id="lab_type" class="form-select" required>
                             <option value="">Select Laboratory Type</option>
                             @foreach($labTypes as $type)
                                 <option value="{{ $type->LaboratoryTypeID }}">{{ $type->LaboratoryTypeName }}</option>
                             @endforeach
-                        </select>
-                    </div>
-                    <div class="col-md-4 mb-3">
-                        <label for="patient_id" class="form-label">Patient</label>
-                        <select name="patient_id" id="patient_id" class="form-select" required>
-                            <option value="">Select Patient</option>
-                            @foreach($patients as $patient)
-                                <option value="{{ $patient->PatientID }}">{{ $patient->FullName }}</option>
+                        </select> -->
+
+                        <select name="lab_type" id="lab_type" class="form-select" required>
+                            <option value="">Select Laboratory Type</option>
+                            @foreach($labTypes as $type)
+                                <option value="{{ $type->LaboratoryTypeID }}" data-price="{{ $type->price }}">
+                                    {{ $type->LaboratoryTypeName }}
+                                </option>
                             @endforeach
                         </select>
+
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label for="user_id" class="form-label">Patient</label>
+                        <select name="user_id" id="user_id" class="form-select" required>
+                            <option value="">Select Patient</option>
+                            @foreach($patients as $patient)
+                                <option value="{{ $patient->UserID }}">{{ $patient->FullName }}</option>                                 
+                            @endforeach
+                        </select>
+
                     </div>
                     <div class="col-md-4 mb-3">
                         <label for="doctor_id" class="form-label">Doctor</label>
                         <select name="doctor_id" id="doctor_id" class="form-select" required>
                             <option value="">Select Doctor</option>
                             @foreach($doctors as $doctor)
-                                <option value="{{ $doctor->DoctorID }}">{{ $doctor->FullName }}</option>
+                                <!-- <option value="{{ $doctor->DoctorID }}">{{ $doctor->FullName }}</option> -->
+                                <option value="{{ $doctor->DoctorID }}">{{ $doctor->user->FullName }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -281,8 +295,7 @@
                             <th>Patient</th>
                             <th>Doctor</th>
                             <th>Date</th>
-                            <th>Price</th>
-                            <th>Status</th>
+                            <th>Price</th>                         
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -291,11 +304,10 @@
                         <tr>
                             <td>{{ $lab->LaboratoryID }}</td>
                             <td>{{ $lab->laboratoryType->LaboratoryTypeName }}</td>
-                            <td>{{ $lab->patient->FullName }}</td>
-                            <td>{{ $lab->doctor->FullName }}</td>
+                            <td>{{ $lab->user->FullName }}</td>
+                            <td>{{ $lab->doctor->user->FullName }}</td>
                             <td>{{ $lab->LaboratoryDate }} {{ $lab->LaboratoryTime }}</td>
-                            <td>${{ number_format($lab->TotalPrice, 2) }}</td>
-                            <td>{{ $lab->Status }}</td>
+                            <td>${{ number_format($lab->TotalPrice, 2) }}</td>                        
                             <td>
                                 <button class="btn btn-info btn-sm" onclick="viewDetails({{ $lab->LaboratoryID }})">View</button>
                                 <button class="btn btn-primary btn-sm" onclick="editLab({{ $lab }})">Edit</button>
@@ -334,7 +346,7 @@
                             <label for="edit_patient" class="form-label">Patient</label>
                             <select id="edit_patient" class="form-select" required>
                                 @foreach($patients as $patient)
-                                    <option value="{{ $patient->PatientID }}">{{ $patient->FullName }}</option>
+                                    <option value="{{ $patient->UserID }}">{{ $patient->FullName }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -342,7 +354,7 @@
                             <label for="edit_doctor" class="form-label">Doctor</label>
                             <select id="edit_doctor" class="form-select" required>
                                 @foreach($doctors as $doctor)
-                                    <option value="{{ $doctor->DoctorID }}">{{ $doctor->FullName }}</option>
+                                    <option value="{{ $doctor->DoctorID }}">{{ $doctor->user->FullName }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -395,30 +407,44 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
    
-    function viewDetails(id) {
-        // Gửi yêu cầu AJAX để lấy chi tiết xét nghiệm
-        fetch(`/admin/lab/details/${id}`)
-            .then(response => response.json())
+   function viewDetails(id) {
+      
+        const url =  `{{ route('admin.lab.details', ['id' => '__id__']) }}`.replace('__id__', id); 
+        fetch(url)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`Failed to fetch details. Status: ${response.status}`);
+                }
+                return response.json();
+            })
             .then(data => {
+                // Kiểm tra xem dữ liệu có đầy đủ hay không
+                if (!data || !data.labType || !data.patientName || !data.doctorName) {
+                    throw new Error('Incomplete data received from the server.');
+                }
+
+                // Hiển thị chi tiết xét nghiệm
                 const details = `
                     <p><strong>Type:</strong> ${data.labType}</p>
                     <p><strong>Patient:</strong> ${data.patientName}</p>
                     <p><strong>Doctor:</strong> ${data.doctorName}</p>
                     <p><strong>Date:</strong> ${data.labDate}</p>
                     <p><strong>Time:</strong> ${data.labTime}</p>
-                    <p><strong>Price:</strong> $${data.price}</p>
-                    <p><strong>Status:</strong> ${data.status}</p>
+                    <p><strong>Price:</strong> $${data.price}</p>                  
                     <p><strong>Result:</strong> ${data.result || 'Pending'}</p>
                 `;
                 document.getElementById('labDetails').innerHTML = details;
+
                 const modal = new bootstrap.Modal(document.getElementById('viewModal'));
                 modal.show();
             })
             .catch(error => {
+           
                 alert('Failed to fetch details!');
-                console.error(error);
+                console.error('Error fetching lab details:', error.message);
             });
     }
+
 
     function saveLabType() {
         const id = document.getElementById('labTypeID').value;
@@ -426,13 +452,14 @@
         const description = document.getElementById('labTypeDescription').value;
         const price = document.getElementById('labTypePrice').value;
 
-        const url = id ? `/admin/lab-type/update/${id}` : '/admin/lab-type/store';
+        const url = id ? `{{ route('admin.updateLabType', ['id' => '__id__']) }}`.replace('__id__', id) : '{{ route('admin.storeLabType') }}'; 
         const method = id ? 'PUT' : 'POST';
 
         fetch(url, {
             method: method,
             headers: {
                 'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
             },
             body: JSON.stringify({ name, description, price }),
         })
@@ -457,10 +484,91 @@
         modal.show();
     }
 
+    function editLab(lab) {
+        // Điền dữ liệu vào modal
+        document.getElementById('edit_id').value = lab.LaboratoryID;
+        document.getElementById('edit_lab_type').value = lab.LaboratoryTypeID;
+        document.getElementById('edit_patient').value = lab.UserID;
+        document.getElementById('edit_doctor').value = lab.DoctorID;
+
+        // Tách date và time từ LaboratoryDate nếu cần
+        const [date, time] = lab.LaboratoryDate.split(' '); // Chia date và time
+        document.getElementById('edit_date').value = date; // Gán giá trị date
+            // Hiển thị thời gian nếu có
+        if (lab.LaboratoryTime) {
+            document.getElementById('edit_time').value = lab.LaboratoryTime;
+        } else {
+            document.getElementById('edit_time').value = '';
+        }
+
+        document.getElementById('edit_price').value = lab.TotalPrice;
+
+        // Hiển thị modal
+        const modal = new bootstrap.Modal(document.getElementById('editModal'));
+        modal.show();
+    }
+
+
+
+    function updateLab() {  
+        const id = document.getElementById('edit_id')?.value || null;
+const labType = document.getElementById('edit_lab_type')?.value || null;
+const userId = document.getElementById('edit_patient')?.value || null;
+const doctorId = document.getElementById('edit_doctor')?.value || null;
+const labDate = document.getElementById('edit_date')?.value || null;
+const labTime = document.getElementById('edit_time')?.value || null;
+const price = document.getElementById('edit_price')?.value || null;
+
+        // const id = document.getElementById('edit_lab_id').value;
+        // const labType = document.getElementById('edit_lab_type').value;
+        // const userId = document.getElementById('edit_user_id').value;
+        // const doctorId = document.getElementById('edit_doctor').value;
+        // const labDate = document.getElementById('edit_lab_date').value;
+        // const labTime = document.getElementById('edit_lab_time').value;
+        // const price = document.getElementById('edit_price').value;
+
+        // const url = `/admin/laboratories/${id}/update`;
+        const url =  `{{ route('admin.lab.updateLab', ['id' => '__id__']) }}`.replace('__id__', id); 
+
+            fetch(url, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                },
+                body: JSON.stringify({
+                    labType,
+                    userId,
+                    doctorId,
+                    labDate,
+                    labTime,
+                    price,
+                }),
+            })
+                .then(response => response.json())
+                .then(data => {
+                    alert(data.message);
+                    window.location.reload();
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Failed to update laboratory assignment.');
+                });
+        }
+
+
+
     function deleteLabType(id) {
-        if (confirm('Are you sure you want to delete this lab type?')) {
-            fetch(`/admin/lab-type/delete/${id}`, {
+        // const url = `/admin/lab-type/delete/${id}`;
+
+         const url = `{{ route('admin.deleteLabType', ['id' => '__id__']) }}`.replace('__id__', id);
+        if (confirm('Are you sure you want to delete this lab type?')) {            
+            fetch(url, {
                 method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content, // Thêm CSRF token
+                },
             })
                 .then(response => response.json())
                 .then(data => {
@@ -473,6 +581,51 @@
                 });
         }
     }
+
+    document.getElementById('lab_type').addEventListener('change', function () {
+        const selectedOption = this.options[this.selectedIndex]; // Lấy tùy chọn được chọn
+        const price = selectedOption.getAttribute('data-price'); // Lấy giá trị của thuộc tính data-price
+        document.getElementById('price').value = price ? price : ''; // Cập nhật giá vào trường price
+    });
+
+    document.getElementById('createLabForm').addEventListener('submit', function (event) {
+        event.preventDefault(); // Ngăn chặn hành vi mặc định của form
+
+        // Thu thập dữ liệu từ form
+        const lab_type = document.getElementById('lab_type').value;
+        const user_id = document.getElementById('user_id').value;
+        const doctor_id = document.getElementById('doctor_id').value;
+        const lab_date = document.getElementById('lab_date').value;
+        const lab_time = document.getElementById('lab_time').value;
+        const price = document.getElementById('price').value; 
+        const createLabUrl = "{{ route('admin.lab.create') }}";   
+
+        // Gửi dữ liệu đến backend
+        fetch(createLabUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+            },
+            body: JSON.stringify({
+                lab_type,
+                user_id,
+                doctor_id,
+                lab_date,
+                lab_time,
+                price,
+            }),
+        })
+            .then(response => response.json())     
+            .then(data => {
+                alert(data.message);
+                window.location.reload();
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Failed to create laboratory assignment.(JS)');
+            });
+            });
 
 
 </script>

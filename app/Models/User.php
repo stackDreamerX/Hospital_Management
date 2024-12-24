@@ -61,5 +61,11 @@ class User extends Authenticatable
     {
         return $this->password; // Laravel sẽ dùng cột "password" cho xác thực
     }
+
+    public function laboratories()
+    {
+        return $this->hasMany(Laboratory::class, 'UserID', 'UserID');
+    }
+
     
 }

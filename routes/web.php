@@ -58,6 +58,10 @@ Route::prefix('admin')->group(function () {
     Route::post('/lab-type/store', [LabController::class, 'storeLabType']) -> name('admin.storeLabType');
     Route::put('/lab-type/update/{id}', [LabController::class, 'updateLabType'])-> name('admin.updateLabType');
     Route::delete('/lab-type/delete/{id}', [LabController::class, 'deleteLabType']) -> name('admin.deleteLabType');
+    Route::post('/lab/create', [LabController::class, 'store'])->name('admin.lab.create');
+    Route::put('/lab/{id}/updateLab', [LabController::class, 'updateLab'])->name('admin.lab.updateLab');
+
+
 
     //ward
     Route::get('/ward', [WardController::class,'ward'])->name('ward');

@@ -14,10 +14,8 @@ return new class extends Migration
         Schema::create('laboratories', function (Blueprint $table) {
             $table->id('LaboratoryID');
             $table->foreignId('LaboratoryTypeID')->constrained('laboratory_types','LaboratoryTypeID')->onDelete('cascade');
-            $table->date('LaboratoryDate'); // Ngày xét nghiệm
-            $table->time('LaboratoryTime'); // Thêm trường giờ xét nghiệm
-            $table->date('LaboratoryDate');
-            $table->foreignId('PatientID')->constrained('patients','PatientID')->onDelete('cascade');
+            $table->date('LaboratoryDate'); // Ngày xét nghiệm       
+            $table->foreignId('UserID')->constrained('users','UserID')->onDelete('cascade');
             $table->foreignId('DoctorID')->constrained('doctors','DoctorID')->onDelete('cascade');
             $table->integer('TotalPrice');
             $table->timestamps();

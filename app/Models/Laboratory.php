@@ -4,7 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-
+use App\Models\User;
+    
 class Laboratory extends Model
 {
     use HasFactory;
@@ -13,23 +14,23 @@ class Laboratory extends Model
     protected $primaryKey = 'LaboratoryID';
     protected $fillable = [
         'LaboratoryTypeID',
-        'PatientID',
+        'UserID',
         'DoctorID',
         'LaboratoryDate',
         'LaboratoryTime',
-        'TotalPrice',
-        'Status',
+        'TotalPrice',        
     ];
 
     public function laboratoryType()
     {
         return $this->belongsTo(LaboratoryType::class, 'LaboratoryTypeID', 'LaboratoryTypeID');
     }
-
-    public function patient()
+   
+    public function user()
     {
-        return $this->belongsTo(Patient::class, 'PatientID', 'PatientID');
-    }
+        return $this->belongsTo(User::class, 'UserID', 'UserID'); // Liên kết với bảng users
+    }    
+
 
     public function doctor()
     {
