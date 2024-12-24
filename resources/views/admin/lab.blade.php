@@ -213,7 +213,9 @@
         </div>
     </div>
 
-
+<div> 
+    <br>
+</div>
     
     <!-- Create New Laboratory Assignment -->
     <div class="card mb-4">
