@@ -22,11 +22,11 @@ Route::get('/home-logout', [HomeController::class, 'home_logout'])->name('home_l
 
 Route::get('/login', [HomeController::class, 'sign_in'])->name('login');
 Route::get('/sign-up', [HomeController::class, 'sign_up'])->name('sign_up');
-Route::post('/home-dashboard', [HomeController::class,'home_dashboard'])->name('home_dashboard'); 
+Route::post('/home-dashboard', [HomeController::class,'home_dashboard'])->name('home_dashboard');
 
 Route::post('/sign-up', [HomeController::class, 'register']);
 
-//Nav 
+//Nav
 Route::get('/staff', [HomeController::class, 'staff'])->name('users.staff');
 Route::get('/locations', [HomeController::class, 'locations'])->name('users.locations');
 Route::get('/patients', [HomeController::class, 'patients'])->name('users.patients');
@@ -54,6 +54,10 @@ Route::prefix('admin')->group(function () {
 
     //Lab
     Route::get('/lab', [LabController::class,'lab'])->name('lab');
+    Route::get('/lab/details/{id}', [LabController::class, 'show'])->name('admin.lab.details');
+    Route::post('/lab-type/store', [LabController::class, 'storeLabType']);
+    Route::put('/lab-type/update/{id}', [LabController::class, 'updateLabType']);
+    Route::delete('/lab-type/delete/{id}', [LabController::class, 'deleteLabType']);
 
     //ward
     Route::get('/ward', [WardController::class,'ward'])->name('ward');

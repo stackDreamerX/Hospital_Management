@@ -9,7 +9,7 @@ License URL: http://creativecommons.org/licenses/by/3.0/
 <title>Visitors an Admin Panel Category Bootstrap Responsive Website Template | Home :: w3layouts</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<meta name="keywords" content="Visitors Responsive web template, Bootstrap Web Templates, Flat Web Templates, Android Compatible web template, 
+<meta name="keywords" content="Visitors Responsive web template, Bootstrap Web Templates, Flat Web Templates, Android Compatible web template,
 Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, SonyEricsson, Motorola web design" />
 <script type="application/x-javascript"> addEventListener("load", function() { setTimeout(hideURLbar, 0); }, false); function hideURLbar(){ window.scrollTo(0,1); } </script>
 <!-- bootstrap-css -->
@@ -22,7 +22,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 <link href='//fonts.googleapis.com/css?family=Roboto:400,100,100italic,300,300italic,400italic,500,500italic,700,700italic,900,900italic' rel='stylesheet' type='text/css'>
 <!-- font-awesome icons -->
 <link rel="stylesheet" href="../public/Backend/css/font.css" type="text/css"/>
-<link href="../public/Backend/css/font-awesome.css" rel="stylesheet"> 
+<link href="../public/Backend/css/font-awesome.css" rel="stylesheet">
 <link rel="stylesheet" href="../public/Backend/css/morris.css" type="text/css"/>
 <!-- calendar -->
 <link rel="stylesheet" href="../public/Backend/css/monthly.css">
@@ -32,13 +32,13 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 <script src="../public/Backend/js/raphael-min.js"></script>
 <script src="../public/Backend/js/morris.js"></script>
 
-<style> 
+<style>
         /* Sidebar menu hover and click effect */
     .sidebar-menu li a {
         transition: background-color 0.3s, color 0.3s;
     }
 
-    .sidebar-menu li a:hover, 
+    .sidebar-menu li a:hover,
     .sidebar-menu li.active > a {
         background-color: #3d7fc1; /* Đổi màu nền */
         color: #fff; /* Đổi màu chữ */
@@ -58,11 +58,11 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 <body>
 <section id="container">
 <!--header start-->
-<header class="header fixed-top clearfix">  
+<header class="header fixed-top clearfix">
 <!--logo start-->
 <!--logo start-->
 <div class="brand">
-    <a href="{{ url('/dashboard')  }}" class="logo">        
+    <a href="{{ url('/dashboard')  }}" class="logo">
         <img alt="" src="../public/Backend/images/logo.ico" height="40px">
         <span>Admin</span>
     </a>
@@ -165,7 +165,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
                         <span>Patient</span>
                     </a>
                 </li>
-            </ul>            
+            </ul>
 		</div>
         <!-- sidebar menu end-->
 
@@ -175,7 +175,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 
     <!--main content start-->
     <section id="main-content">
-        <section class="wrapper">	 		 	
+        <section class="wrapper">
                 @yield('admin_content')
         </section>
     <!-- footer -->
@@ -197,9 +197,9 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 <script src="../public/Backend/js/jquery.nicescroll.js"></script>
 <!--[if lte IE 8]><script language="javascript" type="text/javascript" src="js/flot-chart/excanvas.min.js"></script><![endif]-->
 <script src="../public/Backend/js/jquery.scrollTo.js"></script>
-<!-- morris JavaScript -->	
+<!-- morris JavaScript -->
 @stack('scripts')
-<script>  
+<script>
     $(document).ready(function () {
     // Xử lý sự kiện click vào sidebar menu
     $('.sidebar-menu li a').on('click', function () {

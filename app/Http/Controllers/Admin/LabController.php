@@ -6,104 +6,31 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 
+use Illuminate\Support\Facades\DB;
+use App\Http\Requests;
+use Illuminate\Support\Facades\Redirect;
+use App\Models\Laboratory;
+use App\Models\LaboratoryType;
+use App\Models\Doctor;
+use App\Models\Patient;
+
 class LabController extends Controller
 {
-    private $sampleLabTypes = [
-        [
-            'LaboratoryTypeID' => 1,
-            'LaboratoryTypeName' => 'Blood Test',
-            'Description' => 'Complete blood count and analysis',
-            'Price' => 2500,
-            'Status' => 'Active'
-        ],
-        [
-            'LaboratoryTypeID' => 2,
-            'LaboratoryTypeName' => 'Urine Test',
-            'Description' => 'Comprehensive urine analysis',
-            'Price' => 1500,
-            'Status' => 'Active'
-        ],
-        [
-            'LaboratoryTypeID' => 3,
-            'LaboratoryTypeName' => 'X-Ray',
-            'Description' => 'Radiological examination',
-            'Price' => 3500,
-            'Status' => 'Active'
-        ],
-        [
-            'LaboratoryTypeID' => 4,
-            'LaboratoryTypeName' => 'MRI Scan',
-            'Description' => 'Magnetic resonance imaging',
-            'Price' => 15000,
-            'Status' => 'Active'
-        ],
-        [
-            'LaboratoryTypeID' => 5,
-            'LaboratoryTypeName' => 'CT Scan',
-            'Description' => 'Computerized tomography scan',
-            'Price' => 12000,
-            'Status' => 'Active'
-        ]
-    ];
-
-    private $sampleLaboratories = [
-        [
-            'LaboratoryID' => 1,
-            'LaboratoryTypeID' => 1,
-            'LaboratoryTypeName' => 'Blood Test',
-            'PatientID' => 1,
-            'PatientName' => 'John Doe',
-            'DoctorID' => 1,
-            'DoctorName' => 'Dr. Sarah Wilson',
-            'LaboratoryDate' => '2024-03-20',
-            'LaboratoryTime' => '09:00',
-            'TotalPrice' => 2500,
-            'Status' => 'Pending',
-            'Result' => null,
-            'PaymentStatus' => 'Pending'
-        ],
-        [
-            'LaboratoryID' => 2,
-            'LaboratoryTypeID' => 2,
-            'LaboratoryTypeName' => 'Urine Test',
-            'PatientID' => 2,
-            'PatientName' => 'Jane Smith',
-            'DoctorID' => 2,
-            'DoctorName' => 'Dr. Michael Brown',
-            'LaboratoryDate' => '2024-03-21',
-            'LaboratoryTime' => '10:30',
-            'TotalPrice' => 1500,
-            'Status' => 'Completed',
-            'Result' => 'Normal',
-            'PaymentStatus' => 'Paid'
-        ]
-    ];
-
-    private $sampleDoctors = [
-        ['DoctorID' => 1, 'FullName' => 'Dr. Sarah Wilson', 'Specialization' => 'General Medicine'],
-        ['DoctorID' => 2, 'FullName' => 'Dr. Michael Brown', 'Specialization' => 'Cardiology'],
-        ['DoctorID' => 3, 'FullName' => 'Dr. Emily Davis', 'Specialization' => 'Pediatrics']
-    ];
-
-    private $samplePatients = [
-        ['PatientID' => 1, 'FullName' => 'John Doe', 'Age' => 35],
-        ['PatientID' => 2, 'FullName' => 'Jane Smith', 'Age' => 28],
-        ['PatientID' => 3, 'FullName' => 'Robert Johnson', 'Age' => 45]
-    ];
-
+    
     public function lab()
     {
-        $labTypes = collect($this->sampleLabTypes);
-        $laboratories = collect($this->sampleLaboratories)
-            ->sortByDesc('LaboratoryDate');
-        $doctors = collect($this->sampleDoctors);
-        $patients = collect($this->samplePatients);
+        $labTypes = LaboratoryType::all(); // Lấy danh sách loại xét nghiệm từ database
+        $laboratories = Laboratory::with(['patient', 'doctor', 'laboratoryType'])
+            ->orderBy('LaboratoryDate', 'desc')
+            ->get(); // Lấy danh sách xét nghiệm kèm thông tin liên quan
+        $doctors = Doctor::all(); // Danh sách bác sĩ
+        $patients = Patient::all(); // Danh sách bệnh nhân
 
-        // Calculate statistics
+        // Tính toán thống kê
         $totalTests = $laboratories->count();
         $pendingTests = $laboratories->where('Status', 'Pending')->count();
         $completedTests = $laboratories->where('Status', 'Completed')->count();
-        $totalRevenue = $laboratories->where('PaymentStatus', 'Paid')->sum('TotalPrice');
+        $totalRevenue = $laboratories->sum('TotalPrice');
 
         return view('admin.lab', compact(
             'labTypes',
@@ -117,72 +44,109 @@ class LabController extends Controller
         ));
     }
 
+
     public function store(Request $request)
     {
         $request->validate([
-            'lab_type' => 'required|integer',
-            'patient_id' => 'required|integer',
-            'doctor_id' => 'required|integer',
+            'lab_type' => 'required|exists:laboratory_types,LaboratoryTypeID',
+            'patient_id' => 'required|exists:patients,PatientID',
+            'doctor_id' => 'required|exists:doctors,DoctorID',
             'lab_date' => 'required|date|after_or_equal:today',
             'lab_time' => 'required',
-            'price' => 'required|numeric|min:0'
+            'price' => 'required|numeric|min:0',
         ]);
 
-        // In real application, save to database
+        Laboratory::create([
+            'LaboratoryTypeID' => $request->lab_type,
+            'PatientID' => $request->patient_id,
+            'DoctorID' => $request->doctor_id,
+            'LaboratoryDate' => $request->lab_date,
+            'LaboratoryTime' => $request->lab_time,
+            'TotalPrice' => $request->price,
+        ]);
+
         return response()->json(['message' => 'Lab test created successfully']);
     }
+
 
     public function update(Request $request, $id)
     {
         $request->validate([
-            'lab_type' => 'required|integer',
-            'patient_id' => 'required|integer',
-            'doctor_id' => 'required|integer',
+            'lab_type' => 'required|exists:laboratory_types,LaboratoryTypeID',
+            'patient_id' => 'required|exists:patients,PatientID',
+            'doctor_id' => 'required|exists:doctors,DoctorID',
             'lab_date' => 'required|date',
             'lab_time' => 'required',
             'price' => 'required|numeric|min:0',
             'status' => 'required|in:Pending,Completed,Cancelled',
-            'payment_status' => 'required|in:Pending,Paid,Refunded'
         ]);
 
-        // In real application, update database
+        $lab = Laboratory::findOrFail($id);
+        $lab->update([
+            'LaboratoryTypeID' => $request->lab_type,
+            'PatientID' => $request->patient_id,
+            'DoctorID' => $request->doctor_id,
+            'LaboratoryDate' => $request->lab_date,
+            'LaboratoryTime' => $request->lab_time,
+            'TotalPrice' => $request->price,
+            'Status' => $request->status,
+        ]);
+
         return response()->json(['message' => 'Lab test updated successfully']);
     }
 
+
     public function destroy($id)
     {
-        // In real application, delete from database
+        $lab = Laboratory::findOrFail($id);
+        $lab->delete();
+
         return response()->json(['message' => 'Lab test deleted successfully']);
-    }
-
-    public function updateLabType(Request $request, $id)
-    {
-        $request->validate([
-            'name' => 'required|string|max:100',
-            'description' => 'required|string',
-            'price' => 'required|numeric|min:0',
-            'status' => 'required|in:Active,Inactive'
-        ]);
-
-        // In real application, update database
-        return response()->json(['message' => 'Lab type updated successfully']);
     }
 
     public function storeLabType(Request $request)
     {
         $request->validate([
             'name' => 'required|string|max:100',
-            'description' => 'required|string',
-            'price' => 'required|numeric|min:0'
+            'description' => 'nullable|string',
+            'price' => 'required|numeric|min:0',
         ]);
 
-        // In real application, save to database
+        LaboratoryType::create([
+            'LaboratoryTypeName' => $request->name,
+            'description' => $request->description,
+            'price' => $request->price,
+        ]);
+
         return response()->json(['message' => 'Lab type created successfully']);
     }
 
+
+
+    public function updateLabType(Request $request, $id)
+    {
+        $request->validate([
+            'name' => 'required|string|max:100',
+            'description' => 'nullable|string',
+            'price' => 'required|numeric|min:0',
+        ]);
+
+        $labType = LaboratoryType::findOrFail($id);
+        $labType->update([
+            'LaboratoryTypeName' => $request->name,
+            'description' => $request->description,
+            'price' => $request->price,
+        ]);
+
+        return response()->json(['message' => 'Lab type updated successfully']);
+    }
+
+
     public function deleteLabType($id)
     {
-        // In real application, delete from database
+        $labType = LaboratoryType::findOrFail($id);
+        $labType->delete();
+
         return response()->json(['message' => 'Lab type deleted successfully']);
     }
 
@@ -191,4 +155,23 @@ class LabController extends Controller
         // In real application, generate PDF report
         return response()->json(['message' => 'Report generated successfully']);
     }
+
+    public function show($id)
+    {
+        $lab = Laboratory::with(['laboratoryTypeID', 'patient', 'doctor'])->findOrFail($id);
+
+        return response()->json([
+            'labType' => $lab->laboratoryType->LaboratoryTypeName,
+            'patientName' => $lab->patient->FullName,
+            'doctorName' => $lab->doctor->FullName,
+            'labDate' => $lab->LaboratoryDate,
+            'labTime' => $lab->LaboratoryTime,
+            'price' => $lab->TotalPrice,
+            'status' => $lab->Status,
+            'result' => $lab->Result
+        ]);
+    }
+
+
+
 }
