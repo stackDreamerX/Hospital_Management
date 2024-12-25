@@ -225,12 +225,12 @@
                             <td>{{ $doctor->Title }}</td>
                             <td>
                                 <!-- Nút Edit -->
-                                <button onclick="editDoctor({{ json_encode($doctor) }})" 
+                                <button onclick="editDoctor({{ json_encode($doctor) }})"
                                         class="btn btn-primary btn-sm" style="margin-right: 5px;">
                                     <i class="fa fa-edit"></i> Edit
                                 </button>
                                 <!-- Nút Delete -->
-                                <button onclick="deleteDoctor({{ json_encode($doctor->DoctorID)}})" 
+                                <button onclick="deleteDoctor({{ json_encode($doctor->DoctorID)}})"
                                         class="btn btn-danger btn-sm">
                                     <i class="fa fa-trash"></i> Delete
                                 </button>
@@ -251,7 +251,7 @@
 <!-- Edit Modal -->
 <div class="modal fade" id="editModal" aria-labelledby="testModalLabel" aria-hidden="true" tabindex="-1" >
     <div class="modal-dialog modal-lg">
-        <div class="modal-content"> 
+        <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">Edit Doctor</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
@@ -425,8 +425,8 @@
         setValueSafe('edit_email', user.Email);
         setValueSafe('edit_phone', user.PhoneNumber);
         setValueSafe('edit_speciality', doctor.Speciality);
-        setValueSafe('edit_title', doctor.Title);       
-        var editModal = new bootstrap.Modal(document.getElementById('editModal'));               
+        setValueSafe('edit_title', doctor.Title);
+        var editModal = new bootstrap.Modal(document.getElementById('editModal'));
         editModal.show();
     }
 
@@ -561,11 +561,11 @@
                         <td>${doctor.Speciality}</td>
                         <td>${doctor.Title}</td>
                         <td>
-                            <button onclick="editDoctor(${JSON.stringify(doctor)})" 
+                            <button onclick="editDoctor(${JSON.stringify(doctor)})"
                                     class="btn btn-primary btn-sm" style="margin-right: 5px;">
                                 <i class="fa fa-edit"></i> Edit
                             </button>
-                            <button onclick="deleteDoctor(${doctor.DoctorID})" 
+                            <button onclick="deleteDoctor(${doctor.DoctorID})"
                                     class="btn btn-danger btn-sm">
                                 <i class="fa fa-trash"></i> Delete
                             </button>

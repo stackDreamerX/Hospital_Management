@@ -83,13 +83,13 @@
                             </td>
                             <td>Rs. {{ number_format($prescription['TotalAmount']) }}</td>
                             <td>
-                                <span class="badge bg-{{ 
-                                    $prescription['Status'] == 'Completed' ? 'success' : 'warning' 
+                                <span class="badge bg-{{
+                                    $prescription['Status'] == 'Completed' ? 'success' : 'warning'
                                 }}">
                                     {{ $prescription['Status'] }}
                                 </span>
-                                <span class="badge bg-{{ 
-                                    $prescription['PaymentStatus'] == 'Paid' ? 'success' : 'warning' 
+                                <span class="badge bg-{{
+                                    $prescription['PaymentStatus'] == 'Paid' ? 'success' : 'warning'
                                 }}">
                                     {{ $prescription['PaymentStatus'] }}
                                 </span>
@@ -181,7 +181,7 @@ function viewDetails(prescription) {
             <strong>Date:</strong> ${prescription.Date}
         </div>
         <div class="mb-3">
-            <strong>Status:</strong> 
+            <strong>Status:</strong>
             <span class="badge bg-${prescription.Status == 'Completed' ? 'success' : 'warning'}">
                 ${prescription.Status}
             </span>

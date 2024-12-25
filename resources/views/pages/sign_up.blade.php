@@ -42,7 +42,7 @@
             position: relative;
         }
 
-        .card-header h3, 
+        .card-header h3,
         .card-header p {
             color: white !important;
             margin: 0;
@@ -65,7 +65,7 @@
         }
         .text-muted {
             color: #6c757d !important;
-        }       
+        }
     </style>
 </head>
 <body>
@@ -159,7 +159,7 @@
 
                     <!-- Card Footer -->
                     <div class="card-footer text-center bg-light py-3">
-                        <p class="mb-0">Already have an account? 
+                        <p class="mb-0">Already have an account?
                             <a href="{{ url('/sign-in') }}" class="text-primary">Sign In</a>
                         </p>
                     </div>

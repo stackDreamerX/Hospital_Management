@@ -52,7 +52,7 @@
         <li class="story-layout">
             <div class="story-panel__card js-story-panel__card" style="height: 443.513px;">
                 <div class="story-panel__card-content story-panel__no-selection ">
-                                            <a class="story-panel__image-link" href="/patients/information/access"> 
+                                            <a class="story-panel__image-link" href="/patients/information/access">
                             <div class="story-panel__image-overlay">
                                 <img class="js-story-panel__image" src="public/FrontEnd/images/appointments-card.jpg" width="634" height="356" alt="Appointments">
                             </div>
@@ -298,4 +298,4 @@
 </section>
 </div>
 
-@endsection 
+@endsection

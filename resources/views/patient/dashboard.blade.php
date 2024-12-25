@@ -1,3 +1,5 @@
+
+
 @extends('patient_layout')
 @section('content')
 
@@ -91,9 +93,9 @@
                                         <td>{{ $appointment['Time'] }}</td>
                                         <td>{{ $appointment['DoctorName'] }}</td>
                                         <td>
-                                            <span class="badge bg-{{ 
-                                                $appointment['Status'] == 'Approved' ? 'success' : 
-                                                ($appointment['Status'] == 'Pending' ? 'warning' : 'danger') 
+                                            <span class="badge bg-{{
+                                                $appointment['Status'] == 'Approved' ? 'success' :
+                                                ($appointment['Status'] == 'Pending' ? 'warning' : 'danger')
                                             }}">
                                                 {{ $appointment['Status'] }}
                                             </span>
@@ -138,7 +140,7 @@
                                         <td>{{ $test['TestName'] }}</td>
                                         <td>{{ $test['Result'] ?? 'Pending' }}</td>
                                         <td>
-                                            <span class="badge bg-{{ 
+                                            <span class="badge bg-{{
                                                 $test['Status'] == 'Completed' ? 'success' : 'warning'
                                             }}">
                                                 {{ $test['Status'] }}

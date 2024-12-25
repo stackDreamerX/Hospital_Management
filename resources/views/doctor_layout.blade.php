@@ -13,7 +13,7 @@
 <link href="{{ asset('public/BackEnd/css/style.css') }}" rel='stylesheet' type='text/css' />
 <link href="{{ asset('public/BackEnd/css/style-responsive.css') }}" rel="stylesheet"/>
 <!-- Font Awesome -->
-<link href="{{ asset('public/BackEnd/css/font-awesome.css') }}" rel="stylesheet"> 
+<link href="{{ asset('public/BackEnd/css/font-awesome.css') }}" rel="stylesheet">
 <!-- Calendar -->
 <link rel="stylesheet" href="{{ asset('public/BackEnd/css/monthly.css') }}">
 <!-- Bootstrap 5 -->
@@ -218,8 +218,8 @@
 
          // Close sidebar when clicking outside on mobile
          document.addEventListener('click', function(e) {
-             if (window.innerWidth <= 768 && 
-                 !sidebar.contains(e.target) && 
+             if (window.innerWidth <= 768 &&
+                 !sidebar.contains(e.target) &&
                  !sidebarToggle.contains(e.target)) {
                  sidebar.classList.remove('show');
              }

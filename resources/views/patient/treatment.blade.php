@@ -92,9 +92,9 @@
                             <td>{{ $treatment['TreatmentName'] }}</td>
                             <td>{{ $treatment['DoctorName'] }}</td>
                             <td>
-                                <span class="badge bg-{{ 
-                                    $treatment['Status'] == 'Completed' ? 'success' : 
-                                    ($treatment['Status'] == 'Ongoing' ? 'warning' : 'info') 
+                                <span class="badge bg-{{
+                                    $treatment['Status'] == 'Completed' ? 'success' :
+                                    ($treatment['Status'] == 'Ongoing' ? 'warning' : 'info')
                                 }}">
                                     {{ $treatment['Status'] }}
                                 </span>
@@ -102,8 +102,8 @@
                             <td>{{ Str::limit($treatment['Progress'], 30) }}</td>
                             <td>
                                 Rs. {{ number_format($treatment['Cost']) }}
-                                <span class="badge bg-{{ 
-                                    $treatment['PaymentStatus'] == 'Paid' ? 'success' : 'warning' 
+                                <span class="badge bg-{{
+                                    $treatment['PaymentStatus'] == 'Paid' ? 'success' : 'warning'
                                 }}">
                                     {{ $treatment['PaymentStatus'] }}
                                 </span>
@@ -187,7 +187,7 @@ function viewDetails(treatment) {
             <strong>Period:</strong> ${treatment.StartDate} to ${treatment.EndDate}
         </div>
         <div class="mb-3">
-            <strong>Status:</strong> 
+            <strong>Status:</strong>
             <span class="badge bg-${treatment.Status == 'Completed' ? 'success' : 'warning'}">
                 ${treatment.Status}
             </span>

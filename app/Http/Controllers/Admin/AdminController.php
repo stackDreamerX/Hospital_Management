@@ -121,12 +121,12 @@ class AdminController extends Controller
         $result = DB::table('tbl_admin')
             ->where('admin_email', $admin_email)
             ->where('admin_password', $admin_password)
-            ->first();       
+            ->first();
 
         if ($result) {
             Session::put('admin_name', $result->admin_name);
             Session::put('admin_id', $result->admin_id);
-            return Redirect() -> route('show_dashboard');            
+            return Redirect() -> route('show_dashboard');
         } else {
             Session::put('message', 'Mật khẩu hoặc tài khoản sai. vui lòng nhập lại');
             return Redirect() -> route('admin');
@@ -136,6 +136,6 @@ class AdminController extends Controller
     public function logout() {
         Session::put('admin_name', null);
         Session::put('admin_id', null);
-        return Redirect::to('/admin'); 
+        return Redirect::to('/admin');
     }
 }

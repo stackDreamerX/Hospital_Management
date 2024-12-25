@@ -67,9 +67,9 @@
                             <td>{{ $test['LaboratoryTypeName'] }}</td>
                             <td>{{ $test['DoctorName'] }}</td>
                             <td>
-                                <span class="badge bg-{{ 
-                                    $test['Status'] == 'Completed' ? 'success' : 
-                                    ($test['Status'] == 'Pending' ? 'warning' : 'info') 
+                                <span class="badge bg-{{
+                                    $test['Status'] == 'Completed' ? 'success' :
+                                    ($test['Status'] == 'Pending' ? 'warning' : 'info')
                                 }}">
                                     {{ $test['Status'] }}
                                 </span>
@@ -86,7 +86,7 @@
                                         <i class="fas fa-eye"></i>
                                     </button>
                                     @if($test['Status'] == 'Completed' && $test['Report'])
-                                        <button class="btn btn-primary" 
+                                        <button class="btn btn-primary"
                                                 onclick="downloadReport({{ $test['LaboratoryID'] }})">
                                             <i class="fas fa-download"></i>
                                         </button>

@@ -65,9 +65,9 @@
                             <td>{{ $appointment['Date'] }}</td>
                             <td>{{ $appointment['Type'] }}</td>
                             <td>
-                                <span class="badge bg-{{ 
-                                    $appointment['Status'] == 'Completed' ? 'success' : 
-                                    ($appointment['Status'] == 'Pending' ? 'warning' : 'info') 
+                                <span class="badge bg-{{
+                                    $appointment['Status'] == 'Completed' ? 'success' :
+                                    ($appointment['Status'] == 'Pending' ? 'warning' : 'info')
                                 }}">
                                     {{ $appointment['Status'] }}
                                 </span>
@@ -169,4 +169,4 @@
     </div>
 </div>
 
-@endsection 
+@endsection

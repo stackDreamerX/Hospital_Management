@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
     
-    <link href="public/FrontEnd/css/css2.css" rel="stylesheet">    
+    <link href="public/FrontEnd/css/css2.css" rel="stylesheet">
 
     <link href="public/FrontEnd/css/notokufiarabic.css" rel="stylesheet">
     <link href="public/FrontEnd/css/notosansscsliced.css" rel="stylesheet">
@@ -39,20 +39,20 @@ j = d.createElement(s), dl = l != 'dataLayer' ? '&l=' + l : ''; j.defer = true; 
                 r.src = "https://cdn.heapanalytics.com/js/heap-" + e + ".js";
                 var a = document.getElementsByTagName("script")[0];
                 a.parentNode.insertBefore(r, a);
-                for (var n = function (e) { return function () { heap.push([e].concat(Array.prototype.slice.call(arguments, 0))) } }, 
-                    p = ["addEventProperties", "addUserProperties", "clearEventProperties", "identify", "resetIdentity", "removeEventProperty", "setEventProperties", "track", "unsetEventProperty"], 
-                    o = 0; o < p.length; o++) 
+                for (var n = function (e) { return function () { heap.push([e].concat(Array.prototype.slice.call(arguments, 0))) } },
+                    p = ["addEventProperties", "addUserProperties", "clearEventProperties", "identify", "resetIdentity", "removeEventProperty", "setEventProperties", "track", "unsetEventProperty"],
+                    o = 0; o < p.length; o++)
                 {
                     heap[p[o]] = n(p[o]);
                 }
             };
             heap.load('1538774254');
             heap.clearEventProperties();
-            heap.addEventProperties({ 
-                'primaryLocationId': '', 
-                'physicianId': '', 
-                'instituteId': '', 
-                'zone': '' 
+            heap.addEventProperties({
+                'primaryLocationId': '',
+                'physicianId': '',
+                'instituteId': '',
+                'zone': ''
             });
         </script>
     <!-- End Web Data Layer -->
@@ -165,7 +165,7 @@ j = d.createElement(s), dl = l != 'dataLayer' ? '&l=' + l : ''; j.defer = true; 
                     <a href="" class="notification-banner__link--expand js-notification-banner__link--expand js-lightbox-popup">
                         <img src="public/FrontEnd/images/icon-emergency-circle.svg" alt="Emergency icon">
                     </a>
-                </span>     
+                </span>
 
                 <div class="notification-banner__action">
                     <button class="notification-banner__action-icon js-notification-banner__action-icon">
@@ -239,7 +239,7 @@ j = d.createElement(s), dl = l != 'dataLayer' ? '&l=' + l : ''; j.defer = true; 
 
 
     <span class="header__logo">
-        <a href="{{ url('/trang-chu') }} " disablewebedit="True"><img src="public/FrontEnd/images/logo-ccf.png" alt="Medic Hospital logo" width="300" height="48" disablewebedit="True"></a>          
+        <a href="{{ url('/trang-chu') }} " disablewebedit="True"><img src="public/FrontEnd/images/logo-ccf.png" alt="Medic Hospital logo" width="300" height="48" disablewebedit="True"></a>
     </span>
 
     
@@ -283,7 +283,7 @@ j = d.createElement(s), dl = l != 'dataLayer' ? '&l=' + l : ''; j.defer = true; 
                                     </li>
                                     <li class="nav--primary__link  ">
                                         <a class="nav--primary__link " href="/patients" disablewebedit="True">Patients &amp; Visitors</a>
-                                    </li>                                                                       
+                                    </li>
                                     <li class="nav--primary__link  ">
                                         <a class="nav--primary__link " href="/patients/information/access" disablewebedit="True">Appointments</a>
                                     </li>
@@ -322,7 +322,7 @@ j = d.createElement(s), dl = l != 'dataLayer' ? '&l=' + l : ''; j.defer = true; 
                 <!-- Phần tử Patients & Visitors -->
                 <li class="nav-item border-end">
                     <a class="nav-link {{ request()->is('patients') ? 'active' : '' }}" href="{{ route('users.patients') }}">Patients &amp; Visitors</a>
-                </li>                               
+                </li>
                 <!-- Phần tử Appointments -->
                 <li class="nav-item">
                     <a class="nav-link {{ request()->is('appointments') ? 'active' : '' }}" href="{{ route('users.appointments') }}">Appointments</a>
@@ -430,9 +430,7 @@ j = d.createElement(s), dl = l != 'dataLayer' ? '&l=' + l : ''; j.defer = true; 
                 var HEALTH_INDEX_NAME_DEFAULT = 'hic_sanity_prod';
         </script>
 
-                <!-- <div id="d89JF2Fa-exV-5ixaiTVui1y_gqYcnxAVAB0ZZvIj8rs" style="width: 0px; height: 0px;"><img id="i89JF2Fa-exV-5ixaiTVui1y_gqYcnxAVAB0ZZvIj8rs" width="0" height="0" src="uzp5VKFa"></div> -->
-                <!-- <script src="public/FrontEnd/js/ws-tracking.js"></script><div id="ccf-lcwidget-chat" class="d365-mkt-config" style="display:none" data-website-id="89JF2Fa-exV-5ixaiTVui1y_gqYcnxAVAB0ZZvIj8rs" data-hostname="ca264331a46e4359af48029ef070df94.svc.dynamics.com" data-app-id="24d50ba7-292e-432a-a2dc-5301efa26059" data-org-id="ae29c25f-ef18-4541-9c21-4ce5c6c1c633" data-org-url="https://orga370c35a-crm.omnichannelengagementhub.com"></div> -->
-
+             
         <script id="js-jquery" src="public/FrontEnd/js/jquery-3.0.0.min.js"></script>
 
         <script>

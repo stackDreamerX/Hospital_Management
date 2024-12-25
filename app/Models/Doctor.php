@@ -11,10 +11,10 @@ class Doctor extends Model
     protected $primaryKey = 'DoctorID';
     protected $table = 'doctors';
 
-    protected $fillable = [      
+    protected $fillable = [
         'UserID',
         'Speciality',
-        'Title',    
+        'Title',
     ];
 
     public function appointments()
@@ -25,4 +25,4 @@ class Doctor extends Model
     {
         return $this->belongsTo(User::class, 'UserID'); // Adjust 'user_id' as necessary
     }
-} 
+}

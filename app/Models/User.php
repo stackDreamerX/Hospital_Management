@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -20,7 +19,7 @@ class User extends Authenticatable
     public $incrementing = true;
     protected $keyType = 'int';
 
-    protected $fillable = [        
+    protected $fillable = [
         'RoleID',
         'username',
         'FullName',
@@ -56,7 +55,7 @@ class User extends Authenticatable
     {
         // return 'username'; // Tên cột bạn muốn dùng
         return 'UserID'; // Xác định khóa chính cho Laravel Guard
-    }      
+    }
     public function getAuthPassword()
     {
         return $this->password; // Laravel sẽ dùng cột "password" cho xác thực

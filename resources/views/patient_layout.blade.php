@@ -11,7 +11,7 @@
 <link href="{{ asset('public/BackEnd/css/style.css') }}" rel='stylesheet' type='text/css' />
 <link href="{{ asset('public/BackEnd/css/style-responsive.css') }}" rel="stylesheet"/>
 <!-- Font Awesome -->
-<link href="{{ asset('public/BackEnd/css/font-awesome.css') }}" rel="stylesheet"> 
+<link href="{{ asset('public/BackEnd/css/font-awesome.css') }}" rel="stylesheet">
 <!-- Calendar -->
 <link rel="stylesheet" href="{{ asset('public/BackEnd/css/monthly.css') }}">
 <!-- Bootstrap 5 -->
@@ -101,8 +101,7 @@
             <li class="dropdown">
                 <a data-bs-toggle="dropdown" class="dropdown-toggle" href="#">
                     <img alt="" src="{{ asset('public/BackEnd/images/avatar.jpg') }}">
-                    <!-- <span class="username">{{  session('Username', 'Patient') }}</span> -->
-                    <!-- <span class="username">{{ Auth::user()->FullName ?? 'PatientDefault'}}</span> -->
+                  
 
                     <span class="username">{{ auth()->user()->FullName ?? 'Patient' }}</span>
                     @if(Auth::check())
@@ -159,8 +158,8 @@
                         <i class="fas fa-pills"></i>
                         <span>Prescriptions</span>
                     </a>
-                </li>                
-            </ul>            
+                </li>
+            </ul>
         </div>
         <!-- sidebar menu end-->
     </div>

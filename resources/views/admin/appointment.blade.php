@@ -103,9 +103,9 @@
                             <td>{{ $appointment['DoctorName'] }}</td>
                             <td>{{ $appointment['Reason'] }}</td>
                             <td>
-                                <span class="badge bg-{{ 
-                                    $appointment['Status'] == 'Completed' ? 'success' : 
-                                    ($appointment['Status'] == 'Pending' ? 'warning' : 'info') 
+                                <span class="badge bg-{{
+                                    $appointment['Status'] == 'Completed' ? 'success' :
+                                    ($appointment['Status'] == 'Pending' ? 'warning' : 'info')
                                 }}">
                                     {{ $appointment['Status'] }}
                                 </span>

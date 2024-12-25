@@ -18,7 +18,7 @@ class Laboratory extends Model
         'DoctorID',
         'LaboratoryDate',
         'LaboratoryTime',
-        'TotalPrice',        
+        'TotalPrice',
     ];
 
     public function laboratoryType()
@@ -29,7 +29,7 @@ class Laboratory extends Model
     public function user()
     {
         return $this->belongsTo(User::class, 'UserID', 'UserID'); // Liên kết với bảng users
-    }    
+    }
 
 
     public function doctor()

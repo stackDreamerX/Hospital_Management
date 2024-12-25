@@ -88,19 +88,19 @@
                         <td style="padding: 12px;">
                             @php
                                 $occupancyRate = ($ward['CurrentOccupancy'] / $ward['Capacity']) * 100;
-                                $class = $occupancyRate >= 90 ? 'danger' : 
+                                $class = $occupancyRate >= 90 ? 'danger' :
                                         ($occupancyRate >= 70 ? 'warning' : 'success');
-                                $status = $occupancyRate >= 90 ? 'Full' : 
+                                $status = $occupancyRate >= 90 ? 'Full' :
                                          ($occupancyRate >= 70 ? 'High' : 'Available');
                             @endphp
                             <span class="badge bg-{{ $class }}">{{ $status }}</span>
                         </td>
                         <td style="padding: 12px;">
-                            <button onclick="editWard({{ json_encode($ward) }})" 
+                            <button onclick="editWard({{ json_encode($ward) }})"
                                     class="btn btn-primary btn-sm" style="margin-right: 5px;">
                                 <i class="fa fa-edit"></i> Edit
                             </button>
-                            <button onclick="deleteWard({{ $ward['WardID'] }})" 
+                            <button onclick="deleteWard({{ $ward['WardID'] }})"
                                     class="btn btn-danger btn-sm">
                                 <i class="fa fa-trash"></i> Delete
                             </button>
@@ -151,8 +151,8 @@
                 const wardType = row.querySelector('td:nth-child(3)').textContent.toLowerCase();
                 const doctor = row.querySelector('td:nth-child(6)').textContent.toLowerCase();
 
-                if (wardName.includes(searchTerm) || 
-                    wardType.includes(searchTerm) || 
+                if (wardName.includes(searchTerm) ||
+                    wardType.includes(searchTerm) ||
                     doctor.includes(searchTerm)) {
                     row.style.display = '';
                 } else {

@@ -52,19 +52,19 @@
 
                 <div class="mb-3">
                     <label class="form-label">Reason for Visit</label>
-                    <input type="text" class="form-control" id="reason" 
+                    <input type="text" class="form-control" id="reason"
                            placeholder="e.g., Regular checkup, Follow-up, etc." required>
                 </div>
 
                 <div class="mb-3">
                     <label class="form-label">Symptoms</label>
-                    <textarea class="form-control" id="symptoms" rows="2" 
+                    <textarea class="form-control" id="symptoms" rows="2"
                               placeholder="Describe your symptoms" required></textarea>
                 </div>
 
                 <div class="mb-3">
                     <label class="form-label">Additional Notes</label>
-                    <textarea class="form-control" id="notes" rows="2" 
+                    <textarea class="form-control" id="notes" rows="2"
                               placeholder="Any additional information"></textarea>
                 </div>
 
@@ -109,25 +109,25 @@
                             <td>{{ $appointment['DoctorName'] ?? 'Not assigned yet' }}</td>
                             <td>{{ $appointment['Reason'] }}</td>
                             <td>
-                                <span class="badge bg-{{ 
-                                    $appointment['Status'] == 'Approved' ? 'success' : 
-                                    ($appointment['Status'] == 'Pending' ? 'warning' : 'danger') 
+                                <span class="badge bg-{{
+                                    $appointment['Status'] == 'Approved' ? 'success' :
+                                    ($appointment['Status'] == 'Pending' ? 'warning' : 'danger')
                                 }}">
                                     {{ $appointment['Status'] }}
                                 </span>
                             </td>
                             <td>
                                 <div class="btn-group btn-group-sm">
-                                    <button class="btn btn-info" 
+                                    <button class="btn btn-info"
                                             onclick="viewDetails({{ json_encode($appointment) }})">
                                         <i class="fas fa-eye"></i>
                                     </button>
                                     @if($appointment['Status'] == 'Pending')
-                                        <button class="btn btn-primary" 
+                                        <button class="btn btn-primary"
                                                 onclick="editAppointment({{ json_encode($appointment) }})">
                                             <i class="fas fa-edit"></i>
                                         </button>
-                                        <button class="btn btn-danger" 
+                                        <button class="btn btn-danger"
                                                 onclick="cancelAppointment({{ $appointment['AppointmentID'] }})">
                                             <i class="fas fa-times"></i>
                                         </button>
@@ -335,4 +335,4 @@ function cancelAppointment(id) {
     });
 }
 </script>
-@endsection 
+@endsection

@@ -97,9 +97,9 @@
                                     <td>{{ $schedule['PatientName'] }}</td>
                                     <td>{{ $schedule['Type'] }}</td>
                                     <td>
-                                        <span class="badge bg-{{ 
-                                            $schedule['Status'] == 'Completed' ? 'success' : 
-                                            ($schedule['Status'] == 'Pending' ? 'warning' : 'info') 
+                                        <span class="badge bg-{{
+                                            $schedule['Status'] == 'Completed' ? 'success' :
+                                            ($schedule['Status'] == 'Pending' ? 'warning' : 'info')
                                         }}">
                                             {{ $schedule['Status'] }}
                                         </span>
@@ -132,11 +132,11 @@
                     <div class="timeline">
                         @foreach($recentActivities as $activity)
                         <div class="timeline-item">
-                            <div class="timeline-icon bg-{{ $activity['Type'] == 'appointment' ? 'primary' : 
-                                                         ($activity['Type'] == 'lab' ? 'warning' : 
+                            <div class="timeline-icon bg-{{ $activity['Type'] == 'appointment' ? 'primary' :
+                                                         ($activity['Type'] == 'lab' ? 'warning' :
                                                          ($activity['Type'] == 'treatment' ? 'info' : 'success')) }}">
-                                <i class="fas fa-{{ $activity['Type'] == 'appointment' ? 'calendar' : 
-                                                  ($activity['Type'] == 'lab' ? 'flask' : 
+                                <i class="fas fa-{{ $activity['Type'] == 'appointment' ? 'calendar' :
+                                                  ($activity['Type'] == 'lab' ? 'flask' :
                                                   ($activity['Type'] == 'treatment' ? 'procedures' : 'prescription')) }}">
                                 </i>
                             </div>

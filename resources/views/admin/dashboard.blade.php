@@ -110,8 +110,8 @@
                                         <td>{{ $appointment['AppointmentDate'] }}</td>
                                         <td>{{ $appointment['AppointmentTime'] }}</td>
                                         <td>
-                                            <span class="badge bg-{{ $appointment['Status'] == 'pending' ? 'warning' : 
-                                                ($appointment['Status'] == 'approved' ? 'success' : 
+                                            <span class="badge bg-{{ $appointment['Status'] == 'pending' ? 'warning' :
+                                                ($appointment['Status'] == 'approved' ? 'success' :
                                                 ($appointment['Status'] == 'completed' ? 'info' : 'danger')) }}">
                                                 {{ ucfirst($appointment['Status']) }}
                                             </span>
@@ -139,15 +139,15 @@
                         @forelse($wards ?? [] as $ward)
                         <div class="mb-3">
                             <h4 class="small font-weight-bold">
-                                {{ $ward['WardName'] }} 
+                                {{ $ward['WardName'] }}
                                 <span class="float-end">{{ floor(($ward['CurrentOccupancy'] / $ward['Capacity']) * 100) }}%</span>
                             </h4>
                             <div class="progress">
-                                <div class="progress-bar bg-{{ 
-                                    $ward['CurrentOccupancy'] >= $ward['Capacity'] ? 'danger' : 
-                                    ($ward['CurrentOccupancy'] >= $ward['Capacity'] * 0.8 ? 'warning' : 'success') 
-                                }}" 
-                                role="progressbar" 
+                                <div class="progress-bar bg-{{
+                                    $ward['CurrentOccupancy'] >= $ward['Capacity'] ? 'danger' :
+                                    ($ward['CurrentOccupancy'] >= $ward['Capacity'] * 0.8 ? 'warning' : 'success')
+                                }}"
+                                role="progressbar"
                                 style="width: {{ ($ward['CurrentOccupancy'] / $ward['Capacity']) * 100 }}%"></div>
                             </div>
                         </div>

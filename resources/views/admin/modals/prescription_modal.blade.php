@@ -35,7 +35,7 @@
                                 <select class="form-control medicine-select" required>
                                     <option value="">Select Medicine</option>
                                     @foreach($medicines as $medicine)
-                                        <option value="{{ $medicine['MedicineID'] }}" 
+                                        <option value="{{ $medicine['MedicineID'] }}"
                                                 data-price="{{ $medicine['UnitPrice'] }}">
                                             {{ $medicine['MedicineName'] }}
                                         </option>
@@ -78,4 +78,4 @@
             </div>
         </div>
     </div>
-</div> 
+</div>

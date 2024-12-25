@@ -145,7 +145,7 @@
 
    
 
-<div> 
+<div>
     <br>
 </div>
     
@@ -182,7 +182,7 @@
                         <select name="user_id" id="user_id" class="form-select" required>
                             <option value="">Select Patient</option>
                             @foreach($patients as $patient)
-                                <option value="{{ $patient->UserID }}">{{ $patient->FullName }}</option>                                 
+                                <option value="{{ $patient->UserID }}">{{ $patient->FullName }}</option>
                             @endforeach
                         </select>
 
@@ -229,7 +229,7 @@
                             <th>Patient</th>
                             <th>Doctor</th>
                             <th>Date</th>
-                            <th>Price</th>                         
+                            <th>Price</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -241,7 +241,7 @@
                             <td>{{ $lab->user->FullName }}</td>
                             <td>{{ $lab->doctor->user->FullName }}</td>
                             <td>{{ $lab->LaboratoryDate }} {{ $lab->LaboratoryTime }}</td>
-                            <td>${{ number_format($lab->TotalPrice, 2) }}</td>                        
+                            <td>${{ number_format($lab->TotalPrice, 2) }}</td>
                             <td>
                                 <button class="btn btn-info btn-sm" onclick="viewDetails({{ $lab->LaboratoryID }})">View</button>
                                 <button class="btn btn-primary btn-sm" onclick="editLab({{ $lab }})">Edit</button>
@@ -343,7 +343,7 @@
    
    function viewDetails(id) {
       
-        const url =  `{{ route('doctor.lab.details', ['id' => '__id__']) }}`.replace('__id__', id); 
+        const url =  `{{ route('doctor.lab.details', ['id' => '__id__']) }}`.replace('__id__', id);
         fetch(url)
             .then(response => {
                 if (!response.ok) {
@@ -364,7 +364,7 @@
                     <p><strong>Doctor:</strong> ${data.doctorName}</p>
                     <p><strong>Date:</strong> ${data.labDate}</p>
                     <p><strong>Time:</strong> ${data.labTime}</p>
-                    <p><strong>Price:</strong> $${data.price}</p>                  
+                    <p><strong>Price:</strong> $${data.price}</p>
                     <p><strong>Result:</strong> ${data.result || 'Pending'}</p>
                 `;
                 document.getElementById('labDetails').innerHTML = details;
@@ -409,7 +409,7 @@
 
 
 
-    function updateLab() {  
+    function updateLab() {
         const id = document.getElementById('edit_id')?.value || null;
 const labType = document.getElementById('edit_lab_type')?.value || null;
 const userId = document.getElementById('edit_patient')?.value || null;
@@ -427,7 +427,7 @@ const price = document.getElementById('edit_price')?.value || null;
         // const price = document.getElementById('edit_price').value;
 
         // const url = `/admin/laboratories/${id}/update`;
-        const url =  `{{ route('doctor.lab.updateLab', ['id' => '__id__']) }}`.replace('__id__', id); 
+        const url =  `{{ route('doctor.lab.updateLab', ['id' => '__id__']) }}`.replace('__id__', id);
 
             fetch(url, {
                 method: 'PUT',
@@ -456,7 +456,7 @@ const price = document.getElementById('edit_price')?.value || null;
         }
 
     function deleteLab(id) {
-        if (confirm('Are you sure you want to delete this laboratory assignment?')) {          
+        if (confirm('Are you sure you want to delete this laboratory assignment?')) {
             const url = `{{ route('doctor.lab.delete', ['id' => '__id__']) }}`.replace('__id__', id);
             fetch(url, {
                 method: 'DELETE',
@@ -499,8 +499,8 @@ const price = document.getElementById('edit_price')?.value || null;
         const doctor_id = document.getElementById('doctor_id').value;
         const lab_date = document.getElementById('lab_date').value;
         const lab_time = document.getElementById('lab_time').value;
-        const price = document.getElementById('price').value; 
-        const createLabUrl = "{{ route('doctor.lab.create') }}";   
+        const price = document.getElementById('price').value;
+        const createLabUrl = "{{ route('doctor.lab.create') }}";
 
         // Gửi dữ liệu đến backend
         fetch(createLabUrl, {
@@ -518,7 +518,7 @@ const price = document.getElementById('edit_price')?.value || null;
                 price,
             }),
         })
-            .then(response => response.json())     
+            .then(response => response.json())
             .then(data => {
                 alert(data.message);
                 window.location.reload();

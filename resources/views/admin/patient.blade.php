@@ -23,7 +23,7 @@
                     </div>
                     <div class="col-md-6 mb-3">
                         <label style="font-weight: bold; margin-bottom: 5px;">Username</label>
-                        <input type="text" name="username" class="form-control" required 
+                        <input type="text" name="username" class="form-control" required
                                pattern="^[a-zA-Z0-9._-]{3,50}$" style="padding: 8px;">
                     </div>
                     <div class="col-md-6 mb-3">
@@ -32,7 +32,7 @@
                     </div>
                     <div class="col-md-6 mb-3">
                         <label style="font-weight: bold; margin-bottom: 5px;">Phone Number</label>
-                        <input type="tel" name="phone" class="form-control" required 
+                        <input type="tel" name="phone" class="form-control" required
                                pattern="^0[0-9]{9}$" style="padding: 8px;">
                     </div>
                     <div class="col-md-6 mb-3">
@@ -55,8 +55,8 @@
                     <div class="col-md-6 mb-3">
                         <label style="font-weight: bold; margin-bottom: 5px;">Password</label>
                         <div class="input-group">
-                            <input type="password" name="password" class="form-control" required 
-                                   pattern="^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$" 
+                            <input type="password" name="password" class="form-control" required
+                                   pattern="^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$"
                                    style="padding: 8px;">
                             <button class="btn btn-outline-secondary" type="button" onclick="togglePasswordVisibility(this)">
                                 <i class="fas fa-eye"></i>
@@ -110,11 +110,11 @@
                             {{ $age }}
                         </td>
                         <td style="padding: 12px;">
-                            <button onclick="editPatient({{ json_encode($patient) }})" 
+                            <button onclick="editPatient({{ json_encode($patient) }})"
                                     class="btn btn-primary btn-sm" style="margin-right: 5px;">
                                 <i class="fa fa-edit"></i> Edit
                             </button>
-                            <button onclick="deletePatient({{ $patient['PatientID'] }})" 
+                            <button onclick="deletePatient({{ $patient['PatientID'] }})"
                                     class="btn btn-danger btn-sm">
                                 <i class="fa fa-trash"></i> Delete
                             </button>
@@ -165,8 +165,8 @@
                 const email = row.querySelector('td:nth-child(3)').textContent.toLowerCase();
                 const phone = row.querySelector('td:nth-child(4)').textContent.toLowerCase();
 
-                if (fullName.includes(searchTerm) || 
-                    email.includes(searchTerm) || 
+                if (fullName.includes(searchTerm) ||
+                    email.includes(searchTerm) ||
                     phone.includes(searchTerm)) {
                     row.style.display = '';
                 } else {

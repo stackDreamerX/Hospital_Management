@@ -162,4 +162,4 @@ class AppointmentController extends Controller
         // In real application, generate PDF report
         return response()->json(['message' => 'Report generated successfully']);
     }
-} 
+}

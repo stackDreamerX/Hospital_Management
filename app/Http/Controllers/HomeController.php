@@ -10,14 +10,13 @@ use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Validator;
 use App\Models\User;
-use Illuminate\Support\Facades\Hash; 
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 class HomeController extends Controller
 {
     public function index()
     {
         return view('pages.home');
-        // return view('patient_layout');
     }
 
     public function sign_in() {
@@ -29,7 +28,7 @@ class HomeController extends Controller
     }
   
     public function home_dashboard(Request $request)
-    {      
+    {
         // Validate dữ liệu đầu vào
         $request->validate([
             'username' => 'required|string',
@@ -37,22 +36,22 @@ class HomeController extends Controller
         ]);
      
           
-       // dd(['Username' => $request->Username, 'Password' => $request->Password]);
+    //    dd(['username' => $request->username, 'password' => $request->password]);
 
 
         if (Auth::attempt(['username' => $request->username, 'password' => $request->password])) {
             // Điều hướng đến trang dashboard
-            $request->session()->regenerate();     
+            $request->session()->regenerate();
             if (Auth::user()->RoleID === 'patient') {
                 return redirect()->route('patient.dashboard');
             } elseif (Auth::user()->RoleID === 'doctor') {
                 return redirect()->route('doctor.dashboard');
             } else {
                 return redirect()->route('admin.dashboard');
-            }              
+            }
         }
-        else {  
-            // Đăng nhập thất bại                
+        else {
+            // Đăng nhập thất bại
             return redirect()->back()->withErrors(['message' => 'Tài khoản hoặc mật khẩu không đúng.']);
         }
        
@@ -62,7 +61,7 @@ class HomeController extends Controller
         // Đăng xuất người dùng
         Auth::logout();
         // Chuyển hướng về trang chủ
-        return redirect('/trang-chu')->withErrors(['message' => 'You have been logged out successfully']);      
+        return redirect('/trang-chu')->withErrors(['message' => 'You have been logged out successfully']);
     }
 
    public function register(Request $request)
@@ -83,7 +82,7 @@ class HomeController extends Controller
         //dd($request->all());
         // Tạo user mới
         User::create([
-            'RoleID' => $request->RoleID,    
+            'RoleID' => $request->RoleID,
             'username' => $request->username,
             'FullName' => $request->FullName,
             'Email' => $request->Email,
@@ -109,11 +108,11 @@ class HomeController extends Controller
 
     public function patients()
     {
-        return view('pages.patients');    
+        return view('pages.patients');
     }
 
     public function appointments()
-    {        
+    {
         if (!Auth::check()) {
             return redirect('/sign-in')->with('message', 'Please login to access appointments');
         }
@@ -122,4 +121,4 @@ class HomeController extends Controller
     }
 
 }
-// php artisan make:controller HomeController 
+// php artisan make:controller HomeController

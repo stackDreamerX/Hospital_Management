@@ -39,7 +39,7 @@
                     </div>
                     <div class="col-md-6 mb-3">
                         <label class="form-label">Duration</label>
-                        <input type="text" class="form-control" id="duration" 
+                        <input type="text" class="form-control" id="duration"
                                placeholder="e.g., 30 minutes" required>
                     </div>
                     <div class="col-md-12 mb-3">
@@ -81,9 +81,9 @@
                             <td>{{ $treatment['Type'] }}</td>
                             <td>{{ $treatment['Duration'] }}</td>
                             <td>
-                                <span class="badge bg-{{ 
-                                    $treatment['Status'] == 'Completed' ? 'success' : 
-                                    ($treatment['Status'] == 'Scheduled' ? 'info' : 'danger') 
+                                <span class="badge bg-{{
+                                    $treatment['Status'] == 'Completed' ? 'success' :
+                                    ($treatment['Status'] == 'Scheduled' ? 'info' : 'danger')
                                 }}">
                                     {{ $treatment['Status'] }}
                                 </span>
@@ -94,11 +94,11 @@
                                         <i class="fas fa-eye"></i>
                                     </button>
                                     @if($treatment['Status'] == 'Scheduled')
-                                        <button class="btn btn-success" 
+                                        <button class="btn btn-success"
                                                 onclick="completeTreatment({{ $treatment['TreatmentID'] }})">
                                             <i class="fas fa-check"></i>
                                         </button>
-                                        <button class="btn btn-danger" 
+                                        <button class="btn btn-danger"
                                                 onclick="cancelTreatment({{ $treatment['TreatmentID'] }})">
                                             <i class="fas fa-times"></i>
                                         </button>

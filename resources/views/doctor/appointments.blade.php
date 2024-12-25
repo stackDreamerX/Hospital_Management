@@ -61,9 +61,9 @@
                             </td>
                             <td>{{ $appointment['Reason'] }}</td>
                             <td>
-                                <span class="badge bg-{{ 
-                                    $appointment['Status'] == 'Approved' ? 'success' : 
-                                    ($appointment['Status'] == 'Pending' ? 'warning' : 'danger') 
+                                <span class="badge bg-{{
+                                    $appointment['Status'] == 'Approved' ? 'success' :
+                                    ($appointment['Status'] == 'Pending' ? 'warning' : 'danger')
                                 }}">
                                     {{ $appointment['Status'] }}
                                 </span>
@@ -71,17 +71,17 @@
                             <td>
                                 @if($appointment['Status'] == 'Pending')
                                     <div class="btn-group btn-group-sm">
-                                        <button class="btn btn-success" 
+                                        <button class="btn btn-success"
                                                 onclick="updateStatus({{ $appointment['AppointmentID'] }}, 'Approved')">
                                             <i class="fas fa-check"></i> Approve
                                         </button>
-                                        <button class="btn btn-danger" 
+                                        <button class="btn btn-danger"
                                                 onclick="updateStatus({{ $appointment['AppointmentID'] }}, 'Rejected')">
                                             <i class="fas fa-times"></i> Reject
                                         </button>
                                     </div>
                                 @else
-                                    <button class="btn btn-info btn-sm" 
+                                    <button class="btn btn-info btn-sm"
                                             onclick="viewDetails({{ $appointment['AppointmentID'] }})">
                                         <i class="fas fa-eye"></i> View
                                     </button>
@@ -175,4 +175,4 @@ function viewDetails(appointmentId) {
     modal.show();
 }
 </script>
-@endsection 
+@endsection

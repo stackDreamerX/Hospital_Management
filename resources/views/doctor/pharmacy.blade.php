@@ -11,7 +11,7 @@
             @foreach($lowStockMedicines as $medicine)
             <li>
                 {{ $medicine['Name'] }} ({{ $medicine['Stock'] }} remaining)
-                <button class="btn btn-sm btn-warning ms-2" 
+                <button class="btn btn-sm btn-warning ms-2"
                         onclick="reportLowStock({{ $medicine['MedicineID'] }}, '{{ $medicine['Name'] }}')">
                     <i class="fas fa-bell"></i> Report
                 </button>
@@ -50,7 +50,7 @@
                                 <select class="form-select medicine-select" required>
                                     <option value="">Select Medicine</option>
                                     @foreach($medicines->where('Stock', '>', 0) as $medicine)
-                                        <option value="{{ $medicine['MedicineID'] }}" 
+                                        <option value="{{ $medicine['MedicineID'] }}"
                                                 data-price="{{ $medicine['Price'] }}"
                                                 data-stock="{{ $medicine['Stock'] }}">
                                             {{ $medicine['Name'] }} ({{ $medicine['Type'] }})
@@ -76,7 +76,7 @@
                             </div>
                         </div>
                         <div class="text-end">
-                            <button type="button" class="btn btn-danger btn-sm remove-medicine" 
+                            <button type="button" class="btn btn-danger btn-sm remove-medicine"
                                     onclick="removeMedicine(this)">
                                 <i class="fas fa-trash"></i>
                             </button>
@@ -90,7 +90,7 @@
 
                 <div class="mb-3">
                     <label class="form-label">Notes</label>
-                    <textarea class="form-control" id="notes" rows="3" 
+                    <textarea class="form-control" id="notes" rows="3"
                               placeholder="Additional instructions or notes"></textarea>
                 </div>
 
@@ -129,9 +129,9 @@
                                 @endforeach
                             </td>
                             <td>
-                                <span class="badge bg-{{ 
-                                    $prescription['Status'] == 'Completed' ? 'success' : 
-                                    ($prescription['Status'] == 'Pending' ? 'warning' : 'danger') 
+                                <span class="badge bg-{{
+                                    $prescription['Status'] == 'Completed' ? 'success' :
+                                    ($prescription['Status'] == 'Pending' ? 'warning' : 'danger')
                                 }}">
                                     {{ $prescription['Status'] }}
                                 </span>
@@ -142,7 +142,7 @@
                                         <i class="fas fa-eye"></i>
                                     </button>
                                     @if($prescription['Status'] == 'Pending')
-                                    <button class="btn btn-danger" 
+                                    <button class="btn btn-danger"
                                             onclick="cancelPrescription({{ $prescription['PrescriptionID'] }})">
                                         <i class="fas fa-times"></i>
                                     </button>
@@ -299,4 +299,4 @@ function cancelPrescription(id) {
     });
 }
 </script>
-@endsection 
+@endsection

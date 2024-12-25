@@ -14,8 +14,9 @@ use Illuminate\Support\Facades\Route;
 
 
 
-//FrontEnd - users 
+//FrontEnd - users
 Route::get('/dashboard', [HomeController::class, 'index'])->name(name: 'users.dashboard');
+
 Route::get('/trang-chu', [HomeController::class, 'index'])->name('trang-chu');
 Route::get('/sign-in', [HomeController::class, 'sign_in'])->name('sign_in');
 Route::get('/home-logout', [HomeController::class, 'home_logout'])->name('home_logout');
@@ -88,7 +89,6 @@ Route::prefix('doctor')->middleware('auth')->group(function () {
 
     Route::get('/appointments', [App\Http\Controllers\Doctor\AppointmentController::class, 'index']) ->name('doctor.appointments');
 
-    // Route::get('/lab',[App\Http\Controllers\Doctor\LabController::class,'lab']) -> name('doctor.lab');
     Route::get('/lab', [App\Http\Controllers\Doctor\LabController::class,'lab'])->name('doctor.lab');
     Route::get('/lab/details/{id}', [App\Http\Controllers\Doctor\LabController::class, 'show'])->name('doctor.lab.details');
     Route::post('/lab/create', [App\Http\Controllers\Doctor\LabController::class, 'store'])->name('doctor.lab.create');
@@ -96,7 +96,7 @@ Route::prefix('doctor')->middleware('auth')->group(function () {
     Route::delete('/lab/{id}/delete', [App\Http\Controllers\Doctor\LabController::class, 'destroyLab'])->name('doctor.lab.delete');
 
 
-    Route::get('/patients',[App\Http\Controllers\Doctor\PatientController::class,'index']) -> name('doctor.patients');   
+    Route::get('/patients',[App\Http\Controllers\Doctor\PatientController::class,'index']) -> name('doctor.patients');
     Route::get('/patients-details/{id}',[App\Http\Controllers\Doctor\PatientController::class,'show']) -> name('doctor.patients.show');
     
     Route::get('/pharmacy',[App\Http\Controllers\Doctor\PharmacyController::class,'index']) -> name('doctor.pharmacy');
@@ -106,7 +106,6 @@ Route::prefix('doctor')->middleware('auth')->group(function () {
 
     Route::get('/profile', function() { return 1; })->name('doctor.profile');
     Route::get('/settings', function() { return 1; })->name('doctor.settings');
-    // Route::get('/logout', function() { return 1; })->name('doctor.logout');
     Route::get('/logout', [HomeController::class, 'home_logout'])->name('doctor.logout');
 
 });

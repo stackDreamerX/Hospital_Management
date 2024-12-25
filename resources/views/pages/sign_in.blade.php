@@ -12,34 +12,26 @@
 <link href="public/BackEnd/css/style-responsive.css" rel="stylesheet"/>
 <!-- Font Awesome Icons -->
 <link rel="stylesheet" href="public/BackEnd/css/font.css" type="text/css"/>
-<link href="public/BackEnd/css/font-awesome.css" rel="stylesheet"> 
-<!-- jQuery -->
-<script src="js/jquery2.0.3.min.js"></script>
+<link href="public/BackEnd/css/font-awesome.css" rel="stylesheet">
 
-<style>    
+
+<style>
 </style>
 </head>
 <body class="login-body">
 <div class="log-w3">
     <div class="w3layouts-main">
-        <h2>Đăng nhập</h2>      
-        <!-- @if ($errors->has('message'))
+        <h2>Đăng nhập</h2>
+        @if ($errors->any())
             <div class="alert alert-danger alert-dismissable">
                 <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-                {{ $errors->first('message') }}
-            </div>
-        @endif -->
-        @if ($errors->any()) 
-            <div class="alert alert-danger alert-dismissable">
-                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-                {{ $errors->first() }} 
+                {{ $errors->first() }}
                
             </div>
         @endif
         
         <form action="{{ route('home_dashboard') }}" method="post">
                 @csrf
-                <!-- {{ csrf_field() }} -->
                 <div class="form-group">
                     <input type="text" class="form-control" name="username" placeholder="USERNAME" required="">
                 </div>
@@ -61,12 +53,6 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
-<!-- 
-<script src="public/BackEnd/js/bootstrap.js"></script>
-<script src="public/BackEnd/js/jquery.dcjqaccordion.2.7.js"></script>
-<script src="public/BackEnd/js/scripts.js"></script>
-<script src="public/BackEnd/js/jquery.slimscroll.js"></script>
-<script src="public/BackEnd/js/jquery.nicescroll.js"></script>
-<script src="public/BackEnd/js/jquery.scrollTo.js"></script> -->
+
 </body>
 </html>
