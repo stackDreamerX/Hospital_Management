@@ -6,21 +6,24 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 use App\Models\Appointment;
+use App\Models\User;
+use App\Models\Doctor;
+use Illuminate\Support\Facades\Auth;
 
 class AppointmentController extends Controller
 {
     public function index()
     {
-        $patientId = auth()->user()->id; // Lấy ID từ session
+        $patientId = Auth::user()->UserID; // Lấy ID từ session
         $appointments = Appointment::with('doctor')
-            ->where('PatientID', $patientId)
+            ->where('UserID', $patientId)
             ->orderByDesc('AppointmentDate')
             ->get();
-
+        $doctors = Doctor::with('user')->get();
         $pendingCount = $appointments->where('Status', 'Pending')->count();
         $approvedCount = $appointments->where('Status', 'Approved')->count();
 
-        return view('patient.appointments', compact('appointments', 'pendingCount', 'approvedCount'));
+        return view('patient.appointments', compact('doctors','appointments', 'pendingCount', 'approvedCount'));
     }
 
     public function store(Request $request)
@@ -31,6 +34,7 @@ class AppointmentController extends Controller
             'reason' => 'required|string|max:255',
             'symptoms' => 'required|string',
             'notes' => 'nullable|string',
+            'doctor_id' => 'required|exists:doctors,DoctorID' // Validate DoctorID
         ]);
 
         Appointment::create([
@@ -39,8 +43,9 @@ class AppointmentController extends Controller
             'Reason' => $request->reason,
             'Symptoms' => $request->symptoms,
             'Notes' => $request->notes,
-            'PatientID' => auth()->user()->id,
-            'Status' => 'Pending',
+            'DoctorID' => $request->doctor_id, // Lưu DoctorID
+            'UserID' => Auth::user()->UserID, // Lấy UserID từ Auth
+            'Status' => 'Pending'
         ]);
 
         return response()->json(['message' => 'Đặt lịch thành công!']);
@@ -75,4 +80,14 @@ class AppointmentController extends Controller
         $appointment->delete();
         return response()->json(['message' => 'Hủy cuộc hẹn thành công!']);
     }
+
+    public function show($id)
+    {
+        $appointment = Appointment::where('AppointmentID', $id)
+            ->where('UserID', Auth::user()->UserID)
+            ->firstOrFail();
+
+        return response()->json($appointment);
+    }
+
 }

@@ -4,6 +4,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="keywords" content="Hospital Management System" />
+<meta name="csrf-token" content="{{ csrf_token() }}">
 <script type="application/x-javascript"> addEventListener("load", function() { setTimeout(hideURLbar, 0); }, false); function hideURLbar(){ window.scrollTo(0,1); } </script>
 <!-- bootstrap-css -->
 <link rel="stylesheet" href="{{ asset('public/BackEnd/css/bootstrap.min.css') }}" >
@@ -138,7 +139,7 @@
                     </a>
                 </li>
                 <li class="{{ Request::is('patient/appointments*') ? 'active' : '' }}">
-                    <a href="{{ route('patient.appointments') }}">
+                    <a href="{{ route('patient.appointments.index') }}">
                         <i class="fas fa-calendar-alt"></i>
                         <span>Appointments</span>
                     </a>

@@ -125,7 +125,8 @@
             <h5 class="mb-0">Request New Appointment</h5>
         </div>
         <div class="card-body">
-            <form id="appointmentForm">
+            <form id="appointmentForm" method="POST">
+                @csrf
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label class="form-label">Preferred Date</label>
@@ -136,29 +137,39 @@
                         <input type="time" class="form-control" id="appointment_time" required>
                     </div>
                 </div>
-
+            
                 <div class="mb-3">
                     <label class="form-label">Reason for Visit</label>
-                    <input type="text" class="form-control" id="reason"
-                           placeholder="e.g., Regular checkup, Follow-up, etc." required>
+                    <input type="text" class="form-control" id="reason" placeholder="e.g., Regular checkup, Follow-up, etc." required>
                 </div>
-
+            
                 <div class="mb-3">
                     <label class="form-label">Symptoms</label>
-                    <textarea class="form-control" id="symptoms" rows="2"
-                              placeholder="Describe your symptoms" required></textarea>
+                    <textarea class="form-control" id="symptoms" rows="2" placeholder="Describe your symptoms" required></textarea>
                 </div>
-
+            
                 <div class="mb-3">
                     <label class="form-label">Additional Notes</label>
-                    <textarea class="form-control" id="notes" rows="2"
-                              placeholder="Any additional information"></textarea>
+                    <textarea class="form-control" id="notes" rows="2" placeholder="Any additional information"></textarea>
                 </div>
-
+            
+                <div class="mb-3">
+                    <label class="form-label">Assign Doctor</label>
+                    <select class="form-select" id="doctor_id" required>
+                        <option value="">Select Doctor</option>
+                        @foreach($doctors as $doctor)
+                            <option value="{{ $doctor->DoctorID }}">{{ $doctor->user->FullName }}</option>
+                        @endforeach
+                    </select>
+                </div>
+            
+                <input type="hidden" id="user_id" value="{{ Auth::user()->UserID }}"> <!-- Thêm UserID từ user hiện tại -->
+            
                 <button type="submit" class="btn btn-primary">
                     <i class="fas fa-plus"></i> Request Appointment
                 </button>
             </form>
+            
         </div>
     </div>
 
@@ -262,6 +273,7 @@
             </div>
             <div class="modal-body">
                 <form id="editForm">
+                    @csrf
                     <input type="hidden" id="edit_id">
                     <div class="mb-3">
                         <label class="form-label">Date</label>
@@ -297,130 +309,186 @@
 
 @section('scripts')
 <script>
-let detailsModal, editModal;
+    let detailsModal, editModal;
 
-document.addEventListener('DOMContentLoaded', function() {
-    detailsModal = new bootstrap.Modal(document.getElementById('detailsModal'));
-    editModal = new bootstrap.Modal(document.getElementById('editModal'));
+    document.addEventListener('DOMContentLoaded', function () {
+        // Khởi tạo Bootstrap Modal
+        detailsModal = new bootstrap.Modal(document.getElementById('detailsModal'));
+        editModal = new bootstrap.Modal(document.getElementById('editModal'));
 
-    // Form submission
-    document.getElementById('appointmentForm').addEventListener('submit', function(e) {
-        e.preventDefault();
-        createAppointment();
-    });
+        // Xử lý sự kiện gửi form tạo cuộc hẹn mới
+        document.getElementById('appointmentForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+            createAppointment();
+        });
 
-    // Search functionality
-    document.getElementById('searchInput').addEventListener('keyup', function(e) {
-        const searchTerm = e.target.value.toLowerCase();
-        const rows = document.querySelectorAll('tbody tr');
-
-        rows.forEach(row => {
-            const text = row.textContent.toLowerCase();
-            row.style.display = text.includes(searchTerm) ? '' : 'none';
+        // Tìm kiếm cuộc hẹn
+        document.getElementById('searchInput').addEventListener('keyup', function (e) {
+            const searchTerm = e.target.value.toLowerCase();
+            const rows = document.querySelectorAll('tbody tr');
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                row.style.display = text.includes(searchTerm) ? '' : 'none';
+            });
         });
     });
-});
 
-function createAppointment() {
-    const data = {
-        appointment_date: document.getElementById('appointment_date').value,
-        appointment_time: document.getElementById('appointment_time').value,
-        reason: document.getElementById('reason').value,
-        symptoms: document.getElementById('symptoms').value,
-        notes: document.getElementById('notes').value
-    };
 
-    // Send to server
-    Swal.fire({
-        icon: 'success',
-        title: 'Success',
-        text: 'Appointment request submitted successfully!'
-    }).then(() => {
-        document.getElementById('appointmentForm').reset();
-        window.location.reload();
-    });
-}
+    function createAppointment() {
+        const data = {
+            appointment_date: document.getElementById('appointment_date').value,
+            appointment_time: document.getElementById('appointment_time').value,
+            reason: document.getElementById('reason').value,
+            symptoms: document.getElementById('symptoms').value,
+            notes: document.getElementById('notes').value,
+            doctor_id: document.getElementById('doctor_id').value
+        };
+        const url = `{{ route('patient.appointments.store') }}`;
 
-function viewDetails(appointment) {
-    const content = document.getElementById('detailsContent');
-    content.innerHTML = `
-        <div class="mb-3">
-            <strong>Date & Time:</strong> ${appointment.AppointmentDate} ${appointment.AppointmentTime}
-        </div>
-        <div class="mb-3">
-            <strong>Doctor:</strong> ${appointment.DoctorName || 'Not assigned yet'}
-        </div>
-        <div class="mb-3">
-            <strong>Status:</strong> ${appointment.Status}
-        </div>
-        <div class="mb-3">
-            <strong>Reason:</strong> ${appointment.Reason}
-        </div>
-        <div class="mb-3">
-            <strong>Symptoms:</strong> ${appointment.Symptoms}
-        </div>
-        ${appointment.Notes ? `
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+            },
+            body: JSON.stringify(data)
+        })
+            .then(response => response.json())
+            .then(result => {
+                if (result.message) {
+                    Swal.fire('Thành công', result.message, 'success').then(() => {
+                        document.getElementById('appointmentForm').reset();
+                        window.location.reload();
+                    });
+                } else {
+                    Swal.fire('Lỗi', 'Không thể tạo cuộc hẹn.', 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                Swal.fire('Lỗi', 'Đã xảy ra lỗi khi tạo cuộc hẹn.', 'error');
+            });
+    }
+
+
+    function viewDetails(appointment) {
+        const content = document.getElementById('detailsContent');
+        content.innerHTML = `
             <div class="mb-3">
-                <strong>Notes:</strong> ${appointment.Notes}
+                <strong>Ngày & Giờ:</strong> ${appointment.AppointmentDate} ${appointment.AppointmentTime}
             </div>
-        ` : ''}
-        ${appointment.AdminNotes ? `
             <div class="mb-3">
-                <strong>Admin Notes:</strong> ${appointment.AdminNotes}
+                <strong>Bác sĩ:</strong> ${appointment.DoctorName || 'Chưa được chỉ định'}
             </div>
-        ` : ''}
-    `;
-    detailsModal.show();
-}
+            <div class="mb-3">
+                <strong>Trạng thái:</strong> ${appointment.Status}
+            </div>
+            <div class="mb-3">
+                <strong>Lý do:</strong> ${appointment.Reason}
+            </div>
+            <div class="mb-3">
+                <strong>Triệu chứng:</strong> ${appointment.Symptoms}
+            </div>
+            ${appointment.Notes ? `<div class="mb-3"><strong>Ghi chú:</strong> ${appointment.Notes}</div>` : ''}
+            ${appointment.AdminNotes ? `<div class="mb-3"><strong>Ghi chú quản trị:</strong> ${appointment.AdminNotes}</div>` : ''}
+        `;
+        detailsModal.show();
+    }
 
-function editAppointment(appointment) {
-    document.getElementById('edit_id').value = appointment.AppointmentID;
-    document.getElementById('edit_date').value = appointment.AppointmentDate;
-    document.getElementById('edit_time').value = appointment.AppointmentTime;
-    document.getElementById('edit_reason').value = appointment.Reason;
-    document.getElementById('edit_symptoms').value = appointment.Symptoms;
-    document.getElementById('edit_notes').value = appointment.Notes || '';
-    
-    editModal.show();
-}
 
-function updateAppointment() {
-    const id = document.getElementById('edit_id').value;
-    const data = {
-        appointment_date: document.getElementById('edit_date').value,
-        appointment_time: document.getElementById('edit_time').value,
-        reason: document.getElementById('edit_reason').value,
-        symptoms: document.getElementById('edit_symptoms').value,
-        notes: document.getElementById('edit_notes').value
-    };
+    function editAppointment(id) {
+        const url =  `{{ route('patient.appointments.show', ['id' => '__id__']) }}`.replace('__id__', id);
 
-    // Send to server
-    Swal.fire({
-        icon: 'success',
-        title: 'Success',
-        text: 'Appointment updated successfully!'
-    }).then(() => {
-        editModal.hide();
-        window.location.reload();
-    });
-}
+        fetch(url)
+            .then(response => response.json())
+            .then(appointment => {
+                document.getElementById('edit_id').value = appointment.AppointmentID;
+                document.getElementById('edit_date').value = appointment.AppointmentDate;
+                document.getElementById('edit_time').value = appointment.AppointmentTime;
+                document.getElementById('edit_reason').value = appointment.Reason;
+                document.getElementById('edit_symptoms').value = appointment.Symptoms;
+                document.getElementById('edit_notes').value = appointment.Notes || '';
 
-function cancelAppointment(id) {
-    Swal.fire({
-        title: 'Cancel Appointment',
-        text: 'Are you sure you want to cancel this appointment?',
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonText: 'Yes, cancel it',
-        cancelButtonText: 'No, keep it'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            // Send to server
-            Swal.fire('Cancelled!', 'Your appointment has been cancelled.', 'success')
-            .then(() => window.location.reload());
-        }
-    });
-}
+                editModal.show();
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                Swal.fire('Lỗi', 'Không thể tải thông tin cuộc hẹn.', 'error');
+            });
+    }
+
+    function updateAppointment() {
+        const id = document.getElementById('edit_id').value;
+        const data = {
+            appointment_date: document.getElementById('edit_date').value,
+            appointment_time: document.getElementById('edit_time').value,
+            reason: document.getElementById('edit_reason').value,
+            symptoms: document.getElementById('edit_symptoms').value,
+            notes: document.getElementById('edit_notes').value
+        };
+        const url =  `{{ route('patient.appointments.update', ['id' => '__id__']) }}`.replace('__id__', id);
+        fetch(url, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+            },
+            body: JSON.stringify(data)
+        })
+            .then(response => response.json())
+            .then(result => {
+                if (result.message) {
+                    Swal.fire('Thành công', result.message, 'success').then(() => {
+                        editModal.hide();
+                        window.location.reload();
+                    });
+                } else {
+                    Swal.fire('Lỗi', 'Không thể cập nhật cuộc hẹn.', 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                Swal.fire('Lỗi', 'Đã xảy ra lỗi khi cập nhật cuộc hẹn.', 'error');
+            });
+    }
+
+
+    function cancelAppointment(id) {
+        const url =  `{{ route('patient.appointments.destroy', ['id' => '__id__']) }}`.replace('__id__', id);
+
+        Swal.fire({
+            title: 'Hủy cuộc hẹn',
+            text: 'Bạn có chắc chắn muốn hủy cuộc hẹn này không?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Đồng ý',
+            cancelButtonText: 'Hủy'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                fetch(url, {
+                    method: 'DELETE',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                    }
+                })
+                    .then(response => response.json())
+                    .then(result => {
+                        if (result.message) {
+                            Swal.fire('Thành công', result.message, 'success').then(() => {
+                                window.location.reload();
+                            });
+                        } else {
+                            Swal.fire('Lỗi', 'Không thể hủy cuộc hẹn.', 'error');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        Swal.fire('Lỗi', 'Đã xảy ra lỗi khi hủy cuộc hẹn.', 'error');
+                    });
+            }
+        });
+    }
+
 </script>
 @endsection
 
