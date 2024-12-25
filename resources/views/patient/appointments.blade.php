@@ -1,5 +1,92 @@
 @extends('patient_layout')
+
+@push('styles')
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+@endpush
+
 @section('content')
+
+<style>
+     modal {
+    display: none; /* Ẩn modal ban đầu */
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1050; /* Bootstrap 5 modal z-index */
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background-color: rgba(0, 0, 0, 0.5); /* Overlay mờ */
+    }
+
+    .modal.fade {
+    opacity: 0; /* Modal mờ khi chưa được hiển thị */
+    transition: opacity 0.15s linear;
+    }
+
+    .modal.show {
+    display: block; /* Hiển thị modal */
+    opacity: 1;
+    }
+
+    .modal-dialog {
+    position: relative;
+    margin: 1.75rem auto; /* Center modal vertically */
+    pointer-events: auto;
+    max-width: 500px; /* Độ rộng mặc định */
+    }
+
+    .modal-dialog.modal-lg {
+    max-width: 800px; /* Độ rộng modal lớn */
+    }
+
+    .modal-content {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    background-color: #fff;
+    border: none;
+    border-radius: 0.5rem; /* Bo góc */
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15); /* Đổ bóng */
+    }
+
+    .modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 1rem;
+    border-bottom: 1px solid #dee2e6; /* Border dưới */
+    border-top-left-radius: 0.5rem;
+    border-top-right-radius: 0.5rem;
+    }
+
+    .modal-title {
+    margin-bottom: 0;
+    line-height: 1.5;
+    }
+
+    .btn-close {
+    background: none;
+    border: none;
+    -webkit-appearance: none;
+    }
+
+    .modal-body {
+    position: relative;
+    flex: 1 1 auto;
+    padding: 1rem;
+    }
+
+    .modal-footer {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 1rem;
+    border-top: 1px solid #dee2e6;
+    }
+
+</style>
 
 <div class="container mt-4">
     <!-- Statistics Cards -->
@@ -119,16 +206,16 @@
                             <td>
                                 <div class="btn-group btn-group-sm">
                                     <button class="btn btn-info"
-                                            onclick="viewDetails({{ json_encode($appointment) }})">
+                                             onclick="viewDetails({{ $appointment->id }})">
                                         <i class="fas fa-eye"></i>
                                     </button>
                                     @if($appointment['Status'] == 'Pending')
                                         <button class="btn btn-primary"
-                                                onclick="editAppointment({{ json_encode($appointment) }})">
+                                                onclick="editAppointment({{ $appointment->id }})">
                                             <i class="fas fa-edit"></i>
                                         </button>
                                         <button class="btn btn-danger"
-                                                onclick="cancelAppointment({{ $appointment['AppointmentID'] }})">
+                                                onclick="cancelAppointment({{ $appointment->id }})">
                                             <i class="fas fa-times"></i>
                                         </button>
                                     @endif
@@ -336,3 +423,8 @@ function cancelAppointment(id) {
 }
 </script>
 @endsection
+
+
+@push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
+@endpush

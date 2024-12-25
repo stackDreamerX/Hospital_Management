@@ -74,6 +74,8 @@
         }
     }
 </style>
+
+@stack('styles')
 </head>
 <body>
 <section id="container">
@@ -187,12 +189,7 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="{{ asset('public/BackEnd/js/jquery.min.js') }}"></script>
 <script src="{{ asset('public/BackEnd/js/bootstrap.js') }}"></script>
-<script src="{{ asset('public/BackEnd/js/jquery.dcjqaccordion.2.7.js') }}"></script>
-<script src="{{ asset('public/BackEnd/js/scripts.js') }}"></script>
-<script src="{{ asset('public/BackEnd/js/jquery.slimscroll.js') }}"></script>
-<script src="{{ asset('public/BackEnd/js/jquery.nicescroll.js') }}"></script>
-<script src="{{ asset('public/BackEnd/js/jquery.scrollTo.js') }}"></script>
-
+@stack('scripts')
 <!-- Flash Messages -->
 <script>
     @if(Session::has('success'))

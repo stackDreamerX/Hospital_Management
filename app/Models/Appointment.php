@@ -6,15 +6,17 @@ use Illuminate\Database\Eloquent\Model;
 
 class Appointment extends Model
 {
-    protected $primaryKey = 'AppointmentID';
     protected $table = 'appointments';
-
+    protected $primaryKey = 'AppointmentID';
     protected $fillable = [
         'AppointmentDate',
         'AppointmentTime',
+        'Reason',
+        'Symptoms',
+        'Notes',
         'PatientID',
         'DoctorID',
-        'Status'
+        'Status',
     ];
 
     public function doctor()
@@ -22,8 +24,8 @@ class Appointment extends Model
         return $this->belongsTo(Doctor::class, 'DoctorID');
     }
 
-    public function patient()
+    public function user()
     {
-        return $this->belongsTo(Patient::class, 'PatientID');
+        return $this->belongsTo(User::class, 'UserID');
     }
 }
