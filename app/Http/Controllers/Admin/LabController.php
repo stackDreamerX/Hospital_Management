@@ -116,7 +116,7 @@ class LabController extends Controller
     }
 
     public function storeLabType(Request $request)
-    {       
+    {
         \Log::info('Store Lab Request:', $request->all());
         $request->validate([
             'name' => 'required|string|max:100',

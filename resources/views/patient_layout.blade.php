@@ -107,12 +107,6 @@
                   
 
                     <span class="username">{{ auth()->user()->FullName ?? 'Patient' }}</span>
-                    @if(Auth::check())
-                        
-                    @else
-                        <p>Người dùng chưa đăng nhập.</p>
-                        {{ dd(Auth::user()) }}
-                    @endif
                     <b class="caret"></b>
                 </a>
                 <ul class="dropdown-menu extended logout">
@@ -190,7 +184,7 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="{{ asset('public/BackEnd/js/jquery.min.js') }}"></script>
 <script src="{{ asset('public/BackEnd/js/bootstrap.js') }}"></script>
-@stack('scripts')
+
 <!-- Flash Messages -->
 <script>
     @if(Session::has('success'))
@@ -211,7 +205,6 @@
         });
     @endif
 </script>
-
 @yield('scripts')
 </body>
 </html>

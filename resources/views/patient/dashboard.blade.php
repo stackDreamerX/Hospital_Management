@@ -71,7 +71,7 @@
                 <div class="card-header bg-white py-3">
                     <div class="d-flex justify-content-between align-items-center">
                         <h5 class="mb-0">Upcoming Appointments</h5>
-                        <a href="{{ route('patient.appointments') }}" class="btn btn-sm btn-primary">View All</a>
+                        <a href="{{ route('patient.appointments.index') }}" class="btn btn-sm btn-primary">View All</a>
                     </div>
                 </div>
                 <div class="card-body">

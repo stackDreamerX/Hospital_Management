@@ -520,15 +520,7 @@ const labDate = document.getElementById('edit_date')?.value || null;
 const labTime = document.getElementById('edit_time')?.value || null;
 const price = document.getElementById('edit_price')?.value || null;
 
-        // const id = document.getElementById('edit_lab_id').value;
-        // const labType = document.getElementById('edit_lab_type').value;
-        // const userId = document.getElementById('edit_user_id').value;
-        // const doctorId = document.getElementById('edit_doctor').value;
-        // const labDate = document.getElementById('edit_lab_date').value;
-        // const labTime = document.getElementById('edit_lab_time').value;
-        // const price = document.getElementById('edit_price').value;
-
-        // const url = `/admin/laboratories/${id}/update`;
+      
         const url =  `{{ route('admin.lab.updateLab', ['id' => '__id__']) }}`.replace('__id__', id);
 
             fetch(url, {

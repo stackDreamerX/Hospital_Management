@@ -124,8 +124,10 @@ Route::prefix('patient')->middleware('auth')->group(function () {
     Route::get('/appointments', [App\Http\Controllers\Patient\AppointmentController::class, 'index']) ->name('patient.appointments.index');
     Route::post('/appointments/create', [App\Http\Controllers\Patient\AppointmentController::class, 'store'])->name('patient.appointments.store');
     Route::get('/appointments/{id}', [App\Http\Controllers\Patient\AppointmentController::class, 'show'])->name('patient.appointments.show');
-    Route::put('/appointments/{id}', [App\Http\Controllers\Patient\AppointmentController::class, 'update'])->name('patient.appointments.update');
-    Route::delete('/appointments/{id}', [App\Http\Controllers\Patient\AppointmentController::class, 'destroy'])->name('patient.appointments.destroy');
+    Route::get('/appointments/detail/{id}', [App\Http\Controllers\Patient\AppointmentController::class, 'showDetail']) ->name('patient.appointments.showDetail');
+
+    Route::put('/appointments/{id}/updateAppointment', [App\Http\Controllers\Patient\AppointmentController::class, 'update'])->name('patient.appointments.update');
+    Route::delete('/appointments/{id}/delete', [App\Http\Controllers\Patient\AppointmentController::class, 'destroy'])->name('patient.appointments.destroy');
 
 
     Route::get('/treatments',[App\Http\Controllers\Patient\TreatmentController::class,'index']) -> name('patient.treatments');

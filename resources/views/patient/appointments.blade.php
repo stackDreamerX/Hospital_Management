@@ -202,10 +202,10 @@
                     <tbody>
                         @forelse($appointments as $appointment)
                         <tr>
-                            <td>{{ $appointment['AppointmentDate'] }}</td>
-                            <td>{{ $appointment['AppointmentTime'] }}</td>
-                            <td>{{ $appointment['DoctorName'] ?? 'Not assigned yet' }}</td>
-                            <td>{{ $appointment['Reason'] }}</td>
+                            <td>{{ $appointment->AppointmentDate }}</td>
+                            <td>{{ $appointment->AppointmentTime }}</td>
+                            <td>{{ $appointment->doctor->user->FullName ?? 'Chưa được chỉ định' }}</td>
+                            <td>{{ $appointment->Reason }}</td>
                             <td>
                                 <span class="badge bg-{{
                                     $appointment['Status'] == 'Approved' ? 'success' :
@@ -217,17 +217,20 @@
                             <td>
                                 <div class="btn-group btn-group-sm">
                                     <button class="btn btn-info"
-                                             onclick="viewDetails({{ $appointment->id }})">
+                                             onclick="viewDetails({{ $appointment->AppointmentID  }})">
                                         <i class="fas fa-eye"></i>
+                                        View
                                     </button>
-                                    @if($appointment['Status'] == 'Pending')
+                                    @if($appointment['Status'] == 'pending')
                                         <button class="btn btn-primary"
-                                                onclick="editAppointment({{ $appointment->id }})">
+                                                onclick="editAppointment({{ $appointment->AppointmentID  }})">
                                             <i class="fas fa-edit"></i>
+                                            Edit
                                         </button>
                                         <button class="btn btn-danger"
-                                                onclick="cancelAppointment({{ $appointment->id }})">
+                                                onclick="cancelAppointment({{ $appointment->AppointmentID  }})">
                                             <i class="fas fa-times"></i>
+                                            Cancle
                                         </button>
                                     @endif
                                 </div>
@@ -295,6 +298,17 @@
                         <label class="form-label">Notes</label>
                         <textarea class="form-control" id="edit_notes" rows="2"></textarea>
                     </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Doctor</label>
+                        <select id="edit_doctor" class="form-select" required>
+                            <option value="">Select a Doctor</option>
+                            @foreach ($doctors as $doctor)
+                                <option value="{{ $doctor->DoctorID }}">{{ $doctor->user->FullName }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
                 </form>
             </div>
             <div class="modal-footer">
@@ -315,6 +329,7 @@
         // Khởi tạo Bootstrap Modal
         detailsModal = new bootstrap.Modal(document.getElementById('detailsModal'));
         editModal = new bootstrap.Modal(document.getElementById('editModal'));
+       
 
         // Xử lý sự kiện gửi form tạo cuộc hẹn mới
         document.getElementById('appointmentForm').addEventListener('submit', function (e) {
@@ -344,7 +359,7 @@
             doctor_id: document.getElementById('doctor_id').value
         };
         const url = `{{ route('patient.appointments.store') }}`;
-
+        
         fetch(url, {
             method: 'POST',
             headers: {
@@ -361,39 +376,59 @@
                         window.location.reload();
                     });
                 } else {
+                    console.error('Error:', error);
                     Swal.fire('Lỗi', 'Không thể tạo cuộc hẹn.', 'error');
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
-                Swal.fire('Lỗi', 'Đã xảy ra lỗi khi tạo cuộc hẹn.', 'error');
+                Swal.fire('Lỗi', 'Đã xảy ra lỗi khi tạo cuộc hẹn. <br> kiểm tra ngày hẹn phải sau ngày hiện tại', 'error');
             });
     }
 
 
-    function viewDetails(appointment) {
-        const content = document.getElementById('detailsContent');
-        content.innerHTML = `
-            <div class="mb-3">
-                <strong>Ngày & Giờ:</strong> ${appointment.AppointmentDate} ${appointment.AppointmentTime}
-            </div>
-            <div class="mb-3">
-                <strong>Bác sĩ:</strong> ${appointment.DoctorName || 'Chưa được chỉ định'}
-            </div>
-            <div class="mb-3">
-                <strong>Trạng thái:</strong> ${appointment.Status}
-            </div>
-            <div class="mb-3">
-                <strong>Lý do:</strong> ${appointment.Reason}
-            </div>
-            <div class="mb-3">
-                <strong>Triệu chứng:</strong> ${appointment.Symptoms}
-            </div>
-            ${appointment.Notes ? `<div class="mb-3"><strong>Ghi chú:</strong> ${appointment.Notes}</div>` : ''}
-            ${appointment.AdminNotes ? `<div class="mb-3"><strong>Ghi chú quản trị:</strong> ${appointment.AdminNotes}</div>` : ''}
-        `;
-        detailsModal.show();
+    function viewDetails(appointmentId) {
+        const url =  `{{ route('patient.appointments.showDetail', ['id' => '__id__']) }}`.replace('__id__', appointmentId);
+
+        fetch(url)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(appointment => {
+                const content = document.getElementById('detailsContent');
+                content.innerHTML = `
+                    <div class="mb-3">
+                        <strong>Ngày & Giờ:</strong> ${appointment.AppointmentDate} ${appointment.AppointmentTime}
+                    </div>
+                    <div class="mb-3">
+                        <strong>Bác sĩ:</strong> ${appointment.DoctorName || 'Chưa được chỉ định'}
+                    </div>
+                    <div class="mb-3">
+                        <strong>Trạng thái:</strong> ${appointment.Status}
+                    </div>
+                    <div class="mb-3">
+                        <strong>Lý do:</strong> ${appointment.Reason}
+                    </div>
+                    <div class="mb-3">
+                        <strong>Triệu chứng:</strong> ${appointment.Symptoms}
+                    </div>
+                    ${
+                        appointment.Notes
+                            ? `<div class="mb-3"><strong>Ghi chú:</strong> ${appointment.Notes}</div>`
+                            : ''
+                    }
+                `;
+                detailsModal.show();
+            })
+            .catch(error => {
+                console.error('Error fetching appointment details:', error);
+                Swal.fire('Lỗi', 'Không thể tải thông tin cuộc hẹn.', 'error');
+            });
     }
+
 
 
     function editAppointment(id) {
@@ -408,7 +443,7 @@
                 document.getElementById('edit_reason').value = appointment.Reason;
                 document.getElementById('edit_symptoms').value = appointment.Symptoms;
                 document.getElementById('edit_notes').value = appointment.Notes || '';
-
+                document.getElementById('edit_doctor').value = appointment.DoctorID || '';
                 editModal.show();
             })
             .catch(error => {
@@ -424,7 +459,8 @@
             appointment_time: document.getElementById('edit_time').value,
             reason: document.getElementById('edit_reason').value,
             symptoms: document.getElementById('edit_symptoms').value,
-            notes: document.getElementById('edit_notes').value
+            notes: document.getElementById('edit_notes').value,
+            doctor_id: document.getElementById('edit_doctor').value,
         };
         const url =  `{{ route('patient.appointments.update', ['id' => '__id__']) }}`.replace('__id__', id);
         fetch(url, {
