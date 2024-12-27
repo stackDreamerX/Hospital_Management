@@ -9,52 +9,14 @@ use App\Http\Requests;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Redirect;
 session_start();
+use App\Models\Appointment;
+use App\Models\Doctor;
+use App\Models\User;
+use App\Models\Ward;
 
 class AdminController extends Controller
 {
-    private $sampleDoctors = [
-        ['DoctorID' => 1, 'FullName' => 'Dr. Sarah Wilson', 'Status' => 'online'],
-        ['DoctorID' => 2, 'FullName' => 'Dr. Michael Brown', 'Status' => 'online'],
-        ['DoctorID' => 3, 'FullName' => 'Dr. Emily Davis', 'Status' => 'offline'],
-        ['DoctorID' => 4, 'FullName' => 'Dr. Jessica Taylor', 'Status' => 'online'],
-        ['DoctorID' => 5, 'FullName' => 'Dr. James Anderson', 'Status' => 'offline']
-    ];
-
-    private $samplePatients = [
-        ['PatientID' => 1, 'FullName' => 'John Doe'],
-        ['PatientID' => 2, 'FullName' => 'Jane Smith'],
-        ['PatientID' => 3, 'FullName' => 'Robert Johnson'],
-        ['PatientID' => 4, 'FullName' => 'Mary Williams'],
-        ['PatientID' => 5, 'FullName' => 'David Brown']
-    ];
-
-    private $sampleAppointments = [
-        [
-            'AppointmentID' => 1,
-            'PatientName' => 'John Doe',
-            'DoctorName' => 'Dr. Sarah Wilson',
-            'AppointmentDate' => '2024-03-20',
-            'AppointmentTime' => '09:00',
-            'Status' => 'pending'
-        ],
-        [
-            'AppointmentID' => 2,
-            'PatientName' => 'Jane Smith',
-            'DoctorName' => 'Dr. Michael Brown',
-            'AppointmentDate' => '2024-03-20',
-            'AppointmentTime' => '10:30',
-            'Status' => 'approved'
-        ],
-        [
-            'AppointmentID' => 3,
-            'PatientName' => 'Robert Johnson',
-            'DoctorName' => 'Dr. Emily Davis',
-            'AppointmentDate' => '2024-03-21',
-            'AppointmentTime' => '14:00',
-            'Status' => 'completed'
-        ]
-    ];
-
+   
     private $sampleWards = [
         [
             'WardID' => 1,
@@ -86,33 +48,68 @@ class AdminController extends Controller
         return view('admin_login');
     }
 
-    public function show_dashboard() {
+    // public function show_dashboard() {
         
 
-        // Calculate available beds
-        $totalBeds = collect($this->sampleWards)->sum('Capacity');
-        $occupiedBeds = collect($this->sampleWards)->sum('CurrentOccupancy');
-        $availableBeds = $totalBeds - $occupiedBeds;
+    //     // Calculate available beds
+    //     $totalBeds = collect($this->sampleWards)->sum('Capacity');
+    //     $occupiedBeds = collect($this->sampleWards)->sum('CurrentOccupancy');
+    //     $availableBeds = $totalBeds - $occupiedBeds;
 
-        // Get today's appointments
-        $todayAppointments = collect($this->sampleAppointments)
-            ->where('AppointmentDate', date('Y-m-d'))
-            ->count();
+    //     // Get today's appointments
+    //     $todayAppointments = collect($this->sampleAppointments)
+    //         ->where('AppointmentDate', date('Y-m-d'))
+    //         ->count();
 
-        // Get recent appointments
-        $recentAppointments = collect($this->sampleAppointments)
-            ->sortByDesc('AppointmentDate')
-            ->take(5);
+    //     // Get recent appointments
+    //     $recentAppointments = collect($this->sampleAppointments)
+    //         ->sortByDesc('AppointmentDate')
+    //         ->take(5);
 
-        return view('admin.dashboard', [
-            'doctors' => $this->sampleDoctors,
-            'patients' => $this->samplePatients,
-            'recentAppointments' => $recentAppointments,
-            'wards' => $this->sampleWards,
-            'todayAppointments' => $todayAppointments,
-            'availableBeds' => $availableBeds
-        ]);
+    //     return view('admin.dashboard', [
+    //         'doctors' => $this->sampleDoctors,
+    //         'patients' => $this->samplePatients,
+    //         'recentAppointments' => $recentAppointments,
+    //         'wards' => $this->sampleWards,
+    //         'todayAppointments' => $todayAppointments,
+    //         'availableBeds' => $availableBeds
+    //     ]);
+    // }
+
+    public function show_dashboard()
+    {
+        // Lấy tất cả cuộc hẹn
+        $appointments = Appointment::with(['user', 'doctor.user'])
+            ->orderByDesc('AppointmentDate')
+            ->get();
+
+        // Cập nhật trạng thái 'Overdue' cho các cuộc hẹn quá hạn
+        foreach ($appointments as $appointment) {
+            if ($appointment->AppointmentDate < date('Y-m-d') && $appointment->Status === 'Pending') {
+                $appointment->update(['Status' => 'Overdue']);
+            }
+        }      
+
+        $wards = $this->sampleWards; 
+        // Thống kê dữ liệu
+        $recentAppointments = $appointments;   //->take(10);
+        $todayAppointments = $appointments->where('AppointmentDate', date('Y-m-d'))->count();
+        $doctors = Doctor::all();
+        $patients = User::where('roleID', 'patient')->get();
+        $availableBeds = 0 ;  //Ward::sum('AvailableBeds');
+
+        // Truyền dữ liệu sang view
+        return view('admin.dashboard', compact(
+            'recentAppointments', 
+            'todayAppointments', 
+            'doctors', 
+            'patients', 
+            'availableBeds',
+            'wards'
+        ));
     }
+
+
 
     public function dashboard(Request $request) {
         $admin_email = $request->admin_email;

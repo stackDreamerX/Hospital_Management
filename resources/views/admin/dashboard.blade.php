@@ -104,9 +104,9 @@
                                 </thead>
                                 <tbody>
                                     @forelse($recentAppointments ?? [] as $appointment)
-                                    <tr>
-                                        <td>{{ $appointment['PatientName'] }}</td>
-                                        <td>{{ $appointment['DoctorName'] }}</td>
+                                    <tr class="{{ $appointment->AppointmentDate === date('Y-m-d') ? 'table-warning' : '' }}">
+                                        <td>{{ $appointment->user->FullName ?? 'No name provided' }}</td>
+                                        <td>{{ $appointment->doctor->user->FullName ?? 'No name provided' }}</td>
                                         <td>{{ $appointment['AppointmentDate'] }}</td>
                                         <td>{{ $appointment['AppointmentTime'] }}</td>
                                         <td>

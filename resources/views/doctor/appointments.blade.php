@@ -127,7 +127,7 @@
                     </thead>
                     <tbody>
                         @forelse($appointments as $appointment)
-                        <tr>
+                        <tr class="{{ $appointment->AppointmentDate === date('Y-m-d') ? 'table-warning' : '' }}">
                             <td>{{ $appointment['AppointmentDate'] }}</td>
                             <td>{{ $appointment['AppointmentTime'] }}</td>
                             <td>{{ $appointment->user->FullName ?? 'No name provided' }}</td> <!-- Patient Name -->
