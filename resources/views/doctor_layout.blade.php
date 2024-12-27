@@ -104,7 +104,7 @@
             <li class="dropdown">
                 <a data-bs-toggle="dropdown" class="dropdown-toggle" href="#">
                     <img alt="" src="{{ asset('public/BackEnd/images/avatar.jpg') }}">
-                    <span class="username">{{ Session::get('doctor_name', 'Doctor') }}</span>
+                    <span class="username">{{ auth()->user()->FullName ?? 'Doctor' }}</span>
                     <b class="caret"></b>
                 </a>
                 <ul class="dropdown-menu extended logout">

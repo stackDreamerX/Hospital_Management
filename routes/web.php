@@ -88,6 +88,9 @@ Route::prefix('doctor')->middleware('auth')->group(function () {
     Route::get('/dashboard', [App\Http\Controllers\Doctor\DashboardController::class, 'index'])->name('doctor.dashboard');
 
     Route::get('/appointments', [App\Http\Controllers\Doctor\AppointmentController::class, 'index']) ->name('doctor.appointments');
+    Route::post('/appointments/{id}/updateStatus', [App\Http\Controllers\Doctor\AppointmentController::class, 'updateStatus'])->name('doctor.appointments.updateStatus');
+
+
 
     Route::get('/lab', [App\Http\Controllers\Doctor\LabController::class,'lab'])->name('doctor.lab');
     Route::get('/lab/details/{id}', [App\Http\Controllers\Doctor\LabController::class, 'show'])->name('doctor.lab.details');

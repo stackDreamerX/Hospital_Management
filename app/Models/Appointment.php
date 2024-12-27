@@ -15,6 +15,7 @@ class Appointment extends Model
         'Symptoms',
         'Notes',
         'UserID',
+        'DoctorNotes',
         'DoctorID',
         'Status',
     ];

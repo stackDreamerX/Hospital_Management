@@ -175,17 +175,23 @@
 
     <!-- Appointments List -->
     <div class="card">
-        <div class="card-header bg-white py-3">
-            <div class="d-flex justify-content-between align-items-center">
-                <h5 class="mb-0">My Appointments</h5>
-                <div class="input-group" style="width: 300px;">
-                    <input type="text" id="searchInput" class="form-control" placeholder="Search appointments...">
-                    <button class="btn btn-outline-secondary">
-                        <i class="fas fa-search"></i>
-                    </button>
-                </div>
+            <div class="card-header bg-white py-3">
+                        <h5 class="mb-0">My Appointments</h5>
+                        <div class="d-flex justify-content-between align-items-center mt-3">
+                            <!-- Search Input -->
+                            <div class="input-group" style="width: 300px;">
+                                <span class="input-group-text">
+                                    <i class="fas fa-search"></i> <!-- Icon Search -->
+                                </span>
+                                <input type="text" id="searchInput" class="form-control" placeholder="Search appointments...">
+                            </div>
+                            
+                            <!-- Reload Button -->
+                            <button class="btn btn-outline-secondary ms-3" id="reloadButton">
+                                <i class="fas fa-sync"></i> Reload
+                            </button>
+                        </div>
             </div>
-        </div>
         <div class="card-body">
             <div class="table-responsive">
                 <table class="table">
@@ -195,6 +201,7 @@
                             <th>Time</th>
                             <th>Doctor</th>
                             <th>Reason</th>
+                            <th>DoctorNotes</th>
                             <th>Status</th>
                             <th>Actions</th>
                         </tr>
@@ -206,10 +213,11 @@
                             <td>{{ $appointment->AppointmentTime }}</td>
                             <td>{{ $appointment->doctor->user->FullName ?? 'Chưa được chỉ định' }}</td>
                             <td>{{ $appointment->Reason }}</td>
+                            <td>{{ $appointment['DoctorNotes'] ?? 'No notes provided' }}</td>
                             <td>
                                 <span class="badge bg-{{
-                                    $appointment['Status'] == 'Approved' ? 'success' :
-                                    ($appointment['Status'] == 'Pending' ? 'warning' : 'danger')
+                                    $appointment['Status'] == 'approved' ? 'success' :
+                                    ($appointment['Status'] == 'pending' ? 'warning' : 'danger')
                                 }}">
                                     {{ $appointment['Status'] }}
                                 </span>
@@ -336,16 +344,26 @@
             e.preventDefault();
             createAppointment();
         });
+      
+        const searchInput = document.getElementById('searchInput');
+        const reloadButton = document.getElementById('reloadButton');
+        const tableBody = document.querySelector('tbody');
+        const rows = tableBody.querySelectorAll('tr');
 
-        // Tìm kiếm cuộc hẹn
-        document.getElementById('searchInput').addEventListener('keyup', function (e) {
+        searchInput.addEventListener('keyup', function(e) {
             const searchTerm = e.target.value.toLowerCase();
-            const rows = document.querySelectorAll('tbody tr');
+
             rows.forEach(row => {
                 const text = row.textContent.toLowerCase();
                 row.style.display = text.includes(searchTerm) ? '' : 'none';
             });
         });
+
+    
+        reloadButton.addEventListener('click', function() {
+            window.location.reload();
+        });
+
     });
 
 
