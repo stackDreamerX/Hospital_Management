@@ -100,9 +100,7 @@
                                     <label for="RoleID" class="form-label">Role</label>
                                     <select name="RoleID" id="RoleID" class="form-select" required>
                                         <option value="" disabled selected>Select Role</option>
-                                        <option value="patient">Patient</option>
-                                        <option value="doctor">Doctor</option>
-                                        <option value="administrator">Administrator</option>
+                                        <option value="patient">Patient</option>                                      
                                     </select>
                                 </div>
 
