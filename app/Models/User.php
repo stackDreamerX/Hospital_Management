@@ -59,11 +59,26 @@ class User extends Authenticatable
     public function getAuthPassword()
     {
         return $this->password; // Laravel sẽ dùng cột "password" cho xác thực
+    }  
+
+        public function appointments()
+    {
+        return $this->hasMany(Appointment::class, 'UserID', 'UserID');
     }
 
     public function laboratories()
     {
         return $this->hasMany(Laboratory::class, 'UserID', 'UserID');
+    }
+
+    public function prescriptions()
+    {
+        return $this->hasMany(Prescription::class, 'UserID', 'UserID');
+    }
+
+    public function treatments()
+    {
+        return $this->hasMany(Treatment::class, 'UserID', 'UserID');
     }
 
     
