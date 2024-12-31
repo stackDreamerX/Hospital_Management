@@ -8,26 +8,24 @@ use Illuminate\Support\Facades\Auth;
 class PatientController extends Controller
 {
     public function index()
-    {
-        \DB::enableQueryLog();
-        // Lấy UserID của bác sĩ đang đăng nhập
+    {             
         $userId = Auth::id();
 
-        // Lấy DoctorID dựa trên UserID từ bảng doctors
+      
         $doctor = \App\Models\Doctor::where('UserID', $userId)->first();
 
         if (!$doctor) {
             return redirect()->back()->with('error', 'Doctor information not found.');
         }
 
-        $doctorId = $doctor->DoctorID; // Lấy DoctorID từ bảng doctors
+        $doctorId = $doctor->DoctorID; 
    
         $userIds = \App\Models\Appointment::where('DoctorID', $doctorId)
         ->pluck('UserID')
         ->unique();
 
-        // Lấy danh sách bệnh nhân mà bác sĩ đã làm việc thông qua appointments
-        $patients = User::whereIn('UserID', $userIds) // Chỉ lấy bệnh nhân
+    
+        $patients = \App\Models\User::whereIn('UserID', $userIds)
             ->whereHas('appointments', function ($query) use ($doctorId) {
                 $query->where('DoctorID', $doctorId);
             })
@@ -64,36 +62,36 @@ class PatientController extends Controller
     {
         $userId = Auth::id();
 
-        // Lấy DoctorID từ bảng doctors
+      
         $doctor = \App\Models\Doctor::where('UserID', $userId)->first();
         if (!$doctor) {
             return redirect()->back()->with('error', 'Doctor information not found.');
         }
         $doctorId = $doctor->DoctorID;
 
-        // Lấy thông tin bệnh nhân
+     
         $patient = \App\Models\User::where('RoleID', 'patient')->findOrFail($id);
 
-        // Lấy danh sách appointments liên quan đến bác sĩ hiện tại
+     
         $appointments = \App\Models\Appointment::where('UserID', $id)
             ->where('DoctorID', $doctorId)
             ->orderByDesc('AppointmentDate')
             ->get();
 
-        // Lấy danh sách treatments liên quan đến bác sĩ hiện tại
+      
         $treatments = \App\Models\Treatment::where('UserID', $id)
             ->where('DoctorID', $doctorId)
             ->orderByDesc('TreatmentDate')
             ->get();
 
-        // Lấy danh sách prescriptions liên quan đến bác sĩ hiện tại
+      
         $prescriptions = \App\Models\Prescription::with(['prescriptionDetails.medicine'])
             ->where('UserID', $id)
             ->where('DoctorID', $doctorId)
             ->orderByDesc('PrescriptionDate')
             ->get();
 
-        // Lấy danh sách lab tests liên quan đến bác sĩ hiện tại
+     
         $labTests = \App\Models\Laboratory::with(['laboratoryResults', 'laboratoryDetails', 'laboratoryType'])
             ->where('DoctorID', $doctorId)
             ->where('UserID', $id)
