@@ -38,9 +38,9 @@ class Prescription extends Model
         return $this->belongsTo(Doctor::class, 'DoctorID', 'DoctorID');
     }
 
-    // Liên kết tới bảng medicines (nếu có bảng lưu thuốc kê trong đơn thuốc)
-    public function medicines()
+    public function prescriptionDetail()
     {
-        return $this->hasMany(PrescriptionMedicine::class, 'PrescriptionID', 'PrescriptionID');
+        return $this->hasMany(PrescriptionDetail::class, 'PrescriptionID', 'PrescriptionID');
     }
+
 }
