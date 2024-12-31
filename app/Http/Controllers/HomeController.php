@@ -10,8 +10,10 @@ use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Validator;
 use App\Models\User;
+use App\Models\Doctor;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
+
 class HomeController extends Controller
 {
     public function index()
@@ -19,14 +21,16 @@ class HomeController extends Controller
         return view('pages.home');
     }
 
-    public function sign_in() {
+    public function sign_in()
+    {
         return view('pages.sign_in');
-   }
+    }
 
-    public function sign_up() {
+    public function sign_up()
+    {
         return view('pages.sign_up');
     }
-  
+
     public function home_dashboard(Request $request)
     {
         // Validate dữ liệu đầu vào
@@ -34,9 +38,9 @@ class HomeController extends Controller
             'username' => 'required|string',
             'password' => 'required|string',
         ]);
-     
-          
-    //    dd(['username' => $request->username, 'password' => $request->password]);
+
+
+        //    dd(['username' => $request->username, 'password' => $request->password]);
 
 
         if (Auth::attempt(['username' => $request->username, 'password' => $request->password])) {
@@ -49,22 +53,21 @@ class HomeController extends Controller
             } else {
                 return redirect()->route('admin.dashboard');
             }
-        }
-        else {
+        } else {
             // Đăng nhập thất bại
             return redirect()->back()->withErrors(['message' => 'Tài khoản hoặc mật khẩu không đúng.']);
         }
-       
     }
 
-    public function home_logout() {
+    public function home_logout()
+    {
         // Đăng xuất người dùng
         Auth::logout();
         // Chuyển hướng về trang chủ
         return redirect('/trang-chu')->withErrors(['message' => 'You have been logged out successfully']);
     }
 
-   public function register(Request $request)
+    public function register(Request $request)
     {
         // Xác thực dữ liệu đầu vào
         $validator = Validator::make($request->all(), [
@@ -75,7 +78,7 @@ class HomeController extends Controller
             'RoleID' => 'required|in:patient,doctor,administrator',
             'username' => 'required|string|max:50|unique:users,username',
         ]);
-   
+
         if ($validator->fails()) {
             return redirect()->back()->withErrors($validator)->withInput();
         }
@@ -88,9 +91,9 @@ class HomeController extends Controller
             'Email' => $request->Email,
             'password' => Hash::make($request->password),
             'PhoneNumber' => $request->PhoneNumber,
-                   
+
         ]);
-        
+
 
         // Chuyển hướng sau khi đăng ký thành công
         return redirect('/sign-in')->with('success', 'Account created successfully! Please log in.');
@@ -100,6 +103,42 @@ class HomeController extends Controller
     {
         return view('pages.staff');
     }
+
+    public function searchDoctors(Request $request)
+    {
+        // Retrieve search inputs
+        $specialty = $request->input('specialty');
+        // $location = $request->input('location');
+        // $insurance = $request->input('insurance');
+        // $name = $request->input('doctor_name');
+
+        // Query using Eloquent model
+        $query = Doctor::query();
+
+        // Apply filters if present
+        if ($specialty) {
+            $query->where('Speciality', $specialty);
+        }
+
+        // if ($location) {
+        //     $query->where('Location', $location);
+        // }
+
+        // if ($insurance) {
+        //     $query->where('Insurance', $insurance);
+        // }
+
+        // if ($name) {
+        //     $query->where('Name', 'LIKE', "%$name%");
+        // }
+
+        // Fetch all doctors or filtered results
+        $doctors = $query->get();
+
+        // Return the view with the results
+        return view('staff', ['doctors' => $doctors]);
+    }
+
 
     public function locations()
     {
@@ -116,9 +155,8 @@ class HomeController extends Controller
         if (!Auth::check()) {
             return redirect('/sign-in')->with('message', 'Please login to access appointments');
         }
-        
+
         return redirect('/patient/dashboard');
     }
-
 }
 // php artisan make:controller HomeController
