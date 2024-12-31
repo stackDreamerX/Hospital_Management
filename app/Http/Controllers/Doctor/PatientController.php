@@ -92,7 +92,7 @@ class PatientController extends Controller
             ->get();
 
      
-        $labTests = \App\Models\Laboratory::with(['laboratoryResults', 'laboratoryDetails', 'laboratoryType'])
+        $labTests = \App\Models\Laboratory::with(['laboratoryResult', 'laboratoryDetail', 'laboratoryType'])
             ->where('DoctorID', $doctorId)
             ->where('UserID', $id)
             ->orderByDesc('LaboratoryDate')
