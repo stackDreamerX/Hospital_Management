@@ -3,170 +3,113 @@
 namespace App\Http\Controllers\Doctor;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Auth;
 
 class PatientController extends Controller
 {
-    private $samplePatients = [
-        [
-            'PatientID' => 1,
-            'FullName' => 'John Doe',
-            'Age' => 35,
-            'Gender' => 'Male',
-            'Phone' => '0123456789',
-            'Email' => 'john.doe@example.com',
-            'LastVisit' => '2024-03-15',
-            'Appointments' => [
-                [
-                    'Date' => '2024-03-15',
-                    'Type' => 'Consultation',
-                    'Status' => 'Completed'
-                ],
-                [
-                    'Date' => '2024-03-20',
-                    'Type' => 'Follow-up',
-                    'Status' => 'Pending'
-                ]
-            ],
-            'LabTests' => [
-                [
-                    'Date' => '2024-03-15',
-                    'Type' => 'Blood Test',
-                    'Result' => 'Normal'
-                ]
-            ],
-            'Prescriptions' => [
-                [
-                    'Date' => '2024-03-15',
-                    'Medicines' => ['Paracetamol', 'Vitamin C'],
-                    'Status' => 'Dispensed'
-                ]
-            ],
-            'Treatments' => [
-                [
-                    'Date' => '2024-03-15',
-                    'Type' => 'Physical Therapy',
-                    'Status' => 'Ongoing'
-                ]
-            ]
-        ],
-        // Add more sample patients...
-    ];
-
     public function index()
     {
-        $doctorId = session('doctor_id', 1); // Get logged in doctor's ID
-        
-        // Get all appointments, labs, prescriptions, and treatments for this doctor
-        $appointments = collect($this->getAppointments($doctorId));
-        $labTests = collect($this->getLabTests($doctorId));
-        $prescriptions = collect($this->getPrescriptions($doctorId));
-        $treatments = collect($this->getTreatments($doctorId));
+        \DB::enableQueryLog();
+        // Lấy UserID của bác sĩ đang đăng nhập
+        $userId = Auth::id();
 
-        // Get unique patient IDs from all services
-        $patientIds = collect()
-            ->merge($appointments->pluck('PatientID'))
-            ->merge($labTests->pluck('PatientID'))
-            ->merge($prescriptions->pluck('PatientID'))
-            ->merge($treatments->pluck('PatientID'))
-            ->unique();
+        // Lấy DoctorID dựa trên UserID từ bảng doctors
+        $doctor = \App\Models\Doctor::where('UserID', $userId)->first();
 
-        // Filter patients who have used any of the doctor's services
-        $patients = collect($this->samplePatients)
-            ->whereIn('PatientID', $patientIds)
-            ->values();
+        if (!$doctor) {
+            return redirect()->back()->with('error', 'Doctor information not found.');
+        }
 
+        $doctorId = $doctor->DoctorID; // Lấy DoctorID từ bảng doctors
+   
+        $userIds = \App\Models\Appointment::where('DoctorID', $doctorId)
+        ->pluck('UserID')
+        ->unique();
+
+        // Lấy danh sách bệnh nhân mà bác sĩ đã làm việc thông qua appointments
+        $patients = User::whereIn('UserID', $userIds) // Chỉ lấy bệnh nhân
+            ->whereHas('appointments', function ($query) use ($doctorId) {
+                $query->where('DoctorID', $doctorId);
+            })
+            ->with([
+                'appointments' => function ($query) use ($doctorId) {
+                    $query->where('DoctorID', $doctorId);
+                },
+                'laboratories' => function ($query) use ($doctorId) {
+                    $query->where('DoctorID', $doctorId);
+                },
+                'prescriptions' => function ($query) use ($doctorId) {
+                    $query->where('DoctorID', $doctorId);
+                },
+                'treatments' => function ($query) use ($doctorId) {
+                    $query->where('DoctorID', $doctorId);
+                },
+            ])
+            ->get()
+            ->map(function ($patient) use ($doctorId) {
+                $patient->appointment_count = $patient->appointments->where('DoctorID', $doctorId)->count();
+                $patient->lab_test_count = $patient->laboratories->where('DoctorID', $doctorId)->count();
+                $patient->prescription_count = $patient->prescriptions->where('DoctorID', $doctorId)->count();
+                $patient->treatment_count = $patient->treatments->where('DoctorID', $doctorId)->count();
+                return $patient;
+            });
+
+         
         return view('doctor.patients', compact('patients'));
     }
 
+    
+
     public function show($id)
     {
-        $doctorId = session('doctor_id', 1);
-        
-        // Get patient details
-        $patient = collect($this->samplePatients)
-            ->firstWhere('PatientID', $id);
+        $userId = Auth::id();
 
-        if (!$patient) {
-            return redirect()->back()->with('error', 'Patient not found');
+        // Lấy DoctorID từ bảng doctors
+        $doctor = \App\Models\Doctor::where('UserID', $userId)->first();
+        if (!$doctor) {
+            return redirect()->back()->with('error', 'Doctor information not found.');
         }
+        $doctorId = $doctor->DoctorID;
 
-        // Get all services for this patient with this doctor
-        $appointments = collect($this->getAppointments($doctorId))
-            ->where('PatientID', $id)
-            ->sortByDesc('Date');
+        // Lấy thông tin bệnh nhân
+        $patient = \App\Models\User::where('RoleID', 'patient')->findOrFail($id);
 
-        $labTests = collect($this->getLabTests($doctorId))
-            ->where('PatientID', $id)
-            ->sortByDesc('Date');
+        // Lấy danh sách appointments liên quan đến bác sĩ hiện tại
+        $appointments = \App\Models\Appointment::where('UserID', $id)
+            ->where('DoctorID', $doctorId)
+            ->orderByDesc('AppointmentDate')
+            ->get();
 
-        $prescriptions = collect($this->getPrescriptions($doctorId))
-            ->where('PatientID', $id)
-            ->sortByDesc('Date');
+        // Lấy danh sách treatments liên quan đến bác sĩ hiện tại
+        $treatments = \App\Models\Treatment::where('UserID', $id)
+            ->where('DoctorID', $doctorId)
+            ->orderByDesc('TreatmentDate')
+            ->get();
 
-        $treatments = collect($this->getTreatments($doctorId))
-            ->where('PatientID', $id)
-            ->sortByDesc('Date');
+        // Lấy danh sách prescriptions liên quan đến bác sĩ hiện tại
+        $prescriptions = \App\Models\Prescription::with(['prescriptionDetails.medicine'])
+            ->where('UserID', $id)
+            ->where('DoctorID', $doctorId)
+            ->orderByDesc('PrescriptionDate')
+            ->get();
+
+        // Lấy danh sách lab tests liên quan đến bác sĩ hiện tại
+        $labTests = \App\Models\Laboratory::with(['laboratoryResults', 'laboratoryDetails', 'laboratoryType'])
+            ->where('DoctorID', $doctorId)
+            ->where('UserID', $id)
+            ->orderByDesc('LaboratoryDate')
+            ->get();
+                    
+        
 
         return view('doctor.patient-details', compact(
             'patient',
             'appointments',
-            'labTests',
+            'treatments',
             'prescriptions',
-            'treatments'
+            'labTests'
         ));
     }
 
-    private function getAppointments($doctorId)
-    {
-        // Sample appointments data
-        return [
-            [
-                'PatientID' => 1,
-                'Date' => '2024-03-20',
-                'Type' => 'Follow-up',
-                'Status' => 'Pending'
-            ]
-        ];
-    }
 
-    private function getLabTests($doctorId)
-    {
-        // Sample lab tests data
-        return [
-            [
-                'PatientID' => 1,
-                'Date' => '2024-03-15',
-                'Type' => 'Blood Test',
-                'Result' => 'Normal'
-            ]
-        ];
-    }
-
-    private function getPrescriptions($doctorId)
-    {
-        // Sample prescriptions data
-        return [
-            [
-                'PatientID' => 1,
-                'Date' => '2024-03-15',
-                'Medicines' => ['Paracetamol', 'Vitamin C'],
-                'Status' => 'Dispensed'
-            ]
-        ];
-    }
-
-    private function getTreatments($doctorId)
-    {
-        // Sample treatments data
-        return [
-            [
-                'PatientID' => 1,
-                'Date' => '2024-03-15',
-                'Type' => 'Physical Therapy',
-                'Status' => 'Ongoing'
-            ]
-        ];
-    }
-} 
+}
