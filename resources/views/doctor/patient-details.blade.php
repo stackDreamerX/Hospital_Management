@@ -1,11 +1,15 @@
 @extends('doctor_layout')
 
+@push('styles')
+<link href="http://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+<link href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+@endpush
 
 @section('content')
 
 <style>
     body {
-        background-color: #f8f9fa; /* Màu nền sáng cho giao diện */
+        background-color: #f8f9fa; 
     }
     .card {
         border: 1px solid #ddd;
@@ -24,7 +28,7 @@
     .nav-tabs > li.active > a:focus, 
     .nav-tabs > li.active > a:hover {
         background-color: #337ab7; 
-        color: #fff;
+        color: #fff; 
         border-color: #ddd #ddd transparent;
     }
 
@@ -57,7 +61,7 @@
         padding: 5px 10px;
     }
 
-
+    /* Tùy chỉnh trạng thái */
     .label-success {
         background-color: #5cb85c;
     }
@@ -72,6 +76,13 @@
 </style>
 
 <div class="container">
+    <!-- button back -->
+    <div class="mb-3">
+        <button class="btn btn-primary" onclick="goBack()">
+            <i class="fa fa-arrow-left"></i> Back
+        </button>
+    </div>
+
     <!-- Patient Info -->
     <div class="card">
         <div class="card-body">
@@ -235,14 +246,29 @@
     </div>
 </div>
 
-@endsection
-
-@section('script')
 <script>
     $(document).ready(function () {
         $('.nav-tabs a:first').tab('show');
     });
+
+
+    function goBack() {
+        if (document.referrer) {
+            window.history.back();
+        } else {
+            window.location.href = '{{ route('doctor.patients') }}'; 
+        }
+    }
+
 </script>
+
+
 @endsection
 
+@section('script')
 
+@endsection
+
+@push('scripts')
+<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+@endpush

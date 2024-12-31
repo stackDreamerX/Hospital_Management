@@ -37,8 +37,13 @@ class Laboratory extends Model
         return $this->belongsTo(Doctor::class, 'DoctorID', 'DoctorID');
     }
 
-    public function laboratoryDetails()
+    public function laboratoryDetail()
     {
         return $this->hasMany(LaboratoryDetail::class, 'LaboratoryID', 'LaboratoryID');
+    }
+
+    public function laboratoryResult()
+    {
+        return $this->hasMany(LaboratoryResult::class, 'LaboratoryID', 'LaboratoryID');
     }
 }
