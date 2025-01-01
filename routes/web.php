@@ -105,7 +105,10 @@ Route::prefix('doctor')->middleware('auth')->group(function () {
     Route::get('/pharmacy',[App\Http\Controllers\Doctor\PharmacyController::class,'index']) -> name('doctor.pharmacy');
   
     Route::get('/treatments',[App\Http\Controllers\Doctor\TreatmentController::class,'index']) -> name('doctor.treatments');
-   
+    Route::post('/treatments/create',[App\Http\Controllers\Doctor\TreatmentController::class,'store']) -> name('doctor.treatment.store');
+    Route::get('treatments/details/{id}', [TreatmentController::class, 'show'])->name('doctor.treatments.show');
+    Route::put('treatments/{id}/updateTreatment', [TreatmentController::class, 'update'])->name('doctor.treatments.update');
+    Route::delete('treatments/{id}/delete', [TreatmentController::class, 'destroy'])->name('doctor.treatments.destroy');
 
     Route::get('/profile', function() { return 1; })->name('doctor.profile');
     Route::get('/settings', function() { return 1; })->name('doctor.settings');
