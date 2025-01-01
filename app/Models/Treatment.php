@@ -22,8 +22,11 @@ class Treatment extends Model
     protected $fillable = [
         'TreatmentTypeID',
         'TreatmentDate',
-        'UserID', // Liên kết với bảng users
-        'DoctorID', // Liên kết với bảng doctors
+        'UserID',
+        'DoctorID',
+        'Duration',
+        'Notes',
+        'Status',
         'TotalPrice',
     ];
 
