@@ -19,15 +19,15 @@ class LabController extends Controller
 {
     public function lab()
     {
-        $labTypes = LaboratoryType::all(); // Lấy danh sách loại xét nghiệm từ database
+        $labTypes = LaboratoryType::all(); 
         $laboratories = Laboratory::with(['user', 'doctor', 'laboratoryType'])
             ->orderBy('LaboratoryDate', 'desc')
-            ->get(); // Lấy danh sách xét nghiệm kèm thông tin liên quan     
+            ->get(); 
         $doctors = Doctor::with('user')->get();
       
         $patients = User::where('roleID', 'patient')->get();
 
-        // Tính toán thống kê
+      
         $totalTests = $laboratories->count();
         $pendingTests = $laboratories->where('Status', 'Pending')->count();
         $completedTests = $laboratories->where('Status', 'Completed')->count();
@@ -51,7 +51,7 @@ class LabController extends Controller
             \Log::info('Store Lab Request:', $request->all());
             $request->validate([
                 'lab_type' => 'required|exists:laboratory_types,LaboratoryTypeID',
-                'user_id' => 'required|exists:users,UserID', // Đảm bảo UserID được gửi
+                'user_id' => 'required|exists:users,UserID', 
                 'doctor_id' => 'required|exists:doctors,DoctorID',
                 'lab_date' => 'required|date',
                 'lab_time' => 'required',
@@ -61,7 +61,7 @@ class LabController extends Controller
             try {
                 Laboratory::create([
                     'LaboratoryTypeID' => $request->lab_type,
-                    'UserID' => $request->user_id, // Đảm bảo UserID được truyền
+                    'UserID' => $request->user_id,
                     'DoctorID' => $request->doctor_id,
                     'LaboratoryDate' => $request->lab_date,
                     'LaboratoryTime' => $request->lab_time,
@@ -117,17 +117,17 @@ class LabController extends Controller
 
     public function generateReport(Request $request)
     {
-        // In real application, generate PDF report
+       
         return response()->json(['message' => 'Report generated successfully']);
     }
 
     public function show($id)
     {
         try {
-            // Lấy thông tin xét nghiệm dựa trên ID với các quan hệ liên kết
+           
             $lab = Laboratory::with(['laboratoryType', 'user', 'doctor'])->findOrFail($id);
 
-            // Trả về dữ liệu JSON
+          
             return response()->json([
                 'labType' => $lab->laboratoryType->LaboratoryTypeName,
                 'patientName' => $lab->user->FullName, 
@@ -148,7 +148,7 @@ class LabController extends Controller
 
     public function updateLab(Request $request, $id)
     {
-        \Log::info('Update Lab Request:', $request->all());
+     
 
         $request->validate([
             'labType' => 'required|exists:laboratory_types,LaboratoryTypeID',
@@ -172,7 +172,7 @@ class LabController extends Controller
 
             return response()->json(['message' => 'Laboratory assignment updated successfully']);
         } catch (\Exception $e) {
-            \Log::error('Error updating laboratory: ' . $e->getMessage());
+         
             return response()->json(['error' => 'Failed to update laboratory'], 500);
         }
     }
@@ -180,11 +180,11 @@ class LabController extends Controller
     public function destroyLab($id)
     {
         try {
-            $lab = Laboratory::findOrFail($id); // Tìm Lab theo ID
+            $lab = Laboratory::findOrFail($id); 
             $lab->delete(); // Xóa Lab
             return response()->json(['message' => 'Laboratory assignment deleted successfully.']);
         } catch (\Exception $e) {
-            \Log::error('Error deleting laboratory: ' . $e->getMessage());
+          
             return response()->json(['error' => 'Failed to delete laboratory.'], 500);
         }
     }

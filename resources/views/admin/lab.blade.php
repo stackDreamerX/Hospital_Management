@@ -47,36 +47,36 @@
     }
 
     modal {
-  display: none; /* Ẩn modal ban đầu */
+  display: none;
   position: fixed;
   top: 0;
   left: 0;
-  z-index: 1050; /* Bootstrap 5 modal z-index */
+  z-index: 1050; 
   width: 100%;
   height: 100%;
   overflow: hidden;
-  background-color: rgba(0, 0, 0, 0.5); /* Overlay mờ */
+  background-color: rgba(0, 0, 0, 0.5);
 }
 
 .modal.fade {
-  opacity: 0; /* Modal mờ khi chưa được hiển thị */
+  opacity: 0; 
   transition: opacity 0.15s linear;
 }
 
 .modal.show {
-  display: block; /* Hiển thị modal */
+  display: block; 
   opacity: 1;
 }
 
 .modal-dialog {
   position: relative;
-  margin: 1.75rem auto; /* Center modal vertically */
+  margin: 1.75rem auto; 
   pointer-events: auto;
-  max-width: 500px; /* Độ rộng mặc định */
+  max-width: 500px;
 }
 
 .modal-dialog.modal-lg {
-  max-width: 800px; /* Độ rộng modal lớn */
+  max-width: 800px;
 }
 
 .modal-content {
@@ -85,8 +85,8 @@
   flex-direction: column;
   background-color: #fff;
   border: none;
-  border-radius: 0.5rem; /* Bo góc */
-  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15); /* Đổ bóng */
+  border-radius: 0.5rem;
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15); 
 }
 
 .modal-header {
@@ -94,7 +94,7 @@
   align-items: center;
   justify-content: space-between;
   padding: 1rem 1rem;
-  border-bottom: 1px solid #dee2e6; /* Border dưới */
+  border-bottom: 1px solid #dee2e6; 
   border-top-left-radius: 0.5rem;
   border-top-right-radius: 0.5rem;
 }
@@ -419,12 +419,12 @@
                 return response.json();
             })
             .then(data => {
-                // Kiểm tra xem dữ liệu có đầy đủ hay không
+            
                 if (!data || !data.labType || !data.patientName || !data.doctorName) {
                     throw new Error('Incomplete data received from the server.');
                 }
 
-                // Hiển thị chi tiết xét nghiệm
+           
                 const details = `
                     <p><strong>Type:</strong> ${data.labType}</p>
                     <p><strong>Patient:</strong> ${data.patientName}</p>
