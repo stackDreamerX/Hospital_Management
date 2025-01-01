@@ -5,98 +5,129 @@ namespace App\Http\Controllers\Doctor;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Auth;
+use App\Models\Treatment;
+use App\Models\User;
 
 class TreatmentController extends Controller
 {
-    private $sampleTreatments = [
-        [
-            'TreatmentID' => 1,
-            'PatientID' => 1,
-            'PatientName' => 'John Doe',
-            'DoctorID' => 1,
-            'TreatmentDate' => '2024-03-20',
-            'Type' => 'Physical Therapy',
-            'Description' => 'Lower back rehabilitation',
-            'Duration' => '45 minutes',
-            'Status' => 'Scheduled',
-            'Notes' => null,
-            'Progress' => null
-        ],
-        [
-            'TreatmentID' => 2,
-            'PatientID' => 2,
-            'PatientName' => 'Jane Smith',
-            'DoctorID' => 1,
-            'TreatmentDate' => '2024-03-19',
-            'Type' => 'Wound Care',
-            'Description' => 'Post-surgical wound dressing',
-            'Duration' => '30 minutes',
-            'Status' => 'Completed',
-            'Notes' => 'Healing well, no signs of infection',
-            'Progress' => 'Good progress, schedule follow-up in 1 week'
-        ]
-    ];
-
-    private $treatmentTypes = [
-        'Physical Therapy',
-        'Wound Care',
-        'Respiratory Therapy',
-        'Speech Therapy',
-        'Occupational Therapy',
-        'Chemotherapy',
-        'Radiation Therapy',
-        'Dialysis'
-    ];
-
     public function index()
     {
-        $doctorId = session('doctor_id', 1);
+        // Lấy UserID hiện tại từ Auth
+        $userId = Auth::id();
+
+        // Lấy DoctorID từ bảng doctors dựa vào UserID
+        $doctor = \App\Models\Doctor::where('UserID', $userId)->first();
+
+        if (!$doctor) {
+            return redirect()->back()->with('error', 'Doctor profile not found!');
+        }
+
+        // Lấy danh sách treatments của Doctor
+        $treatments = Treatment::with('user')
+            ->where('DoctorID', $doctor->DoctorID)
+            ->orderBy('TreatmentDate', 'desc')
+            ->get();
+
+        // Lấy danh sách bệnh nhân từ bảng users (RoleID = 'patient')
+        $patients = User::where('RoleID', 'patient')->get();
+
+        // Các loại điều trị
+        // $treatmentTypes = [
+        //     'Physical Therapy',
+        //     'Wound Care',
+        //     'Respiratory Therapy',
+        //     'Speech Therapy',
+        //     'Occupational Therapy',
+        // ];
         
-        $treatments = collect($this->sampleTreatments)
-            ->where('DoctorID', $doctorId)
-            ->sortByDesc('TreatmentDate');
+         // Lấy danh sách các loại điều trị từ bảng treatment_types
+        $treatmentTypes = \App\Models\TreatmentType::all();
 
-        $patients = collect($this->getMyPatients($doctorId));
-        $treatmentTypes = collect($this->treatmentTypes);
-
-        return view('doctor.treatment', compact(
-            'treatments',
-            'patients',
-            'treatmentTypes'
-        ));
+        return view('doctor.treatment', compact('treatments', 'patients', 'treatmentTypes'));
     }
 
     public function store(Request $request)
     {
         $request->validate([
-            'patient_id' => 'required|integer',
-            'type' => 'required|string',
+            'patient_id' => 'required|exists:users,UserID', // Đảm bảo patient_id tồn tại trong bảng users
+            'treatment_type' => 'required|exists:treatment_types,TreatmentTypeID',
             'description' => 'required|string',
             'treatment_date' => 'required|date|after_or_equal:today',
-            'duration' => 'required|string',
-            'notes' => 'nullable|string'
+            'duration' => 'required|string|max:50',
+            'notes' => 'nullable|string',
+            'total_price' => 'required|numeric|min:0',
         ]);
 
-        // In real application, save to database
-        return response()->json(['message' => 'Treatment created successfully']);
+        // Lấy DoctorID từ bảng doctors
+        $userId = Auth::id();
+        $doctor = \App\Models\Doctor::where('UserID', $userId)->first();
+
+        if (!$doctor) {
+            return response()->json(['success' => false, 'message' => 'Doctor profile not found!'], 404);
+        }
+        // dd($request);
+        // Tạo treatment
+        $treatment = Treatment::create([
+            'DoctorID' => $doctor->DoctorID,
+            'UserID' => $request->patient_id,
+            'TreatmentTypeID' => $request->treatment_type,
+            'Description' => $request->description,
+            'TreatmentDate' => $request->treatment_date,    
+            'Duration' => $request->duration,
+            'Notes' => $request->notes,
+            'TotalPrice' => $request->total_price,
+            'Status' => 'Scheduled',
+        ]);
+
+        return response()->json(['success' => true, 'message' => 'Treatment assigned successfully', 'data' => $treatment]);
     }
+
+    public function show($id)
+    {
+        $treatment = Treatment::with(['user', 'treatmentType'])
+            ->where('TreatmentID', $id)
+            ->firstOrFail();
+
+        return response()->json([
+            'TreatmentID' => $treatment->TreatmentID,
+            'PatientID' => $treatment->user->UserID,
+            'PatientName' => $treatment->user->FullName,
+            'TreatmentTypeID' => $treatment->treatmentType->TreatmentTypeID,
+            'TreatmentTypeName' => $treatment->treatmentType->TypeName,
+            'TreatmentDate' => $treatment->TreatmentDate,
+            'Duration' => $treatment->Duration,
+            'TotalPrice' => $treatment->TotalPrice,
+            'Status' => $treatment->Status,
+            'Description' => $treatment->Description,
+            'Notes' => $treatment->Notes,
+            'Progress' => $treatment->Progress ?? null,
+        ]);
+    }
+
 
     public function update(Request $request, $id)
     {
         $request->validate([
             'status' => 'required|in:Completed,Cancelled',
-            'progress' => 'required_if:status,Completed|nullable|string',
-            'notes' => 'nullable|string'
+            'progress' => 'nullable|string',
         ]);
 
-        // In real application, update database
-        return response()->json(['message' => 'Treatment updated successfully']);
+        $treatment = Treatment::findOrFail($id);
+        $treatment->update([
+            'Status' => $request->status,
+            'Progress' => $request->progress,
+        ]);
+
+        return response()->json(['success' => true, 'message' => 'Treatment updated successfully']);
     }
 
     public function destroy($id)
     {
-        // In real application, delete from database
-        return response()->json(['message' => 'Treatment cancelled successfully']);
+        $treatment = Treatment::findOrFail($id);
+        $treatment->delete();
+
+        return response()->json(['success' => true, 'message' => 'Treatment cancelled successfully']);
     }
 
     private function getMyPatients($doctorId)
