@@ -9,50 +9,38 @@
 @section('admin_content')
 
 <style>
-    /* .modal {
-        background: rgba(0, 0, 0, 0.5);
-        z-index: 1050;
-    }
-    
-    .modal-backdrop {
-        z-index: 1040;
-    }
-    
-    .modal-dialog {
-        z-index: 1060;
-        margin: 30px auto;
-    }     */
+
     modal {
-  display: none; /* Ẩn modal ban đầu */
+  display: none; 
   position: fixed;
   top: 0;
   left: 0;
-  z-index: 1050; /* Bootstrap 5 modal z-index */
+  z-index: 1050; 
   width: 100%;
   height: 100%;
   overflow: hidden;
-  background-color: rgba(0, 0, 0, 0.5); /* Overlay mờ */
+  background-color: rgba(0, 0, 0, 0.5); 
 }
 
 .modal.fade {
-  opacity: 0; /* Modal mờ khi chưa được hiển thị */
+  opacity: 0;
   transition: opacity 0.15s linear;
 }
 
 .modal.show {
-  display: block; /* Hiển thị modal */
+  display: block;
   opacity: 1;
 }
 
 .modal-dialog {
   position: relative;
-  margin: 1.75rem auto; /* Center modal vertically */
+  margin: 1.75rem auto;
   pointer-events: auto;
-  max-width: 500px; /* Độ rộng mặc định */
+  max-width: 500px; 
 }
 
 .modal-dialog.modal-lg {
-  max-width: 800px; /* Độ rộng modal lớn */
+  max-width: 800px; 
 }
 
 .modal-content {
@@ -61,8 +49,8 @@
   flex-direction: column;
   background-color: #fff;
   border: none;
-  border-radius: 0.5rem; /* Bo góc */
-  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15); /* Đổ bóng */
+  border-radius: 0.5rem; 
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15); 
 }
 
 .modal-header {
@@ -70,7 +58,7 @@
   align-items: center;
   justify-content: space-between;
   padding: 1rem 1rem;
-  border-bottom: 1px solid #dee2e6; /* Border dưới */
+  border-bottom: 1px solid #dee2e6; 
   border-top-left-radius: 0.5rem;
   border-top-right-radius: 0.5rem;
 }
@@ -114,71 +102,75 @@
     <h2 style="color: #333; margin-bottom: 20px;">Doctor Management</h2>
 
     <!-- Add Doctor Panel -->
-    <form action="{{ route('admin.createDoctor') }}" method="POST">
+    <form id="createDoctorForm" method="POST">
         @csrf
         <div class="row">
+            <!-- Username -->
             <div class="col-md-4 mb-3">
-                <label class="form-label">Username</label>
-                <input type="text" name="username" class="form-control" required>
+                <label for="username" class="form-label">Username</label>
+                <input type="text" id="username" name="username" class="form-control" required>
             </div>
+
+            <!-- Speciality -->
             <div class="col-md-4 mb-3">
-                <label class="form-label">Speciality</label>
-                <select name="speciality" class="form-control" required>
-                <option value="">Select Speciality</option>
-                            <option value="Anesthesiology">Anesthesiology</option>
-                            <option value="Cardiology">Cardiology</option>
-                            <option value="Dermatology">Dermatology</option>
-                            <option value="Emergency Medicine">Emergency Medicine</option>
-                            <option value="Endocrinology">Endocrinology</option>
-                            <option value="Family Medicine">Family Medicine</option>
-                            <option value="Gastroenterology">Gastroenterology</option>
-                            <option value="General Surgery">General Surgery</option>
-                            <option value="Geriatric Medicine">Geriatric Medicine</option>
-                            <option value="Gynecology">Gynecology</option>
-                            <option value="Hematology">Hematology</option>
-                            <option value="Infectious Disease">Infectious Disease</option>
-                            <option value="Internal Medicine">Internal Medicine</option>
-                            <option value="Nephrology">Nephrology</option>
-                            <option value="Neurology">Neurology</option>
-                            <option value="Neurosurgery">Neurosurgery</option>
-                            <option value="Obstetrics">Obstetrics</option>
-                            <option value="Oncology">Oncology</option>
-                            <option value="Ophthalmology">Ophthalmology</option>
-                            <option value="Orthopedics">Orthopedics</option>
-                            <option value="Otolaryngology">Otolaryngology</option>
-                            <option value="Pathology">Pathology</option>
-                            <option value="Pediatrics">Pediatrics</option>
-                            <option value="Plastic Surgery">Plastic Surgery</option>
-                            <option value="Psychiatry">Psychiatry</option>
-                            <option value="Pulmonology">Pulmonology</option>
-                            <option value="Radiology">Radiology</option>
-                            <option value="Rheumatology">Rheumatology</option>
-                            <option value="Urology">Urology</option>
-                            <option value="Vascular Surgery">Vascular Surgery</option>
-                    <!-- Add more options here -->
+                <label for="speciality" class="form-label">Speciality</label>
+                <select id="speciality" name="speciality" class="form-control" required>
+                    <option value="">Select Speciality</option>
+                    <option value="Anesthesiology">Anesthesiology</option>
+                    <option value="Cardiology">Cardiology</option>
+                    <option value="Dermatology">Dermatology</option>
+                    <option value="Emergency Medicine">Emergency Medicine</option>
+                    <option value="Endocrinology">Endocrinology</option>
+                    <option value="Family Medicine">Family Medicine</option>
+                    <option value="Gastroenterology">Gastroenterology</option>
+                    <option value="General Surgery">General Surgery</option>
+                    <option value="Geriatric Medicine">Geriatric Medicine</option>
+                    <option value="Gynecology">Gynecology</option>
+                    <option value="Hematology">Hematology</option>
+                    <option value="Infectious Disease">Infectious Disease</option>
+                    <option value="Internal Medicine">Internal Medicine</option>
+                    <option value="Nephrology">Nephrology</option>
+                    <option value="Neurology">Neurology</option>
+                    <option value="Neurosurgery">Neurosurgery</option>
+                    <option value="Obstetrics">Obstetrics</option>
+                    <option value="Oncology">Oncology</option>
+                    <option value="Ophthalmology">Ophthalmology</option>
+                    <option value="Orthopedics">Orthopedics</option>
+                    <option value="Otolaryngology">Otolaryngology</option>
+                    <option value="Pathology">Pathology</option>
+                    <option value="Pediatrics">Pediatrics</option>
+                    <option value="Plastic Surgery">Plastic Surgery</option>
+                    <option value="Psychiatry">Psychiatry</option>
+                    <option value="Pulmonology">Pulmonology</option>
+                    <option value="Radiology">Radiology</option>
+                    <option value="Rheumatology">Rheumatology</option>
+                    <option value="Urology">Urology</option>
+                    <option value="Vascular Surgery">Vascular Surgery</option>
                 </select>
             </div>
-            <div class="col-md-4 mb-3">
-                <label class="form-label">Title</label>
-                <select name="title" class="form-control" required>
-                <option value="">Select Title</option>
-                            <option value="Resident Doctor">Resident Doctor</option>
-                            <option value="Medical Officer">Medical Officer</option>
-                            <option value="Senior Medical Officer">Senior Medical Officer</option>
-                            <option value="Specialist">Specialist</option>
-                            <option value="Senior Specialist">Senior Specialist</option>
-                            <option value="Consultant">Consultant</option>
-                            <option value="Senior Consultant">Senior Consultant</option>
-                            <option value="Chief Consultant">Chief Consultant</option>
-                            <option value="Head of Department">Head of Department</option>
-                            <option value="Clinical Director">Clinical Director</option>
-                            <option value="Medical Director">Medical Director</option>
 
+            <!-- Title -->
+            <div class="col-md-4 mb-3">
+                <label for="title" class="form-label">Title</label>
+                <select id="title" name="title" class="form-control" required>
+                    <option value="">Select Title</option>
+                    <option value="Resident Doctor">Resident Doctor</option>
+                    <option value="Medical Officer">Medical Officer</option>
+                    <option value="Senior Medical Officer">Senior Medical Officer</option>
+                    <option value="Specialist">Specialist</option>
+                    <option value="Senior Specialist">Senior Specialist</option>
+                    <option value="Consultant">Consultant</option>
+                    <option value="Senior Consultant">Senior Consultant</option>
+                    <option value="Chief Consultant">Chief Consultant</option>
+                    <option value="Head of Department">Head of Department</option>
+                    <option value="Clinical Director">Clinical Director</option>
+                    <option value="Medical Director">Medical Director</option>
                 </select>
             </div>
         </div>
         <button type="submit" class="btn btn-primary">Create Doctor</button>
     </form>
+
 
 
     <!-- Doctors List -->
@@ -342,10 +334,12 @@
 </div>
 
 
+
 @endsection
 
 @push('scripts')
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 @endpush
 
 @section('scripts')
@@ -361,21 +355,7 @@
             console.warn('Edit modal not found!');
         }
 
-        const createForm = document.getElementById('createDoctorForm');
-        if (createForm) {
-            createForm.addEventListener('submit', function (e) {
-                e.preventDefault();
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Success',
-                    text: 'Doctor created successfully!'
-                }).then(() => {
-                    window.location.reload();
-                });
-            });
-        } else {
-            console.warn('Create form not found!');
-        }
+       
 
         const searchInput = document.getElementById('searchInput');
         const tableBody = document.querySelector('.table tbody');
@@ -576,6 +556,55 @@
             })
             .catch(error => {
                 console.error('Error fetching doctor list:', error);
+            });
+    });
+
+//CreateDoctorForm
+    document.getElementById('createDoctorForm').addEventListener('submit', function (event) {
+        event.preventDefault(); 
+
+        const username = document.getElementById('username').value;
+        const speciality = document.getElementById('speciality').value;
+        const title = document.getElementById('title').value;
+        const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
+
+        fetch('{{ route('admin.createDoctor') }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': csrfToken,
+            },
+            body: JSON.stringify({
+                username,
+                speciality,
+                title,
+            }),
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success',
+                        text: data.message,
+                    }).then(() => {
+                        window.location.reload();
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: data.message,
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Failed to create doctor.',
+                });
             });
     });
 

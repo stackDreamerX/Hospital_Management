@@ -9,71 +9,46 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 class StaffController extends Controller
 {
-    private $sampleDoctors = [
-        [
-            'DoctorID' => 1,
-            'UserID' => 1,
-            'FullName' => 'Dr. Sarah Wilson',
-            'Username' => 'dr.wilson',
-            'Email' => 'sarah.wilson@example.com',
-            'PhoneNumber' => '0123456789',
-            'Speciality' => 'Cardiology',
-            'Title' => 'Senior Consultant'
-        ],
-        [
-            'DoctorID' => 2,
-            'UserID' => 2,
-            'FullName' => 'Dr. Michael Brown',
-            'Username' => 'dr.brown',
-            'Email' => 'michael.brown@example.com',
-            'PhoneNumber' => '0123456788',
-            'Speciality' => 'Neurology',
-            'Title' => 'Specialist'
-        ]
-    ];
 
-    // public function staff()
-    // {
-    //     $doctors = collect($this->sampleDoctors);
-    //     return view('admin.staff', compact('doctors'));
-    // }
+  
 
     public function staff()
     {
-        // Lấy danh sách các bác sĩ từ bảng doctors
-        $doctors = Doctor::with('user')->get(); // Liên kết với bảng users
+        
+        $doctors = Doctor::with('user')->get();
         return view('admin.staff', compact('doctors'));
     }
 
     public function createDoctor(Request $request)
-    {
-        // Xác thực đầu vào
+    {    
         $validated = $request->validate([
-            'username' => 'required|exists:users,username', // Username phải tồn tại trong bảng users
+            'username' => 'required|string',
             'speciality' => 'required|string|max:100',
             'title' => 'required|string|max:100',
         ]);
 
-        // Tìm user dựa trên username
         $user = User::where('username', $request->username)->first();
 
-        if ($user->RoleID === 'doctor') {
-            return back()->withErrors(['message' => 'Người dùng này đã là doctor.']);
+        if (!$user) {
+            return response()->json(['success' => false, 'message' => 'Username not exist!']);
         }
 
-        // Cập nhật RoleID thành 'doctor'
+        if ($user->RoleID === 'doctor') {
+            return response()->json(['success' => false, 'message' => 'This user is already a doctor!']);
+        }
+
         $user->RoleID = 'doctor';
         $user->save();
 
-        // Thêm bác sĩ vào bảng doctors
         Doctor::create([
             'UserID' => $user->UserID,
             'Speciality' => $request->speciality,
             'Title' => $request->title,
         ]);
 
-        return back()->with('message', 'Bác sĩ đã được thêm thành công!');
+        return response()->json(['success' => true, 'message' => 'Doctor created successfully!']);
     }
+
 
     public function editDoctor(Request $request, $id)
     {
@@ -97,10 +72,10 @@ class StaffController extends Controller
     public function deleteDoctor($id)
     {
         $doctor = Doctor::findOrFail($id);
-        $doctor->delete(); // Xóa khỏi bảng doctors
+        $doctor->delete(); 
 
         $user = User::findOrFail($doctor->UserID);
-        $user->update(['RoleID' => 'patient']); // Trả người dùng về RoleID 'patient'
+        $user->update(['RoleID' => 'patient']);
 
         return response()->json(['message' => 'Doctor deleted successfully.']);
     }
@@ -108,7 +83,7 @@ class StaffController extends Controller
 //API
     public function getDoctorsList()
     {
-        $doctors = Doctor::with('user')->get(); // Lấy danh sách bác sĩ với thông tin user      
+        $doctors = Doctor::with('user')->get();
         return response()->json($doctors);
     }
 
