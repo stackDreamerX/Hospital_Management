@@ -251,7 +251,7 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
-document.addEventListener('DOMContentLoaded', function () {
+    document.addEventListener('DOMContentLoaded', function () {
     const treatmentModal = new bootstrap.Modal(document.getElementById('treatmentModal'));
     const treatmentDetails = document.getElementById('treatmentDetails');
     const progressForm = document.getElementById('progressForm');
