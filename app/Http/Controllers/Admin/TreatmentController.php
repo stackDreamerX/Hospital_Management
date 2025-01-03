@@ -4,61 +4,56 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Models\Treatment;
 
 class TreatmentController extends Controller
 {
-    private $sampleTreatmentTypes = [
-        ['TreatmentTypeID' => 1, 'TreatmentTypeName' => 'Dental Cleaning'],
-        ['TreatmentTypeID' => 2, 'TreatmentTypeName' => 'Root Canal'],
-        ['TreatmentTypeID' => 3, 'TreatmentTypeName' => 'Physical Therapy'],
-        ['TreatmentTypeID' => 4, 'TreatmentTypeName' => 'Surgery'],
-    ];
-
-    private $sampleTreatments = [
-        [
-            'TreatmentID' => 1,
-            'TreatmentTypeID' => 1,
-            'TreatmentTypeName' => 'Dental Cleaning',
-            'TreatmentDate' => '2024-03-20',
-            'PatientID' => 1,
-            'PatientName' => 'John Doe',
-            'DoctorID' => 1,
-            'DoctorName' => 'Dr. Sarah Wilson',
-            'TotalPrice' => 150000,
-            'Result' => 'Treatment completed successfully'
-        ],
-        [
-            'TreatmentID' => 2,
-            'TreatmentTypeID' => 2,
-            'TreatmentTypeName' => 'Root Canal',
-            'TreatmentDate' => '2024-03-21',
-            'PatientID' => 2,
-            'PatientName' => 'Jane Smith',
-            'DoctorID' => 2,
-            'DoctorName' => 'Dr. Michael Brown',
-            'TotalPrice' => 500000,
-            'Result' => 'Follow-up required in 2 weeks'
-        ]
-    ];
-
-    public function treatment()
+    // Hiển thị danh sách tất cả các treatment
+    public function index()
     {
-        $treatmentTypes = collect($this->sampleTreatmentTypes);
-        $treatments = collect($this->sampleTreatments);
-        $patients = collect([
-            ['PatientID' => 1, 'FullName' => 'John Doe'],
-            ['PatientID' => 2, 'FullName' => 'Jane Smith']
-        ]);
-        $doctors = collect([
-            ['DoctorID' => 1, 'FullName' => 'Dr. Sarah Wilson'],
-            ['DoctorID' => 2, 'FullName' => 'Dr. Michael Brown']
-        ]);
-
-        return view('admin.treatment', compact(
-            'treatmentTypes',
-            'treatments',
-            'patients',
-            'doctors'
-        ));
+        $treatments = Treatment::with(['treatmentType', 'doctor.user', 'user'])
+            ->orderBy('TreatmentDate', 'desc')
+            ->get();
+    
+        // Kiểm tra dữ liệu trả về
+        if ($treatments->isEmpty()) {
+            return view('admin.treatment', compact('treatments'));
+        }
+    
+        return view('admin.treatment', compact('treatments'));
     }
+    
+
+    // Lấy chi tiết một treatment
+    public function show($id)
+{
+    $treatment = Treatment::with(['treatmentType', 'doctor.user', 'user'])
+        ->findOrFail($id);
+
+    return response()->json([
+        'TreatmentID' => $treatment->TreatmentID,
+        'TypeName' => optional($treatment->treatmentType)->TypeName,
+        'PatientName' => optional($treatment->user)->FullName,
+        'DoctorName' => optional($treatment->doctor->user)->FullName,
+        'TreatmentDate' => $treatment->TreatmentDate,
+        'TotalPrice' => $treatment->TotalPrice,
+        'Status' => $treatment->Status,
+        'Description' => $treatment->Description,
+    ]);
+}
+
+
+    // Xóa một treatment
+    public function destroy($id)
+{
+    try {
+        $treatment = Treatment::findOrFail($id);
+        $treatment->delete();
+
+        return response()->json(['message' => 'Treatment deleted successfully.']);
+    } catch (\Exception $e) {
+        return response()->json(['message' => 'Failed to delete treatment: ' . $e->getMessage()], 500);
+    }
+}
+
 }
