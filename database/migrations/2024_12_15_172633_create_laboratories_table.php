@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id('LaboratoryID');
             $table->foreignId('LaboratoryTypeID')->constrained('laboratory_types','LaboratoryTypeID')->onDelete('cascade');
             $table->date('LaboratoryDate'); // Ngày xét nghiệm       
-            $table->foreignId('UserID')->constrained('users','UserID')->onDelete('cascade');
+            $table->foreignId('PatientID')->constrained('patients','PatientID')->onDelete('cascade');
             $table->foreignId('DoctorID')->constrained('doctors','DoctorID')->onDelete('cascade');
             $table->integer('TotalPrice');
             $table->timestamps();

@@ -13,9 +13,7 @@ return new class extends Migration
     {
         Schema::create('laboratory_types', function (Blueprint $table) {
             $table->id('LaboratoryTypeID');
-            $table->string('LaboratoryTypeName', 100)->nullable(false);
-            $table->decimal('price', 10, 2)->nullable(false); // Thêm trường price
-            $table->text('description')->nullable();  
+            $table->string('LaboratoryTypeName', 100)->nullable(false);      
             $table->timestamps();
         });
     }
