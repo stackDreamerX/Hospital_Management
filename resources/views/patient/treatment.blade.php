@@ -1,10 +1,99 @@
 @extends('patient_layout')
+
+
+@push('styles')
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+@endpush
+
 @section('content')
+
+<style>
+     modal {
+    display: none; /* Ẩn modal ban đầu */
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1050; /* Bootstrap 5 modal z-index */
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background-color: rgba(0, 0, 0, 0.5); /* Overlay mờ */
+    }
+
+    .modal.fade {
+    opacity: 0; /* Modal mờ khi chưa được hiển thị */
+    transition: opacity 0.15s linear;
+    }
+
+    .modal.show {
+    display: block; /* Hiển thị modal */
+    opacity: 1;
+    }
+
+    .modal-dialog {
+    position: relative;
+    margin: 1.75rem auto; /* Center modal vertically */
+    pointer-events: auto;
+    max-width: 500px; /* Độ rộng mặc định */
+    }
+
+    .modal-dialog.modal-lg {
+    max-width: 800px; /* Độ rộng modal lớn */
+    }
+
+    .modal-content {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    background-color: #fff;
+    border: none;
+    border-radius: 0.5rem; /* Bo góc */
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15); /* Đổ bóng */
+    }
+
+    .modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 1rem;
+    border-bottom: 1px solid #dee2e6; /* Border dưới */
+    border-top-left-radius: 0.5rem;
+    border-top-right-radius: 0.5rem;
+    }
+
+    .modal-title {
+    margin-bottom: 0;
+    line-height: 1.5;
+    }
+
+    .btn-close {
+    background: none;
+    border: none;
+    -webkit-appearance: none;
+    }
+
+    .modal-body {
+    position: relative;
+    flex: 1 1 auto;
+    padding: 1rem;
+    }
+
+    .modal-footer {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 1rem;
+    border-top: 1px solid #dee2e6;
+    }
+
+</style>
+
 
 <div class="container mt-4">
     <!-- Statistics Cards -->
     <div class="row mb-4">
-        <div class="col-md-3">
+        <div class="col-md-4">
             <div class="card bg-warning text-white">
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center">
@@ -17,7 +106,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-4">
             <div class="card bg-success text-white">
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center">
@@ -30,7 +119,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-4">
             <div class="card bg-info text-white">
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center">
@@ -39,19 +128,6 @@
                             <h2 class="mb-0">Rs. {{ number_format($totalCost) }}</h2>
                         </div>
                         <i class="fas fa-money-bill-wave fa-2x opacity-50"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card bg-primary text-white">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <h6 class="mb-0">Paid Amount</h6>
-                            <h2 class="mb-0">Rs. {{ number_format($paidAmount) }}</h2>
-                        </div>
-                        <i class="fas fa-credit-card fa-2x opacity-50"></i>
                     </div>
                 </div>
             </div>
@@ -79,8 +155,7 @@
                             <th>Start Date</th>
                             <th>Treatment</th>
                             <th>Doctor</th>
-                            <th>Status</th>
-                            <th>Progress</th>
+                            <th>Status (Progress)</th>
                             <th>Cost</th>
                             <th>Actions</th>
                         </tr>
@@ -94,20 +169,12 @@
                             <td>
                                 <span class="badge bg-{{
                                     $treatment['Status'] == 'Completed' ? 'success' :
-                                    ($treatment['Status'] == 'Ongoing' ? 'warning' : 'info')
+                                    ($treatment['Status'] == 'Scheduled' ? 'info' : 'warning')
                                 }}">
-                                    {{ $treatment['Status'] }}
+                                    {{ $treatment['Status'] == 'Scheduled' ? 'Scheduled' : $treatment['Status'] }}
                                 </span>
                             </td>
-                            <td>{{ Str::limit($treatment['Progress'], 30) }}</td>
-                            <td>
-                                Rs. {{ number_format($treatment['Cost']) }}
-                                <span class="badge bg-{{
-                                    $treatment['PaymentStatus'] == 'Paid' ? 'success' : 'warning'
-                                }}">
-                                    {{ $treatment['PaymentStatus'] }}
-                                </span>
-                            </td>
+                            <td>Rs. {{ number_format($treatment['Cost']) }}</td>
                             <td>
                                 <div class="btn-group btn-group-sm">
                                     <button class="btn btn-info" onclick="viewDetails({{ json_encode($treatment) }})">
@@ -121,7 +188,7 @@
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="7" class="text-center">No treatments found</td>
+                            <td colspan="6" class="text-center">No treatments found</td>
                         </tr>
                         @endforelse
                     </tbody>
@@ -187,28 +254,13 @@ function viewDetails(treatment) {
             <strong>Period:</strong> ${treatment.StartDate} to ${treatment.EndDate}
         </div>
         <div class="mb-3">
-            <strong>Status:</strong>
-            <span class="badge bg-${treatment.Status == 'Completed' ? 'success' : 'warning'}">
-                ${treatment.Status}
-            </span>
+            <strong>Status (Progress):</strong> ${treatment.Status}
         </div>
         <div class="mb-3">
             <strong>Description:</strong> ${treatment.Description}
         </div>
         <div class="mb-3">
-            <strong>Progress:</strong> ${treatment.Progress}
-        </div>
-        <div class="mb-3">
             <strong>Cost:</strong> Rs. ${treatment.Cost}
-            <span class="badge bg-${treatment.PaymentStatus == 'Paid' ? 'success' : 'warning'}">
-                ${treatment.PaymentStatus}
-            </span>
-        </div>
-        <div class="mb-3">
-            <strong>Lab Tests:</strong> ${treatment.LabTests.join(', ')}
-        </div>
-        <div class="mb-3">
-            <strong>Medications:</strong> ${treatment.Medications.join(', ')}
         </div>
         ${treatment.Notes ? `
             <div class="mb-3">
@@ -221,7 +273,6 @@ function viewDetails(treatment) {
 }
 
 function downloadReport(id) {
-    // Send to server
     Swal.fire({
         icon: 'success',
         title: 'Success',
