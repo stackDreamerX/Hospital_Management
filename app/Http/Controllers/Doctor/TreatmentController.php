@@ -31,16 +31,7 @@ class TreatmentController extends Controller
 
         // Lấy danh sách bệnh nhân từ bảng users (RoleID = 'patient')
         $patients = User::where('RoleID', 'patient')->get();
-
-        // Các loại điều trị
-        // $treatmentTypes = [
-        //     'Physical Therapy',
-        //     'Wound Care',
-        //     'Respiratory Therapy',
-        //     'Speech Therapy',
-        //     'Occupational Therapy',
-        // ];
-        
+       
          // Lấy danh sách các loại điều trị từ bảng treatment_types
         $treatmentTypes = \App\Models\TreatmentType::all();
 
@@ -85,16 +76,17 @@ class TreatmentController extends Controller
 
     public function show($id)
     {
+        dd($id);
         $treatment = Treatment::with(['user', 'treatmentType'])
             ->where('TreatmentID', $id)
             ->firstOrFail();
-
+        
         return response()->json([
             'TreatmentID' => $treatment->TreatmentID,
             'PatientID' => $treatment->user->UserID,
             'PatientName' => $treatment->user->FullName,
             'TreatmentTypeID' => $treatment->treatmentType->TreatmentTypeID,
-            'TreatmentTypeName' => $treatment->treatmentType->TypeName,
+            'TreatmentTypeName' => $treatment->treatmentType->TreatmentTypeName,
             'TreatmentDate' => $treatment->TreatmentDate,
             'Duration' => $treatment->Duration,
             'TotalPrice' => $treatment->TotalPrice,
@@ -108,19 +100,25 @@ class TreatmentController extends Controller
 
     public function update(Request $request, $id)
     {
-        $request->validate([
-            'status' => 'required|in:Completed,Cancelled',
-            'progress' => 'nullable|string',
-        ]);
+        try {
+            $treatment = Treatment::findOrFail($id);
 
-        $treatment = Treatment::findOrFail($id);
-        $treatment->update([
-            'Status' => $request->status,
-            'Progress' => $request->progress,
-        ]);
+            $request->validate([
+                'status' => 'required|string|max:255',
+            ]);
 
-        return response()->json(['success' => true, 'message' => 'Treatment updated successfully']);
+            $treatment->Status = $request->status;
+            $treatment->save();
+
+            return response()->json(['message' => 'Treatment updated successfully']);
+        } catch (\Exception $e) {
+            \Log::error('Error updating treatment: ' . $e->getMessage());
+            return response()->json(['message' => 'Failed to update treatment'], 500);
+        }
     }
+
+
+
 
     public function destroy($id)
     {

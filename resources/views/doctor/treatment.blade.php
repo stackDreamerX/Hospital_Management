@@ -163,12 +163,12 @@
     </div>
 
     <!-- Treatment List -->
-    <div class="card">
-        <div class="card-header bg-white py-3">
-            <h5 class="mb-0">Treatment List</h5>
-        </div>
-        <div class="card-body">
-            <div class="table-responsive">
+<div class="card">
+    <div class="card-header bg-white py-3">
+        <h5 class="mb-0">Treatment List</h5>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
             <table class="table table-striped">
                 <thead>
                     <tr>
@@ -183,90 +183,85 @@
                 </thead>
                 <tbody>
                     @forelse($treatments as $treatment)
-                    <tr>
-                        <td>{{ $treatment->TreatmentDate }}</td>
-                        <td>{{ $treatment->user->FullName }}</td>
-                        <td>{{ $treatment->treatmentType->treatmentTypeName }}</td>
-                        <td>{{ $treatment->Duration }}</td>
-                        <td>{{ number_format($treatment->TotalPrice, 2) }} $</td>
-                        <td>
-                            <span class="badge bg-{{
-                                $treatment->Status === 'Completed' ? 'success' :
-                                ($treatment->Status === 'Scheduled' ? 'info' : 'danger')
-                            }}">
-                                {{ $treatment->Status }}
-                            </span>
-                        </td>
-                        <td>
-                            <button class="btn btn-info btn-sm" onclick="viewTreatment({{ $treatment->TreatmentID }})">
-                                <i class="fas fa-eye"></i> View
-                            </button>
-                        </td>
-                    </tr>
+                        <tr>
+                            <td>{{ $treatment->TreatmentDate }}</td>
+                            <td>{{ $treatment->user->FullName }}</td>
+                            <td>{{ $treatment->treatmentType->TreatmentTypeName  }}</td>
+                            <td>{{ $treatment->Duration }}</td>
+                            <td>{{ number_format($treatment->TotalPrice, 2) }} $</td>
+                            <td>
+                                <span class="badge bg-{{
+                                    $treatment->Status === 'Completed' ? 'success' :
+                                    ($treatment->Status === 'Scheduled' ? 'info' : 'primary')
+                                }}">
+                                    {{
+                                        $treatment->Status === 'Completed' ? 'Completed' :
+                                        ($treatment->Status === 'Scheduled' ? 'Scheduled' : 'In Progress (' . $treatment->Status . '%)')
+                                    }}
+                                </span>
+                            </td>
+                            <td>
+                                <div class="btn-group">
+                                    <button class="btn btn-info btn-sm" onclick="viewTreatment({{ $treatment->TreatmentID }})">
+                                        <i class="fas fa-eye"></i> View
+                                    </button>
+                                    <button class="btn btn-warning btn-sm" onclick="editTreatment({{ $treatment->TreatmentID }})">
+                                        <i class="fas fa-edit"></i> Edit
+                                    </button>
+                                    <button class="btn btn-danger btn-sm" onclick="deleteTreatment({{ $treatment->TreatmentID }})">
+                                        <i class="fas fa-trash"></i> Delete
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
                     @empty
-                    <tr>
-                        <td colspan="7" class="text-center">No treatments found</td>
-                    </tr>
+                        <tr>
+                            <td colspan="7" class="text-center">No treatments found</td>
+                        </tr>
                     @endforelse
                 </tbody>
             </table>
-
-
-            </div>
         </div>
     </div>
 </div>
 
-<!-- Treatment Details Modal -->
-<div class="modal fade" id="treatmentModal" tabindex="-1">
+<!-- Edit Modal -->
+<div class="modal fade" id="editTreatmentModal" tabindex="-1">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Treatment Details</h5>
+                <h5 class="modal-title">Edit Treatment</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <div id="treatmentDetails">
-                    <!-- Treatment details will be dynamically loaded here -->
-                </div>
-                <div id="progressForm" class="mt-3 d-none">
-                    <hr>
-                    <h6>Update Progress</h6>
-                    <textarea class="form-control" id="progress" rows="3"
-                              placeholder="Enter treatment progress and observations"></textarea>
-                </div>
+                <h6>Update Status</h6>
+                <select class="form-select" id="editStatus">
+                    <option value="Scheduled">Scheduled</option>
+                    @for ($i = 10; $i <= 90; $i += 10)
+                        <option value="{{ $i }}">In Progress ({{ $i }}%)</option>
+                    @endfor
+                    <option value="Completed">Completed</option>
+                </select>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-success d-none" id="saveProgressBtn">Save Progress</button>
+                <button type="button" class="btn btn-success" id="saveEditBtn">Save Changes</button>
             </div>
         </div>
     </div>
 </div>
 
-
-
 @endsection
+
 @section('scripts')
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-    const treatmentModal = new bootstrap.Modal(document.getElementById('treatmentModal'));
-    const treatmentDetails = document.getElementById('treatmentDetails');
-    const progressForm = document.getElementById('progressForm');
-    const saveProgressBtn = document.getElementById('saveProgressBtn');
-
     document.getElementById('treatmentForm').addEventListener('submit', function (e) {
         e.preventDefault();
         createTreatment();
     });
-
-    saveProgressBtn.addEventListener('click', function () {
-        saveProgress();
-    });
-
-    // Function to create treatment
+    // Tạo treatment
     function createTreatment() {
         const patientIdElement = document.getElementById('patient_id');
         const treatmentTypeElement = document.getElementById('treatment_type');
@@ -274,9 +269,10 @@
         const treatmentDateElement = document.getElementById('treatment_date');
         const durationElement = document.getElementById('duration');
         const notesElement = document.getElementById('notes');
-        const total_price =  document.getElementById('total_price');
+        const total_price = document.getElementById('total_price');
+
         if (!patientIdElement || !treatmentTypeElement || !descriptionElement || !treatmentDateElement || !durationElement || !notesElement) {
-            console.error('One or more required elements are missing');          
+            console.error('One or more required elements are missing');
             return;
         }
 
@@ -290,7 +286,7 @@
             total_price: total_price.value
         };
         const createLabUrl = '{{ route('doctor.treatment.store') }}';
-    
+        console.log(createLabUrl);
         fetch(createLabUrl, {
             method: 'POST',
             headers: {
@@ -315,91 +311,142 @@
             });
     }
 
-    // Function to view treatment
-    function viewTreatment(id) {
+    // Hiển thị modal chỉnh sửa
+    function editTreatment(id) {
         const url = `{{ route('doctor.treatments.show', ['id' => '__id__']) }}`.replace('__id__', id);
+
         fetch(url)
-            .then(response => response.json())
-            .then(treatment => {
-                const details = document.getElementById('treatmentDetails');
-                
-                details.innerHTML = `
-                    <div class="row">
-                        <div class="col-md-6">
-                            <p><strong>Patient:</strong> ${treatment.patient.FullName}</p>
-                            <p><strong>Type:</strong> ${treatment.treatment_type.TypeName}</p>
-                            <p><strong>Date:</strong> ${treatment.TreatmentDate}</p>
-                            <p><strong>Duration:</strong> ${treatment.Duration}</p>
-                        </div>
-                        <div class="col-md-6">
-                            <p><strong>Total Price:</strong> ${treatment.TotalPrice.toFixed(2)} $</p>
-                            <p><strong>Status:</strong> ${treatment.Status}</p>
-                            <p><strong>Description:</strong> ${treatment.Description}</p>
-                            <p><strong>Notes:</strong> ${treatment.Notes || 'N/A'}</p>
-                        </div>
-                    </div>
-                `;
-
-                const progressForm = document.getElementById('progressForm');
-                const saveProgressBtn = document.getElementById('saveProgressBtn');
-
-                if (treatment.Status === 'Scheduled') {
-                    progressForm.classList.remove('d-none');
-                    saveProgressBtn.classList.remove('d-none');
-                    saveProgressBtn.setAttribute('data-id', id);
-                } else {
-                    progressForm.classList.add('d-none');
-                    saveProgressBtn.classList.add('d-none');
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`Failed to fetch treatment for edit. Status: ${response.status}`);
                 }
+                return response.json();
+            })
+            .then(data => {
+                document.getElementById('editStatus').value = data.Status === 'Scheduled' ? '0' : data.Status.match(/\d+/)?.[0] || '0';
+                document.getElementById('saveEditBtn').setAttribute('data-id', id);
 
-                treatmentModal.show();
+                const modal = new bootstrap.Modal(document.getElementById('editTreatmentModal'));
+                modal.show();
             })
             .catch(error => {
-                console.error('Error fetching treatment:', error);
-                Swal.fire('Error', 'Failed to load treatment details', 'error');
+                console.error('Error fetching treatment for edit:', error.message);
+                alert('Failed to load treatment details for editing.');
             });
     }
 
 
-
-    // Function to save progress
-    function saveProgress() {
-        const id = saveProgressBtn.getAttribute('data-id');
-        const progress = document.getElementById('progress').value;
-
-        if (!progress) {
-            Swal.fire('Error', 'Progress notes are required', 'error');
-            return;
-        }     
+    function saveEdit() {
+        const id = document.getElementById('saveEditBtn').getAttribute('data-id');
+        const progress = document.getElementById('editStatus').value;
+        const status = progress === '100' ? 'Completed' : `In Progress (${progress}%)`;
         const url = `{{ route('doctor.treatments.update', ['id' => '__id__']) }}`.replace('__id__', id);
-        
+
         fetch(url, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
             },
-            body: JSON.stringify({ status: 'Completed', progress }),
+            body: JSON.stringify({ status }),
         })
-            .then(response => response.json())
-            .then(result => {
-                if (result.success) {
-                    Swal.fire('Success', result.message, 'success').then(() => {
-                        treatmentModal.hide();
-                        window.location.reload();
-                    });
-                } else {
-                    Swal.fire('Error', result.message || 'Failed to save progress', 'error');
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`Failed to update treatment. Status: ${response.status}`);
                 }
+                return response.json();
+            })
+            .then(data => {
+                alert(data.message);
+                window.location.reload();
             })
             .catch(error => {
-                console.error('Error saving progress:', error);
-                Swal.fire('Error', 'Something went wrong. Please try again.', 'error');
+                console.error('Error updating treatment:', error.message);
+                alert('Failed to update treatment.');
             });
     }
-});
+
+
+   
+
+    function viewTreatment(id) {       
+        const url = `{{ route('doctor.treatments.show', ['id' => '__id__']) }}`.replace('__id__', id);
+
+        fetch(url)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`Failed to fetch treatment. Status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                const details = `
+                    <p><strong>Patient:</strong> ${data.PatientName}</p>
+                    <p><strong>Type:</strong> ${data.TreatmentTypeName}</p>
+                    <p><strong>Date:</strong> ${data.TreatmentDate}</p>
+                    <p><strong>Duration:</strong> ${data.Duration}</p>
+                    <p><strong>Total Price:</strong> $${parseFloat(data.TotalPrice).toFixed(2)}</p>
+                    <p><strong>Status:</strong> ${data.Status}</p>
+                    <p><strong>Description:</strong> ${data.Description}</p>
+                    <p><strong>Notes:</strong> ${data.Notes || 'N/A'}</p>
+                `;
+                document.getElementById('treatmentDetails').innerHTML = details;
+
+                const modal = new bootstrap.Modal(document.getElementById('treatmentModal'));
+                modal.show();
+            })
+            .catch(error => {
+                console.error('Error fetching treatment:', error.message);
+                alert('Failed to load treatment details.');
+            });
+    }
+
+
+
+    function deleteTreatment(id) {
+        const url = `{{ route('doctor.treatments.destroy', ['id' => '__id__']) }}`.replace('__id__', id);
+
+        Swal.fire({
+            title: 'Are you sure?',
+            text: 'This action cannot be undone!',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, delete it!',
+            cancelButtonText: 'No, keep it'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                fetch(url, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                    },
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! Status: ${response.status}`);
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        Swal.fire('Deleted!', data.message, 'success').then(() => {
+                            window.location.reload();
+                        });
+                    })
+                    .catch(error => {
+                        console.error('Error deleting treatment:', error);
+                        Swal.fire('Error', 'Failed to delete treatment', 'error');
+                    });
+            }
+        });
+    }
+
+
+
+
 </script>
 @endsection
+
 
 
 
