@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id('AppointmentID');
             $table->date('AppointmentDate');
             $table->time('AppointmentTime');
-            $table->foreignId('PatientID')->constrained('patients','PatientID')->onDelete('cascade');
+            $table->foreignId('UserID')->constrained('users','UserID')->onDelete('cascade');
             $table->foreignId('DoctorID')->constrained('doctors','DoctorID')->onDelete('cascade');
             $table->enum('Status', ['rejected', 'pending', 'approved', 'completed']);
             $table->timestamps();
