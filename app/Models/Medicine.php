@@ -28,4 +28,10 @@ class Medicine extends Model
     {
         return $this->hasMany(PrescriptionDetail::class, 'MedicineID', 'MedicineID');
     }
+
+    public function medicineStock()
+    {
+        return $this->hasMany(MedicineStock::class, 'MedicineID', 'MedicineID');
+    }
+
 }
