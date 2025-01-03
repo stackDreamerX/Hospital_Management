@@ -8,14 +8,95 @@
 
 @section('admin_content')
 
+
+<style>
+     modal {
+    display: none; /* Ẩn modal ban đầu */
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1050; /* Bootstrap 5 modal z-index */
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background-color: rgba(0, 0, 0, 0.5); /* Overlay mờ */
+    }
+
+    .modal.fade {
+    opacity: 0; /* Modal mờ khi chưa được hiển thị */
+    transition: opacity 0.15s linear;
+    }
+
+    .modal.show {
+    display: block; /* Hiển thị modal */
+    opacity: 1;
+    }
+
+    .modal-dialog {
+    position: relative;
+    margin: 1.75rem auto; /* Center modal vertically */
+    pointer-events: auto;
+    max-width: 500px; /* Độ rộng mặc định */
+    }
+
+    .modal-dialog.modal-lg {
+    max-width: 800px; /* Độ rộng modal lớn */
+    }
+
+    .modal-content {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    background-color: #fff;
+    border: none;
+    border-radius: 0.5rem; /* Bo góc */
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15); /* Đổ bóng */
+    }
+
+    .modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 1rem;
+    border-bottom: 1px solid #dee2e6; /* Border dưới */
+    border-top-left-radius: 0.5rem;
+    border-top-right-radius: 0.5rem;
+    }
+
+    .modal-title {
+    margin-bottom: 0;
+    line-height: 1.5;
+    }
+
+    .btn-close {
+    background: none;
+    border: none;
+    -webkit-appearance: none;
+    }
+
+    .modal-body {
+    position: relative;
+    flex: 1 1 auto;
+    padding: 1rem;
+    }
+
+    .modal-footer {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 1rem;
+    border-top: 1px solid #dee2e6;
+    }
+
+</style>
 <div class="container" style="padding: 20px;">
-    <h2 style="color: #333; margin-bottom: 20px;">Patient Management</h2>
-    
-    <!-- Create New Patient Form -->
+    <h2 style="color: #333; margin-bottom: 20px;">User Management</h2>
+
+    <!-- User List -->
     <div class="card mb-4" style="box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-        <div class="card-header" style="background-color: #f8f9fa; padding: 15px;">Create New Patient</div>
+        <div class="card-header" style="background-color: #f8f9fa; padding: 15px;">User List</div>
         <div class="card-body" style="padding: 20px;">
-            <form id="createPatientForm">
+        <form id="addUserForm">
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label style="font-weight: bold; margin-bottom: 5px;">Full Name</label>
@@ -36,46 +117,27 @@
                                pattern="^0[0-9]{9}$" style="padding: 8px;">
                     </div>
                     <div class="col-md-6 mb-3">
-                        <label style="font-weight: bold; margin-bottom: 5px;">Date of Birth</label>
-                        <input type="date" name="date_of_birth" class="form-control" required style="padding: 8px;">
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <label style="font-weight: bold; margin-bottom: 5px;">Gender</label>
-                        <select name="gender" class="form-control" required style="padding: 8px;">
-                            <option value="">Select Gender</option>
-                            <option value="male">Male</option>
-                            <option value="female">Female</option>
-                            <option value="other">Other</option>
+                        <label style="font-weight: bold; margin-bottom: 5px;">Role</label>
+                        <select name="role" class="form-control" required style="padding: 8px;">
+                            <option value="">Select Role</option>
+                            <option value="doctor">Doctor</option>
+                            <option value="patient">Patient</option>
                         </select>
                     </div>
                     <div class="col-md-6 mb-3">
-                        <label style="font-weight: bold; margin-bottom: 5px;">Address</label>
-                        <textarea name="address" class="form-control" rows="3" style="padding: 8px;"></textarea>
-                    </div>
-                    <div class="col-md-6 mb-3">
                         <label style="font-weight: bold; margin-bottom: 5px;">Password</label>
-                        <div class="input-group">
-                            <input type="password" name="password" class="form-control" required
-                                   pattern="^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$"
-                                   style="padding: 8px;">
-                            <button class="btn btn-outline-secondary" type="button" onclick="togglePasswordVisibility(this)">
-                                <i class="fas fa-eye"></i>
-                            </button>
-                        </div>
+                        <input type="password" name="password" class="form-control" required
+                               pattern="^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$"
+                               style="padding: 8px;">
                     </div>
                 </div>
-                <button type="submit" class="btn btn-primary" style="padding: 8px 20px;">Create Patient</button>
+                <button type="submit" class="btn btn-primary" style="padding: 8px 20px;">Add User</button>
             </form>
-        </div>
-    </div>
 
-    <!-- Patient List -->
-    <div class="card" style="box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-        <div class="card-header" style="background-color: #f8f9fa; padding: 15px;">Patient List</div>
-        <div class="card-body" style="padding: 20px;">
-            <div class="mb-3">
+
+            <div class="mt-4">
                 <div class="input-group" style="width: 300px;">
-                    <input type="text" id="searchInput" class="form-control" placeholder="Search patients...">
+                    <input type="text" id="searchInput" class="form-control" placeholder="Search users...">
                     <button class="btn btn-outline-secondary">
                         <i class="fas fa-search"></i>
                     </button>
@@ -88,33 +150,26 @@
                         <th style="padding: 12px;">Full Name</th>
                         <th style="padding: 12px;">Email</th>
                         <th style="padding: 12px;">Phone</th>
-                        <th style="padding: 12px;">Gender</th>
-                        <th style="padding: 12px;">Age</th>
+                        <th style="padding: 12px;">Gender</th>                    
+                        <th style="padding: 12px;">Role</th>
                         <th style="padding: 12px;">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach($patients as $patient)
+                    @foreach($users as $user)
                     <tr style="border-bottom: 1px solid #dee2e6;">
-                        <td style="padding: 12px;">{{ $patient['PatientID'] }}</td>
-                        <td style="padding: 12px;">{{ $patient['FullName'] }}</td>
-                        <td style="padding: 12px;">{{ $patient['Email'] }}</td>
-                        <td style="padding: 12px;">{{ $patient['PhoneNumber'] }}</td>
-                        <td style="padding: 12px;">{{ ucfirst($patient['Gender']) }}</td>
+                        <td style="padding: 12px;">{{ $user->UserID }}</td>
+                        <td style="padding: 12px;">{{ $user->FullName }}</td>
+                        <td style="padding: 12px;">{{ $user->Email }}</td>
+                        <td style="padding: 12px;">{{ $user->PhoneNumber }}</td>
+                        <td style="padding: 12px;">Male</td>                        
+                        <td style="padding: 12px;">{{ $user->RoleID }}</td>
                         <td style="padding: 12px;">
-                            @php
-                                $birthDate = new DateTime($patient['DateOfBirth']);
-                                $today = new DateTime();
-                                $age = $today->diff($birthDate)->y;
-                            @endphp
-                            {{ $age }}
-                        </td>
-                        <td style="padding: 12px;">
-                            <button onclick="editPatient({{ json_encode($patient) }})"
+                            <button onclick="editUser({{ json_encode($user) }})"
                                     class="btn btn-primary btn-sm" style="margin-right: 5px;">
                                 <i class="fa fa-edit"></i> Edit
                             </button>
-                            <button onclick="deletePatient({{ $patient['PatientID'] }})"
+                            <button onclick="deleteUser({{ $user->UserID }})"
                                     class="btn btn-danger btn-sm">
                                 <i class="fa fa-trash"></i> Delete
                             </button>
@@ -128,101 +183,141 @@
 </div>
 
 <!-- Include Edit Modal -->
-@include('admin.modals.patient_modal')
+<div class="modal fade" id="userModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Edit User</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="mb-3">
+                        <label for="name">Full Name</label>
+                        <input type="text" name="name" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="email">Email</label>
+                        <input type="email" name="email" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="phone">Phone</label>
+                        <input type="tel" name="phone" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="gender">Gender</label>
+                        <select name="gender" class="form-control" required>
+                            <option value="male">Male</option>
+                            <option value="female">Female</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="date_of_birth">Date of Birth</label>
+                        <input type="date" name="date_of_birth" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="role">Role</label>
+                        <select name="role" class="form-control" required>
+                            <option value="admin">Admin</option>
+                            <option value="doctor">Doctor</option>
+                            <option value="patient">Patient</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="address">Address</label>
+                        <textarea name="address" class="form-control"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary btn-save">Save Changes</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 @endsection
 
 @section('scripts')
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
-    let editModal;
-    
-    document.addEventListener('DOMContentLoaded', function() {
-        editModal = new bootstrap.Modal(document.getElementById('patientModal'));
-        
-        // Add form submit handler
-        document.getElementById('createPatientForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            Swal.fire({
-                icon: 'success',
-                title: 'Success',
-                text: 'Patient created successfully!'
-            }).then(() => {
-                window.location.reload();
-            });
-        });
 
-        // Add search functionality
-        const searchInput = document.getElementById('searchInput');
-        const tableBody = document.querySelector('.table tbody');
-        const rows = tableBody.querySelectorAll('tr');
+    document.getElementById('addUserForm').addEventListener('submit', function(e) {
+        e.preventDefault();
 
-        searchInput.addEventListener('keyup', function(e) {
-            const searchTerm = e.target.value.toLowerCase();
+        const formData = new FormData(this);
 
-            rows.forEach(row => {
-                const fullName = row.querySelector('td:nth-child(2)').textContent.toLowerCase();
-                const email = row.querySelector('td:nth-child(3)').textContent.toLowerCase();
-                const phone = row.querySelector('td:nth-child(4)').textContent.toLowerCase();
-
-                if (fullName.includes(searchTerm) ||
-                    email.includes(searchTerm) ||
-                    phone.includes(searchTerm)) {
-                    row.style.display = '';
-                } else {
-                    row.style.display = 'none';
-                }
-            });
-        });
-    });
-
-    function editPatient(patient) {
-        document.getElementById('edit_id').value = patient.PatientID;
-        document.getElementById('edit_fullname').value = patient.FullName;
-        document.getElementById('edit_username').value = patient.Username;
-        document.getElementById('edit_email').value = patient.Email;
-        document.getElementById('edit_phone').value = patient.PhoneNumber;
-        document.getElementById('edit_dob').value = patient.DateOfBirth;
-        document.getElementById('edit_gender').value = patient.Gender;
-        document.getElementById('edit_address').value = patient.Address;
-        document.getElementById('edit_password').value = '';
-        
-        editModal.show();
-    }
-
-    function deletePatient(id) {
-        Swal.fire({
-            title: 'Are you sure?',
-            text: "You won't be able to revert this!",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#d33',
-            cancelButtonColor: '#3085d6',
-            confirmButtonText: 'Yes, delete it!'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                Swal.fire('Deleted!', 'Patient has been deleted.', 'success')
-                .then(() => {
+        fetch('{{ route('admin.users.store') }}', {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+            },
+            body: formData,
+        })
+            .then(response => response.json())
+            .then(data => {
+                Swal.fire('Success', data.message, 'success').then(() => {
                     window.location.reload();
                 });
-            }
-        });
-    }
+            })
+            .catch(error => {
+                console.error(error);
+                Swal.fire('Error', 'Failed to add user.', 'error');
+            });
+    });
 
-    function togglePasswordVisibility(button) {
-        const input = button.previousElementSibling;
-        const icon = button.querySelector('i');
-        
-        if (input.type === 'password') {
-            input.type = 'text';
-            icon.classList.remove('fa-eye');
-            icon.classList.add('fa-eye-slash');
-        } else {
-            input.type = 'password';
-            icon.classList.remove('fa-eye-slash');
-            icon.classList.add('fa-eye');
-        }
+
+    function editUser(user) {
+    const modal = document.getElementById('userModal');
+    modal.querySelector('input[name="name"]').value = user.name;
+    modal.querySelector('input[name="email"]').value = user.email;
+    modal.querySelector('input[name="phone"]').value = user.phone;
+    modal.querySelector('select[name="gender"]').value = user.gender;
+    modal.querySelector('input[name="date_of_birth"]').value = user.date_of_birth;
+    modal.querySelector('select[name="role"]').value = user.role;
+    modal.querySelector('textarea[name="address"]').value = user.address;
+
+    const saveButton = modal.querySelector('.btn-save');
+    saveButton.onclick = function () {
+        const formData = new FormData(modal.querySelector('form'));
+        fetch(`/admin/users/${user.id}`, {
+            method: 'PUT',
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+            },
+            body: formData,
+        })
+            .then(response => response.json())
+            .then(data => {
+                alert(data.message);
+                window.location.reload();
+            })
+            .catch(error => console.error('Error:', error));
+    };
+
+    new bootstrap.Modal(modal).show();
+}
+
+function deleteUser(id) {
+    if (confirm('Are you sure you want to delete this user?')) {
+        const url =  `{{ route('admin.patient.destroy', ['id' => '__id__']) }}`.replace('__id__', id);
+        fetch(url, {
+            method: 'DELETE',
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+            },
+        })
+            .then(response => response.json())
+            .then(data => {
+                alert(data.message);
+                window.location.reload();
+            })
+            .catch(error => console.error('Error:', error));
     }
+}
+
 </script>
 @endsection
 
