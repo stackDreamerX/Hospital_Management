@@ -32,7 +32,7 @@ Route::get('/staff', [HomeController::class, 'staff'])->name('users.staff');
 Route::get('/locations', [HomeController::class, 'locations'])->name('users.locations');
 Route::get('/patients', [HomeController::class, 'patients'])->name('users.patients');
 Route::get('/appointments', [HomeController::class, 'appointments'])->name('users.appointments');
-
+Route::get('/search-doctors', [HomeController::class, 'search'])->name('users.search.doctors');
 
 Route::prefix('admin')->group(function () {
     Route::get('/', [AdminController::class, 'index'])->name('admin');
@@ -66,16 +66,20 @@ Route::prefix('admin')->group(function () {
 
 
     //ward
-    Route::get('/ward', [WardController::class,'ward'])->name('ward');
+    Route::get('/ward', [WardController::class,'ward'])->name('admin.ward');
 
     //treatment
-    Route::get('/treatment', [TreatmentController::class,'treatment'])->name('treatment');
-
+    Route::get('/treatment', [TreatmentController::class,'index'])->name('admin.treatment');
+    Route::get('/treatments/{id}', [TreatmentController::class, 'show'])->name('admin.treatment.show');
+    Route::delete('/treatments/{id}', [TreatmentController::class, 'destroy'])->name('admin.treatment.destroy');
     //pharmacy
-    Route::get('/pharmacy', [PharmacyController::class,'pharmacy'])->name('pharmacy');
-
-    //patient
-    Route::get('/patient', [PatientController::class,'patient'])->name('patient');
+    Route::get('/pharmacy', [PharmacyController::class,'index'])->name('admin.pharmacy');
+    Route::get('/pharmacy//{id}', [PharmacyController::class, 'show'])->name('admin.prescription.show');
+    //patient  
+    Route::get('/patient', [PatientController::class, 'index'])->name('admin.patient'); // Danh sách user
+    Route::put('/patient/{id}', [PatientController::class, 'update'])->name('admin.patient.update'); // Cập nhật user
+    Route::delete('/patient/{id}', [PatientController::class, 'destroy'])->name('admin.patient.destroy'); // Xóa user
+    Route::post('/patient', [PatientController::class, 'store'])->name('admin.users.store');
 
 });
 // ->middleware('auth')
@@ -97,18 +101,24 @@ Route::prefix('doctor')->middleware('auth')->group(function () {
     Route::post('/lab/create', [App\Http\Controllers\Doctor\LabController::class, 'store'])->name('doctor.lab.create');
     Route::put('/lab/{id}/updateLab', [App\Http\Controllers\Doctor\LabController::class, 'updateLab'])->name('doctor.lab.updateLab');
     Route::delete('/lab/{id}/delete', [App\Http\Controllers\Doctor\LabController::class, 'destroyLab'])->name('doctor.lab.delete');
-
-
+    
     Route::get('/patients',[App\Http\Controllers\Doctor\PatientController::class,'index']) -> name('doctor.patients');
     Route::get('/patients-details/{id}',[App\Http\Controllers\Doctor\PatientController::class,'show']) -> name('doctor.patients.show');
     
     Route::get('/pharmacy',[App\Http\Controllers\Doctor\PharmacyController::class,'index']) -> name('doctor.pharmacy');
-  
+    Route::post('/pharmacy/create', [App\Http\Controllers\Doctor\PharmacyController::class, 'store'])->name('doctor.pharmacy.create');
+    Route::get('/pharmacy/details/{id}', [App\Http\Controllers\Doctor\PharmacyController::class, 'show'])->name('doctor.pharmacy.show');
+    Route::delete('/pharmacy/{id}/delete', [App\Http\Controllers\Doctor\PharmacyController::class, 'destroy'])->name('doctor.pharmacy.destroy');
+    Route::put('/pharmacy/{id}/updatePharmacy', [App\Http\Controllers\Doctor\PharmacyController::class, 'update'])->name('doctor.treatments.update');
+    Route::put('/pharmacy//{id}/cancel', [App\Http\Controllers\Doctor\PharmacyController::class, 'cancel'])->name('doctor.pharmacy.cancel');
+
+
+
     Route::get('/treatments',[App\Http\Controllers\Doctor\TreatmentController::class,'index']) -> name('doctor.treatments');
-    Route::post('/treatments/create',[App\Http\Controllers\Doctor\TreatmentController::class,'store']) -> name('doctor.treatment.store');
-    Route::get('treatments/details/{id}', [TreatmentController::class, 'show'])->name('doctor.treatments.show');
-    Route::put('treatments/{id}/updateTreatment', [TreatmentController::class, 'update'])->name('doctor.treatments.update');
-    Route::delete('treatments/{id}/delete', [TreatmentController::class, 'destroy'])->name('doctor.treatments.destroy');
+    Route::post('/treatments/create', [App\Http\Controllers\Doctor\TreatmentController::class, 'store'])->name('doctor.treatment.store');
+    Route::get('/treatments/details/{id}', [App\Http\Controllers\Doctor\TreatmentController::class, 'show'])->name('doctor.treatments.show');
+    Route::put('/treatments/{id}/updateTreatment', [App\Http\Controllers\Doctor\TreatmentController::class, 'update'])->name('doctor.treatments.update');
+    Route::delete('/treatments/{id}/delete', [App\Http\Controllers\Doctor\TreatmentController::class, 'destroy'])->name('doctor.treatments.destroy');
 
     Route::get('/profile', function() { return 1; })->name('doctor.profile');
     Route::get('/settings', function() { return 1; })->name('doctor.settings');
@@ -137,11 +147,11 @@ Route::prefix('patient')->middleware('auth')->group(function () {
 
 
     Route::get('/treatments',[App\Http\Controllers\Patient\TreatmentController::class,'index']) -> name('patient.treatments');
-
+    
     Route::get('/lab',[App\Http\Controllers\Patient\LabController::class,'index']) -> name('patient.lab');
 
     Route::get('/pharmacy*',[App\Http\Controllers\Patient\PharmacyController::class,'index']) -> name('patient.pharmacy');
-
+    Route::get('/pharmacy/{id}', [App\Http\Controllers\Patient\PrescriptionController::class, 'show'])->name('patient.pharmacy.show');
 
 });
 // ->middleware('auth')
