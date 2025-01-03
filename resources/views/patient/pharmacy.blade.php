@@ -1,5 +1,94 @@
 @extends('patient_layout')
+
+
+@push('styles')
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+@endpush
+
 @section('content')
+
+<style>
+     modal {
+    display: none; /* Ẩn modal ban đầu */
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1050; /* Bootstrap 5 modal z-index */
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background-color: rgba(0, 0, 0, 0.5); /* Overlay mờ */
+    }
+
+    .modal.fade {
+    opacity: 0; /* Modal mờ khi chưa được hiển thị */
+    transition: opacity 0.15s linear;
+    }
+
+    .modal.show {
+    display: block; /* Hiển thị modal */
+    opacity: 1;
+    }
+
+    .modal-dialog {
+    position: relative;
+    margin: 1.75rem auto; /* Center modal vertically */
+    pointer-events: auto;
+    max-width: 500px; /* Độ rộng mặc định */
+    }
+
+    .modal-dialog.modal-lg {
+    max-width: 800px; /* Độ rộng modal lớn */
+    }
+
+    .modal-content {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    background-color: #fff;
+    border: none;
+    border-radius: 0.5rem; /* Bo góc */
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15); /* Đổ bóng */
+    }
+
+    .modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 1rem;
+    border-bottom: 1px solid #dee2e6; /* Border dưới */
+    border-top-left-radius: 0.5rem;
+    border-top-right-radius: 0.5rem;
+    }
+
+    .modal-title {
+    margin-bottom: 0;
+    line-height: 1.5;
+    }
+
+    .btn-close {
+    background: none;
+    border: none;
+    -webkit-appearance: none;
+    }
+
+    .modal-body {
+    position: relative;
+    flex: 1 1 auto;
+    padding: 1rem;
+    }
+
+    .modal-footer {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 1rem;
+    border-top: 1px solid #dee2e6;
+    }
+
+</style>
+
 
 <div class="container mt-4">
     <!-- Statistics Cards -->
@@ -36,7 +125,7 @@
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
                             <h6 class="mb-0">Total Spent</h6>
-                            <h2 class="mb-0">Rs. {{ number_format($totalSpent) }}</h2>
+                            <h2 class="mb-0">{{ number_format($totalSpent) }}</h2>
                         </div>
                         <i class="fas fa-money-bill-wave fa-2x opacity-50"></i>
                     </div>
@@ -48,15 +137,7 @@
     <!-- Prescriptions List -->
     <div class="card">
         <div class="card-header bg-white py-3">
-            <div class="d-flex justify-content-between align-items-center">
-                <h5 class="mb-0">My Prescriptions</h5>
-                <div class="input-group" style="width: 300px;">
-                    <input type="text" id="searchInput" class="form-control" placeholder="Search prescriptions...">
-                    <button class="btn btn-outline-secondary">
-                        <i class="fas fa-search"></i>
-                    </button>
-                </div>
-            </div>
+            <h5 class="mb-0">My Prescriptions</h5>
         </div>
         <div class="card-body">
             <div class="table-responsive">
@@ -81,28 +162,19 @@
                                     <div>{{ $item['Name'] }} - {{ $item['Dosage'] }}</div>
                                 @endforeach
                             </td>
-                            <td>Rs. {{ number_format($prescription['TotalAmount']) }}</td>
+                            <td>{{ number_format($prescription['TotalAmount']) }}</td>
                             <td>
                                 <span class="badge bg-{{
                                     $prescription['Status'] == 'Completed' ? 'success' : 'warning'
-                                }}">
-                                    {{ $prescription['Status'] }}
-                                </span>
+                                }}">{{ $prescription['Status'] }}</span>
                                 <span class="badge bg-{{
                                     $prescription['PaymentStatus'] == 'Paid' ? 'success' : 'warning'
-                                }}">
-                                    {{ $prescription['PaymentStatus'] }}
-                                </span>
+                                }}">{{ $prescription['PaymentStatus'] }}</span>
                             </td>
                             <td>
-                                <div class="btn-group btn-group-sm">
-                                    <button class="btn btn-info" onclick="viewDetails({{ json_encode($prescription) }})">
-                                        <i class="fas fa-eye"></i>
-                                    </button>
-                                    <button class="btn btn-primary" onclick="downloadPrescription({{ $prescription['PrescriptionID'] }})">
-                                        <i class="fas fa-download"></i>
-                                    </button>
-                                </div>
+                                <button class="btn btn-info btn-sm" onclick="viewDetails({{ json_encode($prescription) }})">
+                                    <i class="fas fa-eye"></i>
+                                </button>
                             </td>
                         </tr>
                         @empty
@@ -117,7 +189,7 @@
     </div>
 </div>
 
-<!-- Details Modal -->
+<!-- Modal -->
 <div class="modal fade" id="detailsModal" tabindex="-1">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
@@ -125,18 +197,11 @@
                 <h5 class="modal-title">Prescription Details</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
-            <div class="modal-body" id="detailsContent">
-                <!-- Content will be loaded dynamically -->
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary" onclick="printPrescription()">
-                    <i class="fas fa-print"></i> Print
-                </button>
-            </div>
+            <div class="modal-body" id="detailsContent"></div>
         </div>
     </div>
 </div>
+
 
 @endsection
 
@@ -146,93 +211,26 @@ let detailsModal;
 
 document.addEventListener('DOMContentLoaded', function() {
     detailsModal = new bootstrap.Modal(document.getElementById('detailsModal'));
-
-    // Search functionality
-    document.getElementById('searchInput').addEventListener('keyup', function(e) {
-        const searchTerm = e.target.value.toLowerCase();
-        const rows = document.querySelectorAll('tbody tr');
-
-        rows.forEach(row => {
-            const text = row.textContent.toLowerCase();
-            row.style.display = text.includes(searchTerm) ? '' : 'none';
-        });
-    });
 });
 
 function viewDetails(prescription) {
     const content = document.getElementById('detailsContent');
-    
-    let medicinesList = prescription.Items.map(item => `
-        <tr>
-            <td>${item.Name}</td>
-            <td>${item.Dosage}</td>
-            <td>${item.Frequency}</td>
-            <td>${item.Duration}</td>
-            <td>${item.Quantity}</td>
-            <td>Rs. ${item.Price}</td>
-        </tr>
+    const items = prescription.Items.map(item => `
+        <li>${item.Name} - ${item.Dosage} x ${item.Quantity}</li>
     `).join('');
-
     content.innerHTML = `
-        <div class="mb-3">
-            <strong>Doctor:</strong> ${prescription.DoctorName}
-        </div>
-        <div class="mb-3">
-            <strong>Date:</strong> ${prescription.Date}
-        </div>
-        <div class="mb-3">
-            <strong>Status:</strong>
-            <span class="badge bg-${prescription.Status == 'Completed' ? 'success' : 'warning'}">
-                ${prescription.Status}
-            </span>
-            <span class="badge bg-${prescription.PaymentStatus == 'Paid' ? 'success' : 'warning'}">
-                ${prescription.PaymentStatus}
-            </span>
-        </div>
-        <div class="table-responsive">
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>Medicine</th>
-                        <th>Dosage</th>
-                        <th>Frequency</th>
-                        <th>Duration</th>
-                        <th>Quantity</th>
-                        <th>Price</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    ${medicinesList}
-                </tbody>
-                <tfoot>
-                    <tr>
-                        <td colspan="5" class="text-end"><strong>Total Amount:</strong></td>
-                        <td><strong>Rs. ${prescription.TotalAmount}</strong></td>
-                    </tr>
-                </tfoot>
-            </table>
-        </div>
-        ${prescription.Notes ? `
-            <div class="mt-3">
-                <strong>Notes:</strong> ${prescription.Notes}
-            </div>
-        ` : ''}
+        <h5>Date: ${prescription.Date}</h5>
+        <h5>Doctor: ${prescription.DoctorName}</h5>
+        <ul>${items}</ul>
+        <h5>Total: ${prescription.TotalAmount}</h5>
     `;
-    
     detailsModal.show();
-}
-
-function downloadPrescription(id) {
-    // Send to server
-    Swal.fire({
-        icon: 'success',
-        title: 'Success',
-        text: 'Prescription downloaded successfully!'
-    });
-}
-
-function printPrescription() {
-    window.print();
 }
 </script>
 @endsection
+
+
+
+@push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
+@endpush

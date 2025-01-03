@@ -3,100 +3,76 @@
 namespace App\Http\Controllers\Patient;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Auth;
+use App\Models\Prescription;
+use App\Models\PrescriptionDetail;
 
 class PharmacyController extends Controller
 {
-    private $samplePrescriptions = [
-        [
-            'PrescriptionID' => 1,
-            'PatientID' => 1,
-            'DoctorName' => 'Dr. Sarah Wilson',
-            'Date' => '2024-03-20',
-            'Status' => 'Pending',
-            'PaymentStatus' => 'Pending',
-            'TotalAmount' => 2500,
-            'Notes' => 'Take after meals',
-            'Items' => [
-                [
-                    'MedicineID' => 1,
-                    'Name' => 'Paracetamol',
-                    'Dosage' => '500mg',
-                    'Frequency' => '3 times daily',
-                    'Duration' => '5 days',
-                    'Quantity' => 15,
-                    'Price' => 500
-                ],
-                [
-                    'MedicineID' => 2,
-                    'Name' => 'Vitamin C',
-                    'Dosage' => '1000mg',
-                    'Frequency' => 'Once daily',
-                    'Duration' => '30 days',
-                    'Quantity' => 30,
-                    'Price' => 2000
-                ]
-            ]
-        ],
-        [
-            'PrescriptionID' => 2,
-            'PatientID' => 1,
-            'DoctorName' => 'Dr. Michael Brown',
-            'Date' => '2024-03-15',
-            'Status' => 'Completed',
-            'PaymentStatus' => 'Paid',
-            'TotalAmount' => 1500,
-            'Notes' => 'Complete course as prescribed',
-            'Items' => [
-                [
-                    'MedicineID' => 3,
-                    'Name' => 'Amoxicillin',
-                    'Dosage' => '250mg',
-                    'Frequency' => '2 times daily',
-                    'Duration' => '7 days',
-                    'Quantity' => 14,
-                    'Price' => 1500
-                ]
-            ]
-        ]
-    ];
-
     public function index()
     {
-        $patientId = session('patient_id', 1);
-        
-        $prescriptions = collect($this->samplePrescriptions)
-            ->where('PatientID', $patientId)
-            ->sortByDesc('Date');
+        $userId = Auth::id(); // Lấy UserID từ Auth
+        $prescriptions = Prescription::with(['doctor.user', 'prescriptionDetail.medicine'])
+            ->where('UserID', $userId)
+            ->orderBy('PrescriptionDate', 'desc')
+            ->get();
 
-        $pendingCount = $prescriptions->where('Status', 'Pending')->count();
-        $completedCount = $prescriptions->where('Status', 'Completed')->count();
-        $totalSpent = $prescriptions->where('PaymentStatus', 'Paid')->sum('TotalAmount');
+        $formattedPrescriptions = $prescriptions->map(function ($prescription) {
+            return [
+                'PrescriptionID' => $prescription->PrescriptionID,
+                'Date' => $prescription->PrescriptionDate,
+                'DoctorName' => $prescription->doctor->user->FullName ?? 'N/A',
+                'Items' => $prescription->prescriptionDetail->map(function ($detail) {
+                    return [
+                        'Name' => $detail->medicine->MedicineName,
+                        'Dosage' => $detail->Dosage,
+                        'Frequency' => $detail->Frequency,
+                        'Duration' => $detail->Duration,
+                        'Quantity' => $detail->Quantity,
+                        'Price' => $detail->Price,
+                    ];
+                }),
+                'TotalAmount' => $prescription->TotalPrice,
+                'Status' => 'Completed',
+                'PaymentStatus' => 'Paid',
+                'Notes' => $prescription->Notes ?? null,
+            ];
+        });
 
-        return view('patient.pharmacy', compact(
-            'prescriptions',
-            'pendingCount',
-            'completedCount',
-            'totalSpent'
-        ));
+        return view('patient.pharmacy', [
+            'prescriptions' => $formattedPrescriptions,
+            'pendingCount' => $formattedPrescriptions->where('Status', 'Pending')->count(),
+            'completedCount' => $formattedPrescriptions->where('Status', 'Completed')->count(),
+            'totalSpent' => $formattedPrescriptions->sum('TotalAmount'),
+        ]);
     }
 
     public function show($id)
     {
-        $prescription = collect($this->samplePrescriptions)
-            ->firstWhere('PrescriptionID', $id);
+        $prescription = Prescription::with(['doctor.user', 'prescriptionDetail.medicine'])
+            ->where('PrescriptionID', $id)
+            ->firstOrFail();
 
-        if (!$prescription) {
-            return redirect()->back()->with('error', 'Prescription not found');
-        }
+        $formattedPrescription = [
+            'PrescriptionID' => $prescription->PrescriptionID,
+            'Date' => $prescription->PrescriptionDate,
+            'DoctorName' => $prescription->doctor->user->FullName ?? 'N/A',
+            'Items' => $prescription->prescriptionDetail->map(function ($detail) {
+                return [
+                    'Name' => $detail->medicine->MedicineName,
+                    'Dosage' => $detail->Dosage,
+                    'Frequency' => $detail->Frequency,
+                    'Duration' => $detail->Duration,
+                    'Quantity' => $detail->Quantity,
+                    'Price' => $detail->Price,
+                ];
+            }),
+            'TotalAmount' => $prescription->TotalPrice,
+            'Notes' => $prescription->Notes ?? 'N/A',
+            'Status' => 'Completed',
+            'PaymentStatus' => 'Paid',
+        ];
 
-        return view('patient.prescription-details', compact('prescription'));
+        return response()->json($formattedPrescription);
     }
-
-    public function downloadPrescription($id)
-    {
-        // In real application, generate and download PDF
-        return response()->json(['message' => 'Prescription downloaded successfully']);
-    }
-} 
+}
