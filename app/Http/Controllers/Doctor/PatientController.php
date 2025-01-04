@@ -85,7 +85,7 @@ class PatientController extends Controller
             ->get();
 
       
-        $prescriptions = \App\Models\Prescription::with(['prescriptionDetails.medicine'])
+        $prescriptions = \App\Models\Prescription::with(['prescriptionDetail.medicine'])
             ->where('UserID', $id)
             ->where('DoctorID', $doctorId)
             ->orderByDesc('PrescriptionDate')

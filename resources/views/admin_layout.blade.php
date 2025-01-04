@@ -134,13 +134,13 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
                         <span>Lab</span>
                     </a>
                 </li>
-
+<!-- 
                 <li class="{{ Request::is('admin/ward') ? 'active' : '' }}">
                     <a href="{{ url('/admin/ward') }}">
                         <i class="fa fa-hospital-o"></i>
                         <span>Ward</span>
                     </a>
-                </li>
+                </li> -->
 
                 <li class="{{ Request::is('admin/treatment') ? 'active' : '' }}">
                     <a href="{{ url('/admin/treatment') }}">

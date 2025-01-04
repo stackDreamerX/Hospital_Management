@@ -1,6 +1,86 @@
 @extends('patient_layout')
 @section('content')
 
+<style>
+     modal {
+    display: none; /* Ẩn modal ban đầu */
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1050; /* Bootstrap 5 modal z-index */
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background-color: rgba(0, 0, 0, 0.5); /* Overlay mờ */
+    }
+
+    .modal.fade {
+    opacity: 0; /* Modal mờ khi chưa được hiển thị */
+    transition: opacity 0.15s linear;
+    }
+
+    .modal.show {
+    display: block; /* Hiển thị modal */
+    opacity: 1;
+    }
+
+    .modal-dialog {
+    position: relative;
+    margin: 1.75rem auto; /* Center modal vertically */
+    pointer-events: auto;
+    max-width: 500px; /* Độ rộng mặc định */
+    }
+
+    .modal-dialog.modal-lg {
+    max-width: 800px; /* Độ rộng modal lớn */
+    }
+
+    .modal-content {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    background-color: #fff;
+    border: none;
+    border-radius: 0.5rem; /* Bo góc */
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15); /* Đổ bóng */
+    }
+
+    .modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 1rem;
+    border-bottom: 1px solid #dee2e6; /* Border dưới */
+    border-top-left-radius: 0.5rem;
+    border-top-right-radius: 0.5rem;
+    }
+
+    .modal-title {
+    margin-bottom: 0;
+    line-height: 1.5;
+    }
+
+    .btn-close {
+    background: none;
+    border: none;
+    -webkit-appearance: none;
+    }
+
+    .modal-body {
+    position: relative;
+    flex: 1 1 auto;
+    padding: 1rem;
+    }
+
+    .modal-footer {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 1rem;
+    border-top: 1px solid #dee2e6;
+    }
+
+</style>
 <div class="container mt-4">
     <!-- Statistics Cards -->
     <div class="row mb-4">
@@ -71,12 +151,12 @@
                                     $test['Status'] == 'Completed' ? 'success' :
                                     ($test['Status'] == 'Pending' ? 'warning' : 'info')
                                 }}">
-                                    {{ $test['Status'] }}
+                                    Pending
                                 </span>
                             </td>
                             <td>
                                 {{ number_format($test['TotalPrice']) }}
-                                <span class="badge bg-{{ $test['PaymentStatus'] == 'Paid' ? 'success' : 'warning' }}">
+                                <span class="badge bg-success">
                                     {{ $test['PaymentStatus'] }}
                                 </span>
                             </td>
@@ -85,7 +165,7 @@
                                     <button class="btn btn-info" onclick="viewDetails({{ json_encode($test) }})">
                                         <i class="fas fa-eye"></i>
                                     </button>
-                                    @if($test['Status'] == 'Completed' && $test['Report'])
+                                    @if($test['Status'] == 'Completed' && $test['Result'])
                                         <button class="btn btn-primary"
                                                 onclick="downloadReport({{ $test['LaboratoryID'] }})">
                                             <i class="fas fa-download"></i>
@@ -100,6 +180,7 @@
                         </tr>
                         @endforelse
                     </tbody>
+
                 </table>
             </div>
         </div>
@@ -174,6 +255,7 @@ function viewDetails(test) {
     `;
     detailsModal.show();
 }
+
 
 function downloadReport(id) {
     // Send to server

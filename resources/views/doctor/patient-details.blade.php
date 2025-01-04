@@ -196,9 +196,13 @@
                         <tr>
                             <td>{{ $prescription->PrescriptionDate }}</td>
                             <td>
+                            @if($prescription->prescriptionDetails && $prescription->prescriptionDetails->isNotEmpty())
                                 @foreach($prescription->prescriptionDetails as $detail)
-                                    {{ $detail->medicine->MedicineName }} (x{{ $detail->Quantity }})<br>
+                                    {{ $detail->medicine->MedicineName ?? 'N/A' }} (x{{ $detail->Quantity ?? '0' }})<br>
                                 @endforeach
+                            @else
+                                <p>No prescription details available.</p>
+                            @endif
                             </td>
                             <td>{{ $prescription->Status }}</td>
                         </tr>

@@ -148,7 +148,7 @@ Route::prefix('patient')->middleware('auth')->group(function () {
 
     Route::get('/treatments',[App\Http\Controllers\Patient\TreatmentController::class,'index']) -> name('patient.treatments');
     
-    Route::get('/lab',[App\Http\Controllers\Patient\LabController::class,'index']) -> name('patient.lab');
+    Route::get('/lab',[App\Http\Controllers\Patient\LabController::class,'index']) -> name('patient.lab');    
 
     Route::get('/pharmacy*',[App\Http\Controllers\Patient\PharmacyController::class,'index']) -> name('patient.pharmacy');
     Route::get('/pharmacy/{id}', [App\Http\Controllers\Patient\PrescriptionController::class, 'show'])->name('patient.pharmacy.show');
