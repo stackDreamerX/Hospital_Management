@@ -8,58 +8,91 @@
 
 
 @section('content')
+<div class="container-fluid px-4">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h4 class="mb-4" 
+                style="font-family: 'Poppins', sans-serif; 
+                    font-size: 32px; 
+                    color: #ffff; 
+                    letter-spacing: 0.5px; 
+                    font-weight: 600; 
+                    text-shadow: 1px 1px 2px rgba(0,0,0,0.05);">
+                Welcome back, {{ auth()->user()->FullName ?? 'Patient' }}
+            </h4>
+        </div>
+    </div>
 
-<div class="container mt-4">
     <!-- Statistics Cards -->
     <div class="row mb-4">
-        <div class="col-md-3">
-            <div class="card bg-primary text-white">
+        <div class="col-md-3 col-sm-6 mb-3 mb-md-0">
+            <div class="card border-0 h-100">
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
-                            <h6 class="mb-0">Today's Appointments</h6>
-                            <h2 class="mb-0">{{ $todayAppointments }}</h2>
+                            <h6 class="text-muted mb-1">Today's Appointments</h6>
+                            <h3 class="mb-0">{{ $todayAppointments }}</h3>
                         </div>
-                        <i class="fas fa-calendar-day fa-2x opacity-50"></i>
+                        <div class="icon-circle bg-primary bg-opacity-10">
+                            <i class="fas fa-calendar-day fa-2x text-primary"></i>
+                        </div>
+                    </div>
+                    <div class="mt-3 pt-2 border-top">
+                        <small class="text-muted"><i class="fas fa-calendar me-1"></i> {{ date('d M Y') }}</small>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="col-md-3">
-            <div class="card bg-success text-white">
+        <div class="col-md-3 col-sm-6 mb-3 mb-md-0">
+            <div class="card border-0 h-100">
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
-                            <h6 class="mb-0">Active Patients</h6>
-                            <h2 class="mb-0">{{ $activePatients }}</h2>
+                            <h6 class="text-muted mb-1">Active Patients</h6>
+                            <h3 class="mb-0">{{ $activePatients }}</h3>
                         </div>
-                        <i class="fas fa-users fa-2x opacity-50"></i>
+                        <div class="icon-circle bg-success bg-opacity-10">
+                            <i class="fas fa-users fa-2x text-success"></i>
+                        </div>
+                    </div>
+                    <div class="mt-3 pt-2 border-top">
+                        <small class="text-muted"><i class="fas fa-user-check me-1"></i> Active under your care</small>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="col-md-3">
-            <div class="card bg-warning text-white">
+        <div class="col-md-3 col-sm-6 mb-3 mb-md-0">
+            <div class="card border-0 h-100">
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
-                            <h6 class="mb-0">Pending Labs</h6>
-                            <h2 class="mb-0">{{ $pendingLabs }}</h2>
+                            <h6 class="text-muted mb-1">Pending Labs</h6>
+                            <h3 class="mb-0">{{ $pendingLabs }}</h3>
                         </div>
-                        <i class="fas fa-flask fa-2x opacity-50"></i>
+                        <div class="icon-circle bg-warning bg-opacity-10">
+                            <i class="fas fa-flask fa-2x text-warning"></i>
+                        </div>
+                    </div>
+                    <div class="mt-3 pt-2 border-top">
+                        <small class="text-muted"><i class="fas fa-hourglass-half me-1"></i> Awaiting results</small>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="col-md-3">
-            <div class="card bg-info text-white">
+        <div class="col-md-3 col-sm-6 mb-3 mb-md-0">
+            <div class="card border-0 h-100">
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
-                            <h6 class="mb-0">Active Treatments</h6>
-                            <h2 class="mb-0">{{ $activeTreatments }}</h2>
+                            <h6 class="text-muted mb-1">Active Treatments</h6>
+                            <h3 class="mb-0">{{ $activeTreatments }}</h3>
                         </div>
-                        <i class="fas fa-procedures fa-2x opacity-50"></i>
+                        <div class="icon-circle bg-info bg-opacity-10">
+                            <i class="fas fa-procedures fa-2x text-info"></i>
+                        </div>
+                    </div>
+                    <div class="mt-3 pt-2 border-top">
+                        <small class="text-muted"><i class="fas fa-heartbeat me-1"></i> Ongoing treatments</small>
                     </div>
                 </div>
             </div>
@@ -69,10 +102,10 @@
     <div class="row">
         <!-- Today's Schedule -->
         <div class="col-md-8 mb-4">
-            <div class="card">
+            <div class="card border-0">
                 <div class="card-header bg-white py-3">
                     <div class="d-flex justify-content-between align-items-center">
-                        <h5 class="mb-0">Today's Schedule</h5>
+                        <h5 class="mb-0"><i class="fas fa-calendar-alt text-primary me-2"></i>Today's Schedule</h5>
                         <a href="{{ route('doctor.appointments') }}" class="btn btn-sm btn-primary">
                             View All
                         </a>
@@ -80,7 +113,7 @@
                 </div>
                 <div class="card-body">
                     <div class="table-responsive">
-                        <table class="table">
+                        <table class="table table-hover">
                             <thead>
                                 <tr>
                                     <th>Time</th>
@@ -93,26 +126,29 @@
                             <tbody>
                                 @forelse($todaySchedule as $schedule)
                                 <tr>
-                                    <td>{{ $schedule['Time'] }}</td>
-                                    <td>{{ $schedule['PatientName'] }}</td>
+                                    <td><i class="far fa-clock me-1"></i> {{ $schedule['Time'] }}</td>
+                                    <td><i class="far fa-user me-1"></i> {{ $schedule['PatientName'] }}</td>
                                     <td>{{ $schedule['Type'] }}</td>
                                     <td>
                                         <span class="badge bg-{{
                                             $schedule['Status'] == 'Completed' ? 'success' :
                                             ($schedule['Status'] == 'Pending' ? 'warning' : 'info')
-                                        }}">
+                                        }} rounded-pill">
                                             {{ $schedule['Status'] }}
                                         </span>
                                     </td>
                                     <td>
-                                        <button class="btn btn-sm btn-info" onclick="viewDetails({{ json_encode($schedule) }})">
+                                        <button class="btn btn-sm btn-info" data-schedule="{{ json_encode($schedule) }}">
                                             <i class="fas fa-eye"></i>
                                         </button>
                                     </td>
                                 </tr>
                                 @empty
                                 <tr>
-                                    <td colspan="5" class="text-center">No appointments scheduled for today</td>
+                                    <td colspan="5" class="text-center py-4">
+                                        <i class="fas fa-calendar-times fa-3x text-muted mb-3"></i>
+                                        <p class="text-muted">No appointments scheduled for today</p>
+                                    </td>
                                 </tr>
                                 @endforelse
                             </tbody>
@@ -124,20 +160,20 @@
 
         <!-- Recent Activities -->
         <div class="col-md-4 mb-4">
-            <div class="card">
+            <div class="card border-0 h-100">
                 <div class="card-header bg-white py-3">
-                    <h5 class="mb-0">Recent Activities</h5>
+                    <h5 class="mb-0"><i class="fas fa-history text-info me-2"></i>Recent Activities</h5>
                 </div>
                 <div class="card-body">
                     <div class="timeline">
                         @foreach($recentActivities as $activity)
                         <div class="timeline-item">
                             <div class="timeline-icon bg-{{ $activity['Type'] == 'appointment' ? 'primary' :
-                                                         ($activity['Type'] == 'lab' ? 'warning' :
-                                                         ($activity['Type'] == 'treatment' ? 'info' : 'success')) }}">
+                                                        ($activity['Type'] == 'lab' ? 'warning' :
+                                                        ($activity['Type'] == 'treatment' ? 'info' : 'success')) }}">
                                 <i class="fas fa-{{ $activity['Type'] == 'appointment' ? 'calendar' :
-                                                  ($activity['Type'] == 'lab' ? 'flask' :
-                                                  ($activity['Type'] == 'treatment' ? 'procedures' : 'prescription')) }}">
+                                                ($activity['Type'] == 'lab' ? 'flask' :
+                                                ($activity['Type'] == 'treatment' ? 'procedures' : 'prescription')) }}">
                                 </i>
                             </div>
                             <div class="timeline-content">
@@ -155,32 +191,39 @@
     <div class="row">
         <!-- Pending Tasks -->
         <div class="col-md-6 mb-4">
-            <div class="card">
+            <div class="card border-0 h-100">
                 <div class="card-header bg-white py-3">
-                    <h5 class="mb-0">Pending Tasks</h5>
+                    <h5 class="mb-0"><i class="fas fa-tasks text-warning me-2"></i>Pending Tasks</h5>
                 </div>
                 <div class="card-body">
-                    <div class="list-group">
-                        @foreach($pendingTasks as $task)
-                        <div class="list-group-item list-group-item-action">
-                            <div class="d-flex w-100 justify-content-between">
-                                <h6 class="mb-1">{{ $task['Title'] }}</h6>
-                                <small class="text-danger">{{ $task['DueDate'] }}</small>
+                    @if(count($pendingTasks) > 0)
+                        <div class="list-group">
+                            @foreach($pendingTasks as $task)
+                            <div class="list-group-item list-group-item-action border-0 mb-2 rounded">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h6 class="mb-1">{{ $task['Title'] }}</h6>
+                                    <small class="text-danger"><i class="fas fa-clock me-1"></i> {{ $task['DueDate'] }}</small>
+                                </div>
+                                <p class="mb-1">{{ $task['Description'] }}</p>
+                                <small class="text-muted"><i class="fas fa-tag me-1"></i> {{ $task['Type'] }}</small>
                             </div>
-                            <p class="mb-1">{{ $task['Description'] }}</p>
-                            <small class="text-muted">{{ $task['Type'] }}</small>
+                            @endforeach
                         </div>
-                        @endforeach
-                    </div>
+                    @else
+                        <div class="text-center py-5">
+                            <i class="fas fa-check-circle fa-3x text-muted mb-3"></i>
+                            <p class="text-muted">No pending tasks</p>
+                        </div>
+                    @endif
                 </div>
             </div>
         </div>
 
         <!-- Patient Statistics -->
         <div class="col-md-6 mb-4">
-            <div class="card">
+            <div class="card border-0 h-100">
                 <div class="card-header bg-white py-3">
-                    <h5 class="mb-0">Patient Statistics</h5>
+                    <h5 class="mb-0"><i class="fas fa-chart-line text-success me-2"></i>Patient Statistics</h5>
                 </div>
                 <div class="card-body">
                     <canvas id="patientStatsChart"></canvas>
@@ -262,6 +305,14 @@ let detailsModal;
 document.addEventListener('DOMContentLoaded', function() {
     detailsModal = new bootstrap.Modal(document.getElementById('detailsModal'));
 
+    // Set up event listeners for view details buttons
+    document.querySelectorAll('.btn-info').forEach(button => {
+        button.addEventListener('click', function() {
+            const schedule = JSON.parse(this.getAttribute('data-schedule'));
+            viewDetails(schedule);
+        });
+    });
+
     // Initialize patient statistics chart
     const ctx = document.getElementById('patientStatsChart').getContext('2d');
     new Chart(ctx, {
@@ -271,15 +322,31 @@ document.addEventListener('DOMContentLoaded', function() {
             datasets: [{
                 label: 'Patient Visits',
                 data: [12, 19, 15, 25, 22, 30],
-                borderColor: 'rgb(75, 192, 192)',
-                tension: 0.1
+                borderColor: '#089bab',
+                backgroundColor: 'rgba(8, 155, 171, 0.1)',
+                tension: 0.3,
+                fill: true
             }]
         },
         options: {
             responsive: true,
+            plugins: {
+                legend: {
+                    display: true,
+                    position: 'top'
+                }
+            },
             scales: {
                 y: {
-                    beginAtZero: true
+                    beginAtZero: true,
+                    grid: {
+                        color: 'rgba(0, 0, 0, 0.05)'
+                    }
+                },
+                x: {
+                    grid: {
+                        color: 'rgba(0, 0, 0, 0.05)'
+                    }
                 }
             }
         }

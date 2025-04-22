@@ -70,6 +70,16 @@
 
 @section('content')
 
+@if(session('error'))
+<div class="container mt-4">
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <strong>Error!</strong> {{ session('error') }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+</div>
+@endif
+
+
 <div class="container mt-4">
     <!-- Statistics Cards -->
     <div class="row mb-4">
@@ -148,18 +158,18 @@
                             <td>
                                 @if($appointment['Status'] == 'pending')
                                     <div class="btn-group btn-group-sm">
-                                        <button class="btn btn-success"
-                                                onclick="updateStatus({{ $appointment['AppointmentID'] }}, 'Approved')">
+                                        <button class="btn btn-success approve-btn" 
+                                                data-id="{{ $appointment['AppointmentID'] }}">
                                             <i class="fas fa-check"></i> Approve
                                         </button>
-                                        <button class="btn btn-danger"
-                                                onclick="updateStatus({{ $appointment['AppointmentID'] }}, 'Rejected')">
+                                        <button class="btn btn-danger reject-btn"
+                                                data-id="{{ $appointment['AppointmentID'] }}">
                                             <i class="fas fa-times"></i> Reject
                                         </button>
                                     </div>
                                 @else
-                                    <button class="btn btn-info btn-sm"
-                                            onclick="viewDetails({{ $appointment }})">
+                                    <button class="btn btn-info btn-sm view-details-btn"
+                                            data-appointment='{{ json_encode($appointment) }}'>
                                         <i class="fas fa-eye"></i> View
                                     </button>
                                 @endif
@@ -208,6 +218,25 @@ document.addEventListener('DOMContentLoaded', function() {
     const reloadButton = document.getElementById('reloadButton');
     const tableBody = document.querySelector('tbody');
     const rows = tableBody.querySelectorAll('tr');
+
+    // Add event listeners for buttons
+    document.querySelectorAll('.approve-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            updateStatus(this.getAttribute('data-id'), 'Approved');
+        });
+    });
+
+    document.querySelectorAll('.reject-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            updateStatus(this.getAttribute('data-id'), 'Rejected');
+        });
+    });
+
+    document.querySelectorAll('.view-details-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            viewDetails(JSON.parse(this.getAttribute('data-appointment')));
+        });
+    });
 
     searchInput.addEventListener('keyup', function(e) {
         const searchTerm = e.target.value.toLowerCase();
@@ -275,16 +304,16 @@ function viewDetails(appointment) {
             <strong>Time:</strong> ${appointment.AppointmentTime}
         </div>
         <div class="mb-3">
-            <strong>Patient Name:</strong> {{ $appointment->user->FullName }}
+            <strong>Patient Name:</strong> ${appointment.user ? appointment.user.FullName : 'No name provided'}
         </div>
         <div class="mb-3">
-            <strong>Contact:</strong> {{$appointment->user->PhoneNumber }} {{$appointment->user->Email}}
+            <strong>Contact:</strong> ${appointment.user ? (appointment.user.PhoneNumber || 'No phone') : 'No contact'} ${appointment.user ? (appointment.user.Email || '') : ''}
         </div>
         <div class="mb-3">
             <strong>Reason:</strong> ${appointment.Reason}
         </div>
         <div class="mb-3">
-            <strong>Symptoms:</strong> ${appointment.Symptoms}
+            <strong>Symptoms:</strong> ${appointment.Symptoms || 'No symptoms provided'}
         </div>
         <div class="mb-3">
             <strong>Notes:</strong> ${appointment.Notes || 'No additional notes'}

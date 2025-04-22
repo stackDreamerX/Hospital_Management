@@ -1,80 +1,26 @@
 <!DOCTYPE html>
+<html lang="en">
 <head>
 <title>Patient Dashboard</title>
+<link rel="icon" type="image/x-icon" href="{{ asset('public/logo.ico') }}">
+
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="keywords" content="Hospital Management System" />
 <meta name="csrf-token" content="{{ csrf_token() }}">
 <script type="application/x-javascript"> addEventListener("load", function() { setTimeout(hideURLbar, 0); }, false); function hideURLbar(){ window.scrollTo(0,1); } </script>
-<!-- bootstrap-css -->
-<link rel="stylesheet" href="{{ asset('public/BackEnd/css/bootstrap.min.css') }}" >
-<!-- Custom CSS -->
-<link href="{{ asset('public/BackEnd/css/style.css') }}" rel='stylesheet' type='text/css' />
-<link href="{{ asset('public/BackEnd/css/style-responsive.css') }}" rel="stylesheet"/>
-<!-- Font Awesome -->
-<link href="{{ asset('public/BackEnd/css/font-awesome.css') }}" rel="stylesheet">
-<!-- Calendar -->
-<link rel="stylesheet" href="{{ asset('public/BackEnd/css/monthly.css') }}">
+
+
 <!-- Bootstrap 5 -->
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-<!-- Font Awesome 6 -->
+
+<!-- Font Awesome -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
-<style>
-    .sidebar-menu li.active a {
-        background-color: #007bff !important;
-        color: #fff !important;
-        font-weight: bold;
-        border-left: 4px solid #ffffff;
-    }
+<!-- Custom CSS -->
+<link rel="stylesheet" href="{{ asset('public/css/patient_layout.css') }}">
 
-    .sidebar-menu li a {
-        padding: 15px 20px;
-        display: block;
-        transition: all 0.3s ease;
-    }
 
-    .sidebar-menu li a i {
-        margin-right: 10px;
-        width: 20px;
-        text-align: center;
-    }
-
-    .header.fixed-top {
-        background: #f8f9fa;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    }
-
-    .notification-badge {
-        position: absolute;
-        top: -5px;
-        right: -5px;
-        padding: 3px 6px;
-        border-radius: 50%;
-        font-size: 0.7rem;
-        background: #dc3545;
-        color: white;
-    }
-
-    .content-wrapper {
-        padding: 20px;
-        background: #f4f6f9;
-    }
-
-    @media (max-width: 768px) {
-        .sidebar {
-            position: fixed;
-            z-index: 1000;
-            width: 250px;
-            transform: translateX(-100%);
-            transition: transform 0.3s;
-        }
-        
-        .sidebar.show {
-            transform: translateX(0);
-        }
-    }
-</style>
 
 @stack('styles')
 </head>
@@ -85,34 +31,32 @@
     <!--logo start-->
     <div class="brand">
         <a href="{{ route('patient.dashboard') }}" class="logo">
-            <img src="{{ asset('public/BackEnd/images/logo.ico') }}" alt="Logo" height="40">
-            <span>Patient</span>
+            <img src="{{ asset('public/logo.ico') }}" alt="Logo" height="40">
+            <span>Patient Portal</span>
         </a>
-        <div class="sidebar-toggle-box">
-            <div class="fa fa-bars"></div>
+        <div class="sidebar-toggle-box" id="sidebarToggle">
+            <i class="fa fa-bars"></i>
         </div>
     </div>
     <!--logo end-->
 
     <div class="top-nav clearfix">
         <!--search & user info start-->
-        <ul class="nav pull-right top-menu">
+        <ul class="nav top-menu">
             <li>
                 <input type="text" class="form-control search" placeholder="Search">
             </li>
             <!-- user login dropdown start-->
             <li class="dropdown">
                 <a data-bs-toggle="dropdown" class="dropdown-toggle" href="#">
-                    <img alt="" src="{{ asset('public/BackEnd/images/avatar.jpg') }}">
-                  
-
+                    <img alt="" src="{{ asset('public/avatar.jpg') }}">
                     <span class="username">{{ auth()->user()->FullName ?? 'Patient' }}</span>
                     <b class="caret"></b>
                 </a>
                 <ul class="dropdown-menu extended logout">
                     <li><a href="{{ route('patient.profile') }}"><i class="fa fa-user"></i> Profile</a></li>
                     <li><a href="{{ route('patient.settings') }}"><i class="fa fa-cog"></i> Settings</a></li>
-                    <li><a href="{{ route('patient.logout') }}"><i class="fa fa-sign-out"></i> Logout</a></li>
+                    <li><a href="{{ route('patient.logout') }}"><i class="fa fa-sign-out-alt"></i> Logout</a></li>
                 </ul>
             </li>
         </ul>
@@ -165,7 +109,7 @@
 
 <!--main content start-->
 <section id="main-content">
-    <section class="wrapper">
+    <section class="wrapper" style="background: linear-gradient(135deg, #1a3a8f 0%, #2c3e50 100%); color: #fff;">
         @yield('content')
     </section>
     <!-- footer -->
@@ -182,12 +126,25 @@
 <!-- Scripts -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script src="{{ asset('public/BackEnd/js/jquery.min.js') }}"></script>
-<script src="{{ asset('public/BackEnd/js/bootstrap.js') }}"></script>
+
+<!-- Sidebar Toggle Script -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const sidebarToggle = document.getElementById('sidebarToggle');
+        const sidebar = document.getElementById('sidebar');
+        
+        if (sidebarToggle) {
+            sidebarToggle.addEventListener('click', function() {
+                sidebar.classList.toggle('show');
+            });
+        }
+    });
+</script>
 
 <!-- Flash Messages -->
+@if(Session::has('success'))
 <script>
-    @if(Session::has('success'))
+    document.addEventListener('DOMContentLoaded', function() {
         Swal.fire({
             icon: 'success',
             title: 'Success',
@@ -195,16 +152,22 @@
             timer: 3000,
             showConfirmButton: false
         });
-    @endif
+    });
+</script>
+@endif
 
-    @if(Session::has('error'))
+@if(Session::has('error'))
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
         Swal.fire({
             icon: 'error',
             title: 'Error',
             text: '{{ Session::get("error") }}'
         });
-    @endif
+    });
 </script>
+@endif
+
 @yield('scripts')
 </body>
 </html>

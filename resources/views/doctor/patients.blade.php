@@ -1,45 +1,40 @@
 @extends('doctor_layout');
 
-@push('styles')
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
-<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-@endpush
-
 @section('content')
 
 
 <style>
      modal {
-  display: none; /* Ẩn modal ban đầu */
+  display: none; 
   position: fixed;
   top: 0;
   left: 0;
-  z-index: 1050; /* Bootstrap 5 modal z-index */
+  z-index: 1050; 
   width: 100%;
   height: 100%;
   overflow: hidden;
-  background-color: rgba(0, 0, 0, 0.5); /* Overlay mờ */
+  background-color: rgba(0, 0, 0, 0.5); 
 }
 
 .modal.fade {
-  opacity: 0; /* Modal mờ khi chưa được hiển thị */
+  opacity: 0; 
   transition: opacity 0.15s linear;
 }
 
 .modal.show {
-  display: block; /* Hiển thị modal */
+  display: block; 
   opacity: 1;
 }
 
 .modal-dialog {
   position: relative;
-  margin: 1.75rem auto; /* Center modal vertically */
+  margin: 1.75rem auto; 
   pointer-events: auto;
-  max-width: 500px; /* Độ rộng mặc định */
+  max-width: 500px;
 }
 
 .modal-dialog.modal-lg {
-  max-width: 800px; /* Độ rộng modal lớn */
+  max-width: 800px;
 }
 
 .modal-content {
@@ -48,8 +43,8 @@
   flex-direction: column;
   background-color: #fff;
   border: none;
-  border-radius: 0.5rem; /* Bo góc */
-  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15); /* Đổ bóng */
+  border-radius: 0.5rem;
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15); 
 }
 
 .modal-header {
@@ -57,7 +52,7 @@
   align-items: center;
   justify-content: space-between;
   padding: 1rem 1rem;
-  border-bottom: 1px solid #dee2e6; /* Border dưới */
+  border-bottom: 1px solid #dee2e6;
   border-top-left-radius: 0.5rem;
   border-top-right-radius: 0.5rem;
 }
@@ -186,19 +181,16 @@ document.addEventListener('DOMContentLoaded', function() {
     const searchInput = document.getElementById('searchInput');
     const patientCards = document.querySelectorAll('.patient-card');
 
-    searchInput.addEventListener('keyup', function(e) {
-        const searchTerm = e.target.value.toLowerCase();
+    if(searchInput && patientCards.length > 0){
+        searchInput.addEventListener('keyup', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
 
-        patientCards.forEach(card => {
-            const text = card.textContent.toLowerCase();
-            card.style.display = text.includes(searchTerm) ? '' : 'none';
+            patientCards.forEach(card => {
+                const text = card.textContent.toLowerCase();
+                card.style.display = text.includes(searchTerm) ? '' : 'none';
+            });
         });
-    });
+    }
 });
 </script>
 @endsection
-
-
-@push('scripts')
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
-@endpush

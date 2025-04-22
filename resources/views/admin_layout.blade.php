@@ -1,52 +1,22 @@
-
-
 <!DOCTYPE html>
 <head>
-<title>Visitors an Admin Panel Category Bootstrap Responsive Website Template | Home :: w3layouts</title>
+<title>Admin Dashboard</title>
+<link rel="icon" type="image/x-icon" href="{{ asset('public/logo.ico') }}">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="keywords" content="Visitors Responsive web template, Bootstrap Web Templates, Flat Web Templates, Android Compatible web template,
 Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, SonyEricsson, Motorola web design" />
 <meta name="csrf-token" content="{{ csrf_token() }}">
 <script type="application/x-javascript"> addEventListener("load", function() { setTimeout(hideURLbar, 0); }, false); function hideURLbar(){ window.scrollTo(0,1); } </script>
-<!-- bootstrap-css -->
-<link rel="stylesheet" href="../public/Backend/css/bootstrap.min.css" >
-<!-- //bootstrap-css -->
+
+<!-- Bootstrap CSS -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
+<!-- Font Awesome CSS -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 <!-- Custom CSS -->
-<link href="../public/Backend/css/style.css" rel='stylesheet' type='text/css' />
-<link href="../public/Backend/css/style-responsive.css" rel="stylesheet"/>
-<!-- font CSS -->
-<link href='//fonts.googleapis.com/css?family=Roboto:400,100,100italic,300,300italic,400italic,500,500italic,700,700italic,900,900italic' rel='stylesheet' type='text/css'>
-<!-- font-awesome icons -->
-<link rel="stylesheet" href="../public/Backend/css/font.css" type="text/css"/>
-<link href="../public/Backend/css/font-awesome.css" rel="stylesheet">
-<link rel="stylesheet" href="../public/Backend/css/morris.css" type="text/css"/>
-<!-- calendar -->
-<link rel="stylesheet" href="../public/Backend/css/monthly.css">
-<!-- //calendar -->
-<!-- //font-awesome icons -->
-<script src="../public/Backend/js/jquery2.0.3.min.js"></script>
-<script src="../public/Backend/js/raphael-min.js"></script>
-<script src="../public/Backend/js/morris.js"></script>
+<link href="{{ asset('public/css/admin_layout.css') }}" rel="stylesheet">
 
-<style>
-        /* Sidebar menu hover and click effect */
-    .sidebar-menu li a {
-        transition: background-color 0.3s, color 0.3s;
-    }
-
-    .sidebar-menu li a:hover,
-    .sidebar-menu li.active > a {
-        background-color: #3d7fc1; /* Đổi màu nền */
-        color: #fff; /* Đổi màu chữ */
-        border-radius: 5px;
-    }
-    
-    /* Hiệu ứng click */
-    .sidebar-menu li a:active {
-        transform: scale(0.98); /* Hiệu ứng nhấn */
-    }
-</style>
+<?php use Illuminate\Support\Facades\Session; ?>
 
 @stack('styles')
 </head>
@@ -59,8 +29,8 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 <!--logo start-->
 <!--logo start-->
 <div class="brand">
-    <a href="{{ url('/dashboard')  }}" class="logo">
-        <img alt="" src="../public/Backend/images/logo.ico" height="40px">
+    <a href="{{ url('admin/dashboard')  }}" class="logo">
+        <img alt="" src="../public/logo.ico" height="40px">
         <span>Admin</span>
     </a>
     <div class="sidebar-toggle-box">
@@ -82,8 +52,8 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
         </li>
         <!-- user login dropdown start-->
         <li class="dropdown">
-            <a data-bs-toggle="dropdown" class="dropdown-toggle" href="#">
-                <img alt="" src="../public/Backend/images/2.png">
+            <a class="dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <img alt="" src="../public/2.png">
                 <span class="username">
 					<?php
 						$name = Session::get("admin_name");
@@ -95,9 +65,10 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
                 <b class="caret"></b>
             </a>
             <ul class="dropdown-menu dropdown-menu-end logout">
-                <li><a href="#"><i class=" fa fa-suitcase"></i>Profile</a></li>
-                <li><a href="#"><i class="fa fa-cog"></i> Settings</a></li>
-                <li><a href="{{ route('logout') }}"><i class="fa fa-key"></i> Đăng xuất</a></li>
+                <li><a class="dropdown-item" href="#"><i class="fa-solid fa-suitcase"></i> Profile</a></li>
+                <li><a class="dropdown-item" href="#"><i class="fa-solid fa-gear"></i> Settings</a></li>
+                <li><hr class="dropdown-divider"></li>
+                <li><a class="dropdown-item" href="{{ route('logout') }}"><i class="fa-solid fa-right-from-bracket"></i> Đăng xuất</a></li>
             </ul>
         </li>
         <!-- user login dropdown end -->
@@ -116,49 +87,49 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
             <ul class="sidebar-menu" id="nav-accordion">
                 <li class="{{ Request::is('admin/dashboard') ? 'active' : '' }}">
                     <a href="{{ url('/admin/dashboard') }}">
-                        <i class="fa fa-dashboard"></i>
+                        <i class="fa-solid fa-gauge-high"></i>
                         <span>Dashboard</span>
                     </a>
                 </li>
                 
                 <li class="{{ Request::is('admin/staff') ? 'active' : '' }}">
                     <a href="{{ url('/admin/staff') }}">
-                        <i class="fa fa-users"></i>
+                        <i class="fa-solid fa-users"></i>
                         <span>Staff</span>
                     </a>
                 </li>
 
                 <li class="{{ Request::is('admin/lab') ? 'active' : '' }}">
                     <a href="{{ url('/admin/lab') }}">
-                        <i class="fa fa-flask"></i>
+                        <i class="fa-solid fa-flask"></i>
                         <span>Lab</span>
                     </a>
                 </li>
 <!-- 
                 <li class="{{ Request::is('admin/ward') ? 'active' : '' }}">
                     <a href="{{ url('/admin/ward') }}">
-                        <i class="fa fa-hospital-o"></i>
+                        <i class="fa-solid fa-hospital"></i>
                         <span>Ward</span>
                     </a>
                 </li> -->
 
                 <li class="{{ Request::is('admin/treatment') ? 'active' : '' }}">
                     <a href="{{ url('/admin/treatment') }}">
-                        <i class="fa fa-medkit"></i>
+                        <i class="fa-solid fa-briefcase-medical"></i>
                         <span>Treatment</span>
                     </a>
                 </li>
 
                 <li class="{{ Request::is('admin/pharmacy') ? 'active' : '' }}">
                     <a href="{{ url('/admin/pharmacy') }}">
-                        <i class="fa fa-plus-square"></i>
+                        <i class="fa-solid fa-prescription-bottle-medical"></i>
                         <span>Pharmacy</span>
                     </a>
                 </li>
 
                 <li class="{{ Request::is('admin/patient') ? 'active' : '' }}">
                     <a href="{{ url('/admin/patient') }}">
-                        <i class="fa fa-user"></i>
+                        <i class="fa-solid fa-hospital-user"></i>
                         <span>Patient</span>
                     </a>
                 </li>
@@ -187,23 +158,50 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 
 </section>
 
-<script src="../public/Backend/js/bootstrap.js"></script>
-<script src="../public/Backend/js/jquery.dcjqaccordion.2.7.js"></script>
-<script src="../public/Backend/js/scripts.js"></script>
-<script src="../public/Backend/js/jquery.slimscroll.js"></script>
-<script src="../public/Backend/js/jquery.nicescroll.js"></script>
-<!--[if lte IE 8]><script language="javascript" type="text/javascript" src="js/flot-chart/excanvas.min.js"></script><![endif]-->
-<script src="../public/Backend/js/jquery.scrollTo.js"></script>
-<!-- morris JavaScript -->
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.7/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
+<!-- jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+
 @stack('scripts')
 <script>
     $(document).ready(function () {
+    // Toggle sidebar on mobile
+    $('.sidebar-toggle-box').on('click', function() {
+        $('#sidebar').toggleClass('show');
+    });
+    
     // Xử lý sự kiện click vào sidebar menu
     $('.sidebar-menu li a').on('click', function () {
         // Xóa class active ở tất cả các mục
         $('.sidebar-menu li').removeClass('active');
         // Thêm class active vào mục đang được click
         $(this).parent('li').addClass('active');
+    });
+
+    // Ensure all Bootstrap dropdowns work properly
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize Bootstrap 5 dropdowns
+        var dropdownElementList = [].slice.call(document.querySelectorAll('.dropdown-toggle'));
+        dropdownElementList.map(function(element) {
+            return new bootstrap.Dropdown(element);
+        });
+    });
+
+    // Alternative direct click handling if Bootstrap initialization fails
+    $('.dropdown-toggle').on('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        $(this).siblings('.dropdown-menu').toggleClass('show');
+    });
+
+    // Close dropdowns when clicking outside
+    $(document).on('click', function(e) {
+        if (!$(e.target).closest('.dropdown').length) {
+            $('.dropdown-menu').removeClass('show');
+        }
     });
 });
 

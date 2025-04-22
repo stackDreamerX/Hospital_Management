@@ -1,4 +1,4 @@
-@extends('admin_layout');
+@extends('admin_layout')
 
 @push('styles')
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -23,7 +23,7 @@
                                 <div class="h5 mb-0 font-weight-bold text-gray-800">{{ count($doctors ?? []) }}</div>
                             </div>
                             <div class="col-auto">
-                                <i class="fas fa-user-md fa-2x text-gray-300"></i>
+                                <i class="fa-solid fa-user-doctor fa-2x text-gray-300"></i>
                             </div>
                         </div>
                     </div>
@@ -40,7 +40,7 @@
                                 <div class="h5 mb-0 font-weight-bold text-gray-800">{{ count($patients ?? []) }}</div>
                             </div>
                             <div class="col-auto">
-                                <i class="fas fa-users fa-2x text-gray-300"></i>
+                                <i class="fa-solid fa-users fa-2x text-gray-300"></i>
                             </div>
                         </div>
                     </div>
@@ -57,7 +57,7 @@
                                 <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $todayAppointments ?? 0 }}</div>
                             </div>
                             <div class="col-auto">
-                                <i class="fas fa-calendar-check fa-2x text-gray-300"></i>
+                                <i class="fa-solid fa-calendar-check fa-2x text-gray-300"></i>
                             </div>
                         </div>
                     </div>
@@ -74,7 +74,7 @@
                                 <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $availableBeds ?? 0 }}</div>
                             </div>
                             <div class="col-auto">
-                                <i class="fas fa-bed fa-2x text-gray-300"></i>
+                                <i class="fa-solid fa-bed fa-2x text-gray-300"></i>
                             </div>
                         </div>
                     </div>
@@ -136,24 +136,31 @@
                         <h6 class="m-0 font-weight-bold text-primary">Ward Status</h6>
                     </div>
                     <div class="card-body">
-                        @forelse($wards ?? [] as $ward)
-                        <div class="mb-3">
-                            <h4 class="small font-weight-bold">
-                                {{ $ward['WardName'] }}
-                                <span class="float-end">{{ floor(($ward['CurrentOccupancy'] / $ward['Capacity']) * 100) }}%</span>
-                            </h4>
-                            <div class="progress">
-                                <div class="progress-bar bg-{{
-                                    $ward['CurrentOccupancy'] >= $ward['Capacity'] ? 'danger' :
-                                    ($ward['CurrentOccupancy'] >= $ward['Capacity'] * 0.8 ? 'warning' : 'success')
-                                }}"
-                                role="progressbar"
-                                style="width: {{ ($ward['CurrentOccupancy'] / $ward['Capacity']) * 100 }}%"></div>
-                            </div>
-                        </div>
-                        @empty
-                        <p class="text-center">No ward information available</p>
-                        @endforelse
+                        @if(!empty($wards))
+                            @foreach($wards as $ward)
+                                <div class="mb-3">
+                                    <h4 class="small font-weight-bold">
+                                        {{ $ward['WardName'] }}
+                                        <span class="float-end">{{ floor(($ward['CurrentOccupancy'] / $ward['Capacity']) * 100) }}%</span>
+                                    </h4>
+                                    <div class="progress">
+                                        <div class="progress-bar 
+                                            @if(($ward['CurrentOccupancy'] / $ward['Capacity']) >= 1) bg-danger
+                                            @elseif(($ward['CurrentOccupancy'] / $ward['Capacity']) >= 0.8) bg-warning
+                                            @else bg-success
+                                            @endif"
+                                            role="progressbar" 
+                                            style="width: {{ ($ward['CurrentOccupancy'] / $ward['Capacity']) * 100 }}%" 
+                                            aria-valuenow="{{ ($ward['CurrentOccupancy'] / $ward['Capacity']) * 100 }}" 
+                                            aria-valuemin="0" 
+                                            aria-valuemax="100">
+                                        </div>
+                                    </div>
+                                </div>
+                            @endforeach
+                        @else
+                            <p class="text-center">No ward information available</p>
+                        @endif
                     </div>
                 </div>
             </div>
