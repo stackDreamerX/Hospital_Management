@@ -55,160 +55,206 @@
 
         <!-- Results Section -->
         <div class="row g-4">
-            <!-- Sample Doctor Card -->
-            <div class="col-md-6 col-lg-4">
-                <div class="card h-100 shadow-sm">
-                    <div class="card-body">
-                        <div class="d-flex align-items-center mb-3">
-                            <img src="public/FrontEnd/images/doctor-placeholder.jpg" alt="Doctor"
-                                class="rounded-circle me-3" style="width: 80px; height: 80px; object-fit: cover;">
-                            <div>
-                                <h5 class="card-title mb-1">Dr. John Smith</h5>
-                                <p class="card-subtitle text-muted">Cardiology</p>
+            <!-- Doctor Cards -->
+            <div class="row mt-4">
+                <!-- Doctor 1 -->
+                <div class="col-md-6 col-lg-4 mb-4" data-aos="fade-up">
+                    <div class="card doctor-card h-100">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center mb-3">
+                                <img src="{{ asset('public/images/doctor-placeholder.jpg') }}" alt="Dr. Sarah Johnson" class="doctor-img me-3">
+                                <div class="card-content">
+                                    <h5 class="card-title mb-0">Dr. Sarah Johnson</h5>
+                                    <span class="doctor-specialty">Cardiology</span>
+                                </div>
+                            </div>
+                            <div class="doctor-rating mb-2">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star-half-alt"></i>
+                                <span class="ms-1">4.7 (125 reviews)</span>
+                            </div>
+                            <p class="card-text">15+ years of experience specializing in cardiovascular health </p>
+                            <div class="doctor-details mt-3">
+                                <div class="mb-2"><i class="fas fa-graduation-cap me-2"></i> Harvard Medical School</div>
+                                <div class="mb-2"><i class="fas fa-hospital me-2"></i> Thong Nhat Hospital</div>
+                                <div><i class="fas fa-language me-2"></i> English, Vietnamese</div>
+                            </div>
+                            <div class="mt-3">
+                                <a href="#" class="btn btn-outline-primary me-2"><i class="fas fa-user-md me-1"></i> View Profile</a>
+                                <a href="#" class="btn btn-primary"><i class="far fa-calendar-check me-1"></i> Book</a>
                             </div>
                         </div>
-                        <p class="card-text">
-                            <i class="fas fa-map-marker-alt text-primary me-2"></i>Main Campus<br>
-                            <i class="fas fa-graduation-cap text-primary me-2"></i>20 years experience<br>
-                            <i class="fas fa-star text-warning me-1"></i>4.8 (120 reviews)
-                        </p>
-                        <div class="d-flex justify-content-between align-items-center mt-3">
-                            <button class="btn btn-outline-primary">View Profile</button>
-                            <button class="btn btn-primary">Book Appointment</button>
+                    </div>
+                </div>
+
+                <!-- Doctor 2 -->
+                <div class="col-md-6 col-lg-4 mb-4" data-aos="fade-up" data-aos-delay="100">
+                    <div class="card doctor-card h-100">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center mb-3">
+                                <img src="{{ asset('public/images/doctor-placeholder.jpg') }}" alt="Dr. Michael Chen" class="doctor-img me-3">
+                                <div class="card-content">
+                                    <h5 class="card-title mb-0">Dr. Michael Chen</h5>
+                                    <span class="doctor-specialty">Neurology</span>
+                                </div>
+                            </div>
+                            <div class="doctor-rating mb-2">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <span class="ms-1">4.9 (98 reviews)</span>
+                            </div>
+                            <p class="card-text">Expert in neurological disorders with innovative treatment approaches.</p>
+                            <div class="doctor-details mt-3">
+                                <div class="mb-2"><i class="fas fa-graduation-cap me-2"></i> Johns Hopkins University</div>
+                                <div class="mb-2"><i class="fas fa-hospital me-2"></i> Cho Ray Hospital</div>
+                                <div><i class="fas fa-language me-2"></i> English, Vietnamese, Mandarin</div>
+                            </div>
+                            <div class="mt-3">
+                                <a href="#" class="btn btn-outline-primary me-2"><i class="fas fa-user-md me-1"></i> View Profile</a>
+                                <a href="#" class="btn btn-primary"><i class="far fa-calendar-check me-1"></i> Book</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Doctor 3 -->
+                <div class="col-md-6 col-lg-4 mb-4" data-aos="fade-up" data-aos-delay="200">
+                    <div class="card doctor-card h-100">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center mb-3">
+                                <img src="{{ asset('public/images/doctor-placeholder.jpg') }}" alt="Dr. Emily Nguyen" class="doctor-img me-3">
+                                <div class="card-content">
+                                    <h5 class="card-title mb-0">Dr. Emily Nguyen</h5>
+                                    <span class="doctor-specialty">Pediatrics</span>
+                                </div>
+                            </div>
+                            <div class="doctor-rating mb-2">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="far fa-star"></i>
+                                <span class="ms-1">4.0 (72 reviews)</span>
+                            </div>
+                            <p class="card-text">Compassionate care for children with a focus on developmental health.</p>
+                            <div class="doctor-details mt-3">
+                                <div class="mb-2"><i class="fas fa-graduation-cap me-2"></i> Stanford University</div>
+                                <div class="mb-2"><i class="fas fa-hospital me-2"></i> Da Khoa Thu Duc Hospital</div>
+                                <div><i class="fas fa-language me-2"></i> English, Vietnamese</div>
+                            </div>
+                            <div class="mt-3">
+                                <a href="#" class="btn btn-outline-primary me-2"><i class="fas fa-user-md me-1"></i> View Profile</a>
+                                <a href="#" class="btn btn-primary"><i class="far fa-calendar-check me-1"></i> Book</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Doctor 4 -->
+                <div class="col-md-6 col-lg-4 mb-4" data-aos="fade-up" data-aos-delay="100">
+                    <div class="card doctor-card h-100">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center mb-3">
+                                <img src="{{ asset('public/images/doctor-placeholder.jpg') }}" alt="Dr. James Wilson" class="doctor-img me-3">
+                                <div class="card-content">
+                                    <h5 class="card-title mb-0">Dr. James Wilson</h5>
+                                    <span class="doctor-specialty">Orthopedics</span>
+                                </div>
+                            </div>
+                            <div class="doctor-rating mb-2">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star-half-alt"></i>
+                                <span class="ms-1">4.6 (83 reviews)</span>
+                            </div>
+                            <p class="card-text">Specializing in sports medicine and minimally invasive surgical</p>
+                            <div class="doctor-details mt-3">
+                                <div class="mb-2"><i class="fas fa-graduation-cap me-2"></i> UCLA Medical School</div>
+                                <div class="mb-2"><i class="fas fa-hospital me-2"></i> Thong Nhat Hospital</div>
+                                <div><i class="fas fa-language me-2"></i> English</div>
+                            </div>
+                            <div class="mt-3">
+                                <a href="#" class="btn btn-outline-primary me-2"><i class="fas fa-user-md me-1"></i> View Profile</a>
+                                <a href="#" class="btn btn-primary"><i class="far fa-calendar-check me-1"></i> Book</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Doctor 5 -->
+                <div class="col-md-6 col-lg-4 mb-4" data-aos="fade-up" data-aos-delay="200">
+                    <div class="card doctor-card h-100">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center mb-3">
+                                <img src="{{ asset('public/images/doctor-placeholder.jpg') }}" alt="Dr. Lily Tran" class="doctor-img me-3">
+                                <div class="card-content">
+                                    <h5 class="card-title mb-0">Dr. Lily Tran</h5>
+                                    <span class="doctor-specialty">Dermatology</span>
+                                </div>
+                            </div>
+                            <div class="doctor-rating mb-2">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <span class="ms-1">5.0 (105 reviews)</span>
+                            </div>
+                            <p class="card-text">Expert in cosmetic and medical dermatology with a holistic approach.</p>
+                            <div class="doctor-details mt-3">
+                                <div class="mb-2"><i class="fas fa-graduation-cap me-2"></i> Yale School of Medicine</div>
+                                <div class="mb-2"><i class="fas fa-hospital me-2"></i> Cho Ray Hospital</div>
+                                <div><i class="fas fa-language me-2"></i> English, Vietnamese</div>
+                            </div>
+                            <div class="mt-3">
+                                <a href="#" class="btn btn-outline-primary me-2"><i class="fas fa-user-md me-1"></i> View Profile</a>
+                                <a href="#" class="btn btn-primary"><i class="far fa-calendar-check me-1"></i> Book</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Doctor 6 -->
+                <div class="col-md-6 col-lg-4 mb-4" data-aos="fade-up" data-aos-delay="300">
+                    <div class="card doctor-card h-100">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center mb-3">
+                                <img src="{{ asset('public/images/doctor-placeholder.jpg') }}" alt="Dr. Robert Pham" class="doctor-img me-3">
+                                <div class="card-content">
+                                    <h5 class="card-title mb-0">Dr. Robert Pham</h5>
+                                    <span class="doctor-specialty">Internal Medicine</span>
+                                </div>
+                            </div>
+                            <div class="doctor-rating mb-2">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="far fa-star"></i>
+                                <span class="ms-1">4.2 (67 reviews)</span>
+                            </div>
+                            <p class="card-text">Comprehensive care focused on chronic disease management</p>
+                            <div class="doctor-details mt-3">
+                                <div class="mb-2"><i class="fas fa-graduation-cap me-2"></i> University of California</div>
+                                <div class="mb-2"><i class="fas fa-hospital me-2"></i> Da Khoa Thu Duc Hospital</div>
+                                <div><i class="fas fa-language me-2"></i> English, Vietnamese</div>
+                            </div>
+                            <div class="mt-3">
+                                <a href="#" class="btn btn-outline-primary me-2"><i class="fas fa-user-md me-1"></i> View Profile</a>
+                                <a href="#" class="btn btn-primary"><i class="far fa-calendar-check me-1"></i> Book</a>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-
-
-            <!-- Add more doctor cards here -->
-
-            <div class="col-md-6 col-lg-4">
-                <div class="card h-100 shadow-sm">
-                    <div class="card-body">
-                        <div class="d-flex align-items-center mb-3">
-                            <img src="public/FrontEnd/images/doctor-placeholder.jpg" alt="Doctor"
-                                class="rounded-circle me-3" style="width: 80px; height: 80px; object-fit: cover;">
-                            <div>
-                                <h5 class="card-title mb-1">Dr. Jane Doe</h5>
-                                <p class="card-subtitle text-muted">Neurology</p>
-                            </div>
-                        </div>
-                        <p class="card-text">
-                            <i class="fas fa-map-marker-alt text-primary me-2"></i>Main Campus<br>
-                            <i class="fas fa-graduation-cap text-primary me-2"></i>15 years experience<br>
-                            <i class="fas fa-star text-warning me-1"></i>4.7 (90 reviews)
-                        </p>
-                        <div class="d-flex justify-content-between align-items-center mt-3">
-                            <button class="btn btn-outline-primary">View Profile</button>
-                            <button class="btn btn-primary">Book Appointment</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-6 col-lg-4">
-                <div class="card h-100 shadow-sm">
-                    <div class="card-body">
-                        <div class="d-flex align-items-center mb-3">
-                            <img src="public/FrontEnd/images/doctor-placeholder.jpg" alt="Doctor"
-                                class="rounded-circle me-3" style="width: 80px; height: 80px; object-fit: cover;">
-                            <div>
-                                <h5 class="card-title mb-1">Dr. Alice Green</h5>
-                                <p class="card-subtitle text-muted">Cardiology</p>
-                            </div>
-                        </div>
-                        <p class="card-text">
-                            <i class="fas fa-map-marker-alt text-primary me-2"></i>Main Campus<br>
-                            <i class="fas fa-graduation-cap text-primary me-2"></i>12 years experience<br>
-                            <i class="fas fa-star text-warning me-1"></i>4.9 (105 reviews)<br>
-                            <strong>Insurance:</strong> Medicare
-                        </p>
-                        <div class="d-flex justify-content-between align-items-center mt-3">
-                            <button class="btn btn-outline-primary">View Profile</button>
-                            <button class="btn btn-primary">Book Appointment</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-6 col-lg-4">
-                <div class="card h-100 shadow-sm">
-                    <div class="card-body">
-                        <div class="d-flex align-items-center mb-3">
-                            <img src="public/FrontEnd/images/doctor-placeholder.jpg" alt="Doctor"
-                                class="rounded-circle me-3" style="width: 80px; height: 80px; object-fit: cover;">
-                            <div>
-                                <h5 class="card-title mb-1">Dr. Brian Carter</h5>
-                                <p class="card-subtitle text-muted">Neurology</p>
-                            </div>
-                        </div>
-                        <p class="card-text">
-                            <i class="fas fa-map-marker-alt text-primary me-2"></i>Downtown Clinic<br>
-                            <i class="fas fa-graduation-cap text-primary me-2"></i>10 years experience<br>
-                            <i class="fas fa-star text-warning me-1"></i>4.8 (85 reviews)<br>
-                            <strong>Insurance:</strong> Blue Cross
-                        </p>
-                        <div class="d-flex justify-content-between align-items-center mt-3">
-                            <button class="btn btn-outline-primary">View Profile</button>
-                            <button class="btn btn-primary">Book Appointment</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-6 col-lg-4">
-                <div class="card h-100 shadow-sm">
-                    <div class="card-body">
-                        <div class="d-flex align-items-center mb-3">
-                            <img src="public/FrontEnd/images/doctor-placeholder.jpg" alt="Doctor"
-                                class="rounded-circle me-3" style="width: 80px; height: 80px; object-fit: cover;">
-                            <div>
-                                <h5 class="card-title mb-1">Dr. Susan Taylor</h5>
-                                <p class="card-subtitle text-muted">Orthopedics</p>
-                            </div>
-                        </div>
-                        <p class="card-text">
-                            <i class="fas fa-map-marker-alt text-primary me-2"></i>West Medical Center<br>
-                            <i class="fas fa-graduation-cap text-primary me-2"></i>8 years experience<br>
-                            <i class="fas fa-star text-warning me-1"></i>4.7 (70 reviews)<br>
-                            <strong>Insurance:</strong> Aetna
-                        </p>
-                        <div class="d-flex justify-content-between align-items-center mt-3">
-                            <button class="btn btn-outline-primary">View Profile</button>
-                            <button class="btn btn-primary">Book Appointment</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-6 col-lg-4">
-                <div class="card h-100 shadow-sm">
-                    <div class="card-body">
-                        <div class="d-flex align-items-center mb-3">
-                            <img src="public/FrontEnd/images/doctor-placeholder.jpg" alt="Doctor"
-                                class="rounded-circle me-3" style="width: 80px; height: 80px; object-fit: cover;">
-                            <div>
-                                <h5 class="card-title mb-1">Dr. Kevin Wilson</h5>
-                                <p class="card-subtitle text-muted">Pediatrics</p>
-                            </div>
-                        </div>
-                        <p class="card-text">
-                            <i class="fas fa-map-marker-alt text-primary me-2"></i>Main Campus<br>
-                            <i class="fas fa-graduation-cap text-primary me-2"></i>5 years experience<br>
-                            <i class="fas fa-star text-warning me-1"></i>4.6 (60 reviews)<br>
-                            <strong>Insurance:</strong> Blue Cross
-                        </p>
-                        <div class="d-flex justify-content-between align-items-center mt-3">
-                            <button class="btn btn-outline-primary">View Profile</button>
-                            <button class="btn btn-primary">Book Appointment</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-
-
         </div>
 
         <!-- Pagination -->
@@ -226,48 +272,4 @@
             </ul>
         </nav>
     </div>
-
-    <!-- Additional Styles -->
-    <style>
-        .card {
-            transition: transform 0.2s;
-        }
-
-        .card:hover {
-            transform: translateY(-5px);
-        }
-
-        .btn-primary {
-            background-color: #0078BF;
-            border-color: #0078BF;
-        }
-
-        .btn-primary:hover {
-            background-color: #006ca8;
-            border-color: #006ca8;
-        }
-
-        .btn-outline-primary {
-            color: #0078BF;
-            border-color: #0078BF;
-        }
-
-        .btn-outline-primary:hover {
-            background-color: #0078BF;
-            border-color: #0078BF;
-        }
-
-        .text-primary {
-            color: #0078BF !important;
-        }
-
-        .page-link {
-            color: #0078BF;
-        }
-
-        .page-item.active .page-link {
-            background-color: #0078BF;
-            border-color: #0078BF;
-        }
-    </style>
 @endsection
