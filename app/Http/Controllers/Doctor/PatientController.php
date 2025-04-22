@@ -4,16 +4,15 @@ namespace App\Http\Controllers\Doctor;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
-
+use App\Http\Controllers\Doctor\console;
 class PatientController extends Controller
 {
     public function index()
-    {             
+    {              
         $userId = Auth::id();
-
+        
       
-        $doctor = \App\Models\Doctor::where('UserID', $userId)->first();
-
+        $doctor = \App\Models\Doctor::where('UserID', $userId)->first();  
         if (!$doctor) {
             return redirect()->back()->with('error', 'Doctor information not found.');
         }
@@ -45,14 +44,15 @@ class PatientController extends Controller
             ])
             ->get()
             ->map(function ($patient) use ($doctorId) {
-                $patient->appointment_count = $patient->appointments->where('DoctorID', $doctorId)->count();
-                $patient->lab_test_count = $patient->laboratories->where('DoctorID', $doctorId)->count();
-                $patient->prescription_count = $patient->prescriptions->where('DoctorID', $doctorId)->count();
-                $patient->treatment_count = $patient->treatments->where('DoctorID', $doctorId)->count();
+                $patient->appointment_count = optional($patient->appointments)->where('DoctorID', $doctorId)->count() ?? 0;
+                $patient->lab_test_count = optional($patient->laboratories)->where('DoctorID', $doctorId)->count() ?? 0;
+                $patient->prescription_count = optional($patient->prescriptions)->where('DoctorID', $doctorId)->count() ?? 0;
+                $patient->treatment_count = optional($patient->treatments)->where('DoctorID', $doctorId)->count() ?? 0;
+              
                 return $patient;
             });
 
-         
+          
         return view('doctor.patients', compact('patients'));
     }
 

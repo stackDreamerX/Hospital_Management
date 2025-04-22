@@ -61,7 +61,7 @@ class User extends Authenticatable
         return $this->password; // Laravel sẽ dùng cột "password" cho xác thực
     }  
 
-        public function appointments()
+    public function appointments()
     {
         return $this->hasMany(Appointment::class, 'UserID', 'UserID');
     }
@@ -81,5 +81,19 @@ class User extends Authenticatable
         return $this->hasMany(Treatment::class, 'UserID', 'UserID');
     }
 
+    /**
+     * Get ratings submitted by this user
+     */
+    public function ratings()
+    {
+        return $this->hasMany(Rating::class, 'user_id', 'UserID');
+    }
     
+    /**
+     * Get doctor profile if user is a doctor
+     */
+    public function doctor()
+    {
+        return $this->hasOne(Doctor::class, 'UserID', 'UserID');
+    }
 }

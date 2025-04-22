@@ -25,4 +25,22 @@ class Doctor extends Model
     {
         return $this->belongsTo(User::class, 'UserID'); // Adjust 'user_id' as necessary
     }
+    
+    /**
+     * Get ratings for this doctor
+     */
+    public function ratings()
+    {
+        return $this->hasMany(Rating::class, 'doctor_id', 'DoctorID');
+    }
+    
+    /**
+     * Get average doctor rating
+     */
+    public function getAverageRatingAttribute()
+    {
+        return $this->ratings()->where('status', 'approved')
+            ->whereNotNull('doctor_rating')
+            ->avg('doctor_rating');
+    }
 }
