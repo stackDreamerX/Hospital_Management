@@ -225,20 +225,15 @@
                                 <td><i class="far fa-calendar-plus me-1"></i> {{ $treatment['StartDate'] }}</td>
                                 <td>
                                     <div class="progress" style="height: 8px;">
-                                        @php
-                                            @php
-                                                $progress = intval(str_replace('%', '', $treatment['Progress']));
-                                            @endphp
-                                            <div class="progress" style="height: 8px;">
-                                                <div class="progress-bar bg-success" role="progressbar" style="width: {{ $progress }}%;" 
-                                                    aria-valuenow="{{ $progress }}" aria-valuemin="0" aria-valuemax="100"></div>
-                                            </div>
-                                            <small class="text-muted">{{ $treatment['Progress'] }}</small>
-                                        </td>
+                                        <div class="progress-bar bg-success" role="progressbar" 
+                                            style="width: {{ (int)str_replace('%', '', $treatment['Progress']) }}%" 
+                                            aria-valuenow="{{ (int)str_replace('%', '', $treatment['Progress']) }}" 
+                                            aria-valuemin="0" aria-valuemax="100"></div>
+                                    </div>
+                                    <small class="text-muted">{{ $treatment['Progress'] }}</small>
+                                </td>
                                 <td>
-                                    <span class="badge bg-warning rounded-pill">
-                                        {{ $treatment['Status'] }}
-                                    </span>
+                                    <span class="badge bg-warning rounded-pill">{{ $treatment['Status'] }}</span>
                                 </td>
                             </tr>
                             @endforeach

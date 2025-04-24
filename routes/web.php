@@ -210,7 +210,7 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
 Route::get('/feedback', [App\Http\Controllers\FeedbackController::class, 'publicFeedback'])->name('feedback.public');
 
 // Bed Management Routes
-// Route::middleware(['auth'])->group(function () {
+// Route::middleware(['auth'])->prefix('admin')->group(function () {
     // WardBed routes
     Route::get('/beds', [WardBedController::class, 'index'])->name('beds.index');
 

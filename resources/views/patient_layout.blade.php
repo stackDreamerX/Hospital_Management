@@ -180,6 +180,56 @@
 </script>
 @endif
 
+<!-- Session Keeper -->
+<script>
+    // Session activity variables
+    let lastActivity = new Date();
+    let isIdle = false;
+    const sessionTimeout = {{ config('session.lifetime', 30) * 60 * 1000 }}; // Convert minutes to milliseconds
+
+    // Update last activity time on user interaction
+    function updateActivity() {
+        const now = new Date();
+        // If user was idle and is now active, refresh the page to ensure proper state
+        if (isIdle) {
+            location.reload();
+            return;
+        }
+        lastActivity = now;
+    }
+
+    // Check if session might be expired
+    function checkSession() {
+        const now = new Date();
+        const timeSinceLastActivity = now - lastActivity;
+        
+        // If we've been inactive for more than session timeout minus 1 minute
+        if (timeSinceLastActivity > (sessionTimeout - 60000)) {
+            isIdle = true;
+        }
+        
+        // Keep the session alive if user is active
+        if (timeSinceLastActivity < (sessionTimeout / 2)) {
+            // Send heartbeat to keep session alive
+            fetch('{{ route("patient.dashboard") }}', {
+                method: 'HEAD',
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            }).catch(error => console.error('Session heartbeat error:', error));
+        }
+    }
+
+    // Set up event listeners for user activity
+    ['mousemove', 'mousedown', 'keypress', 'touchstart', 'scroll'].forEach(event => {
+        document.addEventListener(event, updateActivity, true);
+    });
+
+    // Check session every minute
+    setInterval(checkSession, 60000);
+</script>
+
 @yield('scripts')
 </body>
 </html>
