@@ -4,12 +4,11 @@
 <title>Doctor Dashboard</title>
 <link rel="icon" type="image/x-icon" href="{{ asset('public/logo.ico') }}">
 
+
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="keywords" content="Hospital Management System" />
 <meta name="csrf-token" content="{{ csrf_token() }}">
-
-<script type="application/x-javascript"> addEventListener("load", function() { setTimeout(hideURLbar, 0); }, false); function hideURLbar(){ window.scrollTo(0,1); } </script>
 
 <!-- Bootstrap 5 -->
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -26,8 +25,8 @@
 <header class="header fixed-top clearfix">
     <!--logo start-->
     <div class="brand">
-        <a href="{{ route('doctor.dashboard') }}" class="logo">
-            <img src="{{ asset('public/BackEnd/images/logo.ico') }}" alt="Logo" height="40">
+        <a href="{{ route('users.dashboard') }}" class="logo">
+            <img src="{{ asset('public/logo.ico') }}" alt="Logo" height="40">
             <span>Doctor Portal</span>
         </a>
         <div class="sidebar-toggle-box" id="sidebarToggle">
@@ -45,7 +44,7 @@
             <!-- user login dropdown start-->
             <li class="dropdown">
                 <a data-bs-toggle="dropdown" class="dropdown-toggle" href="#">
-                    <img alt="" src="{{ asset('public/BackEnd/images/avatar.jpg') }}">
+                    <img alt="" src="{{ asset('public/avatar.jpg') }}">
                     <span class="username">{{ auth()->user()->FullName ?? 'Doctor' }}</span>
                     <b class="caret"></b>
                 </a>

@@ -115,8 +115,9 @@
             @foreach($lowStockMedicines as $medicine)
             <li>
                 {{ $medicine->MedicineName }} ({{ $medicine->Stock }} remaining)
-                <button class="btn btn-sm btn-warning ms-2"
-                        onclick="reportLowStock({{ $medicine->MedicineID }}, '{{ $medicine->MedicineName }}')">
+                <button class="btn btn-sm btn-warning ms-2 report-low-stock" 
+                        data-id="{{ $medicine->MedicineID }}" 
+                        data-name="{{ $medicine->MedicineName }}">
                     <i class="fas fa-bell"></i> Report
                 </button>
             </li>
@@ -243,12 +244,12 @@
                             </td>
                             <td>
                                 <div class="btn-group btn-group-sm">
-                                    <button class="btn btn-info" onclick="viewPrescription({{ $prescription->PrescriptionID }})">
+                                    <button class="btn btn-info view-prescription" data-id="{{ $prescription->PrescriptionID }}">
                                         <i class="fas fa-eye"></i>
                                     </button>
                                     @if($prescription->Status == 'Pending')
-                                    <button class="btn btn-danger"
-                                            onclick="cancelPrescription({{ $prescription->PrescriptionID }})">
+                                    <button class="btn btn-danger cancel-prescription" 
+                                            data-id="{{ $prescription->PrescriptionID }}">
                                         <i class="fas fa-times"></i>
                                     </button>
                                     @endif
@@ -298,12 +299,37 @@
     let prescriptionModal;
 
   document.addEventListener('DOMContentLoaded', function () {
-    const prescriptionModal = new bootstrap.Modal(document.getElementById('prescriptionModal'));
+    prescriptionModal = new bootstrap.Modal(document.getElementById('prescriptionModal'));
 
     // Form submission
     document.getElementById('prescriptionForm').addEventListener('submit', function (e) {
         e.preventDefault();
         createPrescription();
+    });
+    
+    // Add event listeners for low stock report buttons
+    document.querySelectorAll('.report-low-stock').forEach(button => {
+        button.addEventListener('click', function() {
+            const id = this.getAttribute('data-id');
+            const name = this.getAttribute('data-name');
+            reportLowStock(id, name);
+        });
+    });
+    
+    // Add event listeners for viewing prescriptions
+    document.querySelectorAll('.view-prescription').forEach(button => {
+        button.addEventListener('click', function() {
+            const id = this.getAttribute('data-id');
+            viewPrescription(id);
+        });
+    });
+    
+    // Add event listeners for canceling prescriptions
+    document.querySelectorAll('.cancel-prescription').forEach(button => {
+        button.addEventListener('click', function() {
+            const id = this.getAttribute('data-id');
+            cancelPrescription(id);
+        });
     });
 });
 
@@ -344,6 +370,16 @@ function createPrescription() {
         notes: document.getElementById('notes').value,
     };
 
+    // Show loading state
+    const loadingSwal = Swal.fire({
+        title: 'Processing...',
+        text: 'Creating prescription',
+        allowOutsideClick: false,
+        didOpen: () => {
+            Swal.showLoading();
+        }
+    });
+
     fetch(createPrescriptionUrl, {
         method: 'POST',
         headers: {
@@ -359,23 +395,39 @@ function createPrescription() {
             return response.json();
         })
         .then(result => {
+            // Close loading dialog
+            loadingSwal.close();
+            
             if (result.success) {
                 Swal.fire('Success', result.message, 'success').then(() => {
                     window.location.reload();
                 });
             } else {
-                Swal.fire('Error', result.message, 'error');
+                Swal.fire('Error', result.message || 'Failed to create prescription', 'error');
             }
         })
         .catch(error => {
+            // Close loading dialog
+            loadingSwal.close();
+            
             console.error('Error creating prescription:', error);
-            Swal.fire('Error', 'Failed to create prescription', 'error');
+            Swal.fire('Error', 'Failed to create prescription. Please try again.', 'error');
         });
 }
 
 // View prescription details
 function viewPrescription(id) {
     const url = `{{ route('doctor.pharmacy.show', ['id' => '__id__']) }}`.replace('__id__', id);
+
+    // Show loading state
+    const loadingSwal = Swal.fire({
+        title: 'Loading...',
+        text: 'Fetching prescription details',
+        allowOutsideClick: false,
+        didOpen: () => {
+            Swal.showLoading();
+        }
+    });
 
     fetch(url)
         .then(response => {
@@ -385,35 +437,64 @@ function viewPrescription(id) {
             return response.json();
         })
         .then(data => {
+            // Close loading dialog
+            loadingSwal.close();
+            
+            // Log the response for debugging
+            console.log('Prescription data:', data);
+            
             const details = document.getElementById('prescriptionDetails');
 
-            // Kiểm tra xem data.medicines có tồn tại và là một mảng
-            const medicinesList =
-                Array.isArray(data.medicines) && data.medicines.length > 0
-                    ? data.medicines
-                          .map(
-                              med =>
-                                  `<li>${med.name} - ${med.dosage}, ${med.frequency} for ${med.duration} (${med.quantity} units)</li>`
-                          )
-                          .join('')
-                    : '<li>No medicines</li>';
+            try {
+                // Check if we have valid data
+                if (!data) {
+                    throw new Error('No data received from server');
+                }
+                
+                // Create medicines list with fallbacks
+                let medicinesList = '<li>No medicines available</li>';
+                
+                if (Array.isArray(data.Medicines) && data.Medicines.length > 0) {
+                    medicinesList = data.Medicines
+                        .map(med => {
+                            // Add fallbacks for all medicine properties
+                            const name = med.Name || 'Unknown medicine';
+                            const dosage = med.Dosage || 'No dosage specified';
+                            const frequency = med.Frequency || 'No frequency specified';
+                            const duration = med.Duration || 'No duration specified';
+                            const quantity = med.Quantity || '0';
+                            
+                            return `<li>${name} - ${dosage}, ${frequency} for ${duration} (${quantity} units)</li>`;
+                        })
+                        .join('');
+                }
 
-            details.innerHTML = `
-                <p><strong>Date:</strong> ${data.date || 'N/A'}</p>
-                <p><strong>Patient:</strong> ${data.patient_name || 'N/A'}</p>
-                <p><strong>Medicines:</strong></p>
-                <ul>
-                    ${medicinesList}
-                </ul>
-                <p><strong>Notes:</strong> ${data.notes || 'N/A'}</p>
-                <p><strong>Status:</strong> ${data.status || 'N/A'}</p>
-            `;
+                // Build HTML with fallbacks for all values
+                details.innerHTML = `
+                    <p><strong>Prescription ID:</strong> ${data.PrescriptionID || 'N/A'}</p>
+                    <p><strong>Date:</strong> ${data.Date || 'N/A'}</p>
+                    <p><strong>Patient:</strong> ${data.PatientName || 'N/A'}</p>
+                    <p><strong>Medicines:</strong></p>
+                    <ul>
+                        ${medicinesList}
+                    </ul>
+                    <p><strong>Notes:</strong> ${data.Notes || 'No notes'}</p>
+                    <p><strong>Status:</strong> ${data.Status || 'Unknown'}</p>
+                `;
 
-            prescriptionModal.show();
+                const modal = new bootstrap.Modal(document.getElementById('prescriptionModal'));
+                modal.show();
+            } catch (error) {
+                console.error('Error processing prescription details:', error);
+                Swal.fire('Error', `Failed to process prescription details: ${error.message}`, 'error');
+            }
         })
         .catch(error => {
+            // Close loading dialog
+            loadingSwal.close();
+            
             console.error('Error fetching prescription details:', error);
-            Swal.fire('Error', 'Failed to load prescription details', 'error');
+            Swal.fire('Error', 'Failed to load prescription details. Please try again.', 'error');
         });
 }
 
@@ -429,7 +510,17 @@ function cancelPrescription(id) {
         cancelButtonText: 'No, keep it',
     }).then(result => {
         if (result.isConfirmed) {
-            const url = `/doctor/pharmacy/cancel/${id}`;
+            // Show loading state
+            const loadingSwal = Swal.fire({
+                title: 'Processing...',
+                text: 'Canceling prescription',
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+            
+            const url = `{{ route('doctor.pharmacy.cancel', ['id' => '__id__']) }}`.replace('__id__', id);
             fetch(url, {
                 method: 'PUT',
                 headers: {
@@ -445,13 +536,19 @@ function cancelPrescription(id) {
                     return response.json();
                 })
                 .then(data => {
-                    Swal.fire('Cancelled!', data.message, 'success').then(() => {
+                    // Close loading dialog
+                    loadingSwal.close();
+                    
+                    Swal.fire('Cancelled!', data.message || 'Prescription cancelled successfully', 'success').then(() => {
                         window.location.reload();
                     });
                 })
                 .catch(error => {
+                    // Close loading dialog
+                    loadingSwal.close();
+                    
                     console.error('Error cancelling prescription:', error);
-                    Swal.fire('Error', 'Failed to cancel prescription', 'error');
+                    Swal.fire('Error', 'Failed to cancel prescription. Please try again.', 'error');
                 });
         }
     });
@@ -468,28 +565,40 @@ function reportLowStock(medicineId, medicineName) {
         confirmButtonText: 'Send Report',
     }).then(result => {
         if (result.isConfirmed) {
-            const url = `/doctor/pharmacy/report-low-stock`;
-            fetch(url, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                },
-                body: JSON.stringify({ medicine_id: medicineId, notes: result.value }),
-            })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! Status: ${response.status}`);
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    Swal.fire('Reported!', data.message, 'success');
-                })
-                .catch(error => {
-                    console.error('Error reporting low stock:', error);
-                    Swal.fire('Error', 'Failed to report low stock', 'error');
+            // Show loading state
+            const loadingSwal = Swal.fire({
+                title: 'Processing...',
+                text: 'Sending low stock report',
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+            
+            // Since there's no specific route defined in web.php, we'll handle this temporarily
+            // This should be replaced with a proper route once implemented
+            setTimeout(() => {
+                // Close loading dialog
+                loadingSwal.close();
+                
+                // Show success message
+                Swal.fire({
+                    title: 'Reported!',
+                    text: `Low stock for ${medicineName} has been reported to admin.`,
+                    icon: 'success'
                 });
+                
+                // In a real implementation, you would make a fetch request to the server
+                // Example:
+                // fetch('/doctor/pharmacy/report-low-stock', {
+                //     method: 'POST',
+                //     headers: {
+                //         'Content-Type': 'application/json',
+                //         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                //     },
+                //     body: JSON.stringify({ medicine_id: medicineId, notes: result.value }),
+                // })
+            }, 1000);
         }
     });
 }

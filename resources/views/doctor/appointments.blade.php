@@ -64,8 +64,113 @@
   line-height: 1.5;
 }
 
+/* Enhanced Modal Styling */
+.modal-content {
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
 
+.modal-header {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+    color: white;
+    padding: 1.5rem;
+    border-bottom: none;
+}
 
+.modal-header .modal-title {
+    font-weight: 600;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+}
+
+.modal-header .btn-close {
+    background-color: rgba(255, 255, 255, 0.5);
+    border-radius: 50%;
+    opacity: 1;
+    padding: 0.6rem;
+    margin: -0.5rem -0.5rem -0.5rem auto;
+    transition: all 0.3s ease;
+}
+
+.modal-header .btn-close:hover {
+    background-color: rgba(255, 255, 255, 0.8);
+    transform: rotate(90deg);
+}
+
+.modal-body {
+    padding: 2rem;
+}
+
+.modal-footer {
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
+    padding: 1.5rem;
+}
+
+.modal-footer .btn {
+    border-radius: 10px;
+    padding: 0.6rem 1.5rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.modal-footer .btn-secondary {
+    background-color: #f8f9fa;
+    color: var(--text-color);
+    border: 1px solid #ddd;
+}
+
+.modal-footer .btn-secondary:hover {
+    background-color: #e9ecef;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+}
+
+/* Appointment details styling */
+#appointmentDetails p {
+    margin-bottom: 1rem;
+    padding: 0.8rem 1rem;
+    background-color: #f8f9fa;
+    border-radius: 10px;
+    border-left: 4px solid var(--primary-color);
+}
+
+#appointmentDetails strong {
+    color: var(--primary-dark);
+    font-weight: 600;
+    min-width: 100px;
+    display: inline-block;
+}
+
+/* Animation for modal */
+.modal.fade .modal-dialog {
+    transform: scale(0.95) translateY(-20px);
+    transition: transform 0.3s ease-out;
+}
+
+.modal.show .modal-dialog {
+    transform: scale(1) translateY(0);
+}
+
+/* Enhance the view button */
+.view-details-btn {
+    border-radius: 8px;
+    padding: 0.5rem 0.8rem;
+    transition: all 0.3s ease;
+    background: linear-gradient(135deg, #2bb0ed 0%, #3f8cff 100%);
+    border: none;
+    box-shadow: 0 4px 10px rgba(63, 140, 255, 0.2);
+}
+
+.view-details-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 15px rgba(63, 140, 255, 0.3);
+}
+
+.view-details-btn i {
+    margin-right: 5px;
+}
 </style>
 
 @section('content')
@@ -169,7 +274,7 @@
                                     </div>
                                 @else
                                     <button class="btn btn-info btn-sm view-details-btn"
-                                            data-appointment='{{ json_encode($appointment) }}'>
+                                            data-appointment='{{ json_encode(value: $appointment) }}'>
                                         <i class="fas fa-eye"></i> View
                                     </button>
                                 @endif
@@ -189,14 +294,14 @@
 
 <!-- View Details Modal -->
 <div class="modal fade" id="detailsModal" tabindex="-1">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Appointment Details</h5>
+                <h5 class="modal-title"><i class="fas fa-info-circle me-2 text-primary"></i>Appointment Details</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
-                <div id="appointmentDetails">
+                <div id="appointmentDetails" class="p-2">
                     <!-- Details will be loaded here -->
                 </div>
             </div>
