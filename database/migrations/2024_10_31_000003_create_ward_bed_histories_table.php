@@ -25,7 +25,7 @@ class CreateWardBedHistoriesTable extends Migration
             $table->timestamps();
 
             $table->foreign('WardBedID')->references('WardBedID')->on('ward_beds')->onDelete('cascade');
-            $table->foreign('PatientID')->references('PatientID')->on('patients')->onDelete('set null');
+            $table->foreign('PatientID')->references('UserID')->on('users')->onDelete('set null');
             $table->foreign('UpdatedByUserID')->references('UserID')->on('users')->onDelete('cascade');
         });
     }

@@ -64,7 +64,7 @@
                             <tbody>
                                 @forelse($allocations as $allocation)
                                 <tr>
-                                    <td>{{ $allocation->patient->user->name ?? 'Unknown' }}</td>
+                                    <td>{{ $allocation->patient->FullName ?? 'Unknown' }}</td>
                                     <td>{{ $allocation->wardBed->ward->WardName ?? 'N/A' }}</td>
                                     <td>{{ $allocation->wardBed->BedNumber ?? 'N/A' }}</td>
                                     <td>{{ $allocation->AllocationDate ? date('M d, Y H:i', strtotime($allocation->AllocationDate)) : 'N/A' }}</td>
@@ -76,7 +76,7 @@
                                             <span class="badge bg-success">Active</span>
                                         @endif
                                     </td>
-                                    <td>{{ $allocation->allocatedBy->name ?? 'System' }}</td>
+                                    <td>{{ $allocation->allocatedBy->FullName ?? 'System' }}</td>
                                     <td>
                                         <a href="{{ route('allocations.show', $allocation) }}" class="btn btn-sm btn-info">
                                             <i class="fas fa-eye"></i>

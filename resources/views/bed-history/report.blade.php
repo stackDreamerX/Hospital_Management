@@ -202,7 +202,7 @@
                                             </td>
                                             <td>
                                                 @if($record->PatientID && $record->patient)
-                                                    {{ $record->patient->user->name ?? 'Unknown' }}
+                                                    {{ $record->patient->FullName ?? 'Unknown' }}
                                                 @else
                                                     -
                                                 @endif

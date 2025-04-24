@@ -20,7 +20,7 @@ class WardBedHistoryController extends Controller
         $patientId = $request->input('patient_id');
         $status = $request->input('status');
 
-        $query = WardBedHistory::with(['wardBed.ward', 'patient.user', 'updatedBy']);
+        $query = WardBedHistory::with(['wardBed.ward', 'patient', 'updatedBy']);
 
         if ($bedId) {
             $query->where('WardBedID', $bedId);
@@ -54,7 +54,7 @@ class WardBedHistoryController extends Controller
      */
     public function show(WardBedHistory $history)
     {
-        $history->load('wardBed.ward', 'patient.user', 'updatedBy');
+        $history->load('wardBed.ward', 'patient', 'updatedBy');
         return view('bed-history.show', compact('history'));
     }
 
@@ -67,7 +67,7 @@ class WardBedHistoryController extends Controller
     public function forBed(WardBed $bed)
     {
         $history = WardBedHistory::where('WardBedID', $bed->WardBedID)
-                               ->with(['patient.user', 'updatedBy'])
+                               ->with(['patient', 'updatedBy'])
                                ->orderBy('FromDate', 'desc')
                                ->paginate(20);
 
@@ -121,7 +121,7 @@ class WardBedHistoryController extends Controller
         }
 
         // Get recent history for display
-        $recentHistory = WardBedHistory::with(['wardBed.ward', 'patient.user', 'updatedBy'])
+        $recentHistory = WardBedHistory::with(['wardBed.ward', 'patient', 'updatedBy'])
                                      ->whereDate('FromDate', '>=', $fromDate)
                                      ->whereDate('FromDate', '<=', $toDate)
                                      ->orderBy('FromDate', 'desc')

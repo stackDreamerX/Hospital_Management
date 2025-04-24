@@ -59,15 +59,15 @@
                                     <th>Patient:</th>
                                     <td>
                                         @if($history->PatientID && $history->patient)
-                                            {{ $history->patient->user->name ?? 'Unknown' }}
+                                            {{ $history->patient->FullName ?? 'Unknown' }}
                                         @else
-                                            <span class="text-muted">No patient assigned</span>
+                                            None (Bed Unoccupied)
                                         @endif
                                     </td>
                                 </tr>
                                 <tr>
                                     <th>Updated By:</th>
-                                    <td>{{ $history->updatedBy->name ?? 'System' }}</td>
+                                    <td>{{ $history->updatedBy->FullName ?? 'System' }}</td>
                                 </tr>
                             </table>
                         </div>

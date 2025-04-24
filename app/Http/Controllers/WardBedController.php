@@ -88,7 +88,7 @@ class WardBedController extends Controller
                 'ToDate' => null,
                 'Status' => $bed->Status,
                 'Note' => 'Bed created',
-                'UpdatedByUserID' => Auth::id(),
+                'UpdatedByUserID' => Auth::user()->UserID,
             ]);
         });
 
@@ -160,7 +160,7 @@ class WardBedController extends Controller
                     'ToDate' => null,
                     'Status' => $newStatus,
                     'Note' => 'Status changed from ' . $oldStatus . ' to ' . $newStatus,
-                    'UpdatedByUserID' => Auth::id(),
+                    'UpdatedByUserID' => Auth::user()->UserID,
                 ]);
             }
 
@@ -230,7 +230,7 @@ class WardBedController extends Controller
                 'ToDate' => null,
                 'Status' => $newStatus,
                 'Note' => $request->Note ?? 'Status changed from ' . $oldStatus . ' to ' . $newStatus,
-                'UpdatedByUserID' => Auth::id(),
+                'UpdatedByUserID' => Auth::user()->UserID,
             ]);
 
             $bed->update([

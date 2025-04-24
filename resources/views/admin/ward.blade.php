@@ -195,12 +195,12 @@
             .then(response => response.json())
             .then(data => {
                 if (data.message) {
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Success',
+            Swal.fire({
+                icon: 'success',
+                title: 'Success',
                         text: data.message
-                    }).then(() => {
-                        window.location.reload();
+            }).then(() => {
+                window.location.reload();
                     });
                 }
             })

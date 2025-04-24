@@ -20,7 +20,7 @@
                             <table class="table table-bordered">
                                 <tr>
                                     <th>Patient:</th>
-                                    <td>{{ $allocation->patient->user->name ?? 'Unknown' }}</td>
+                                    <td>{{ $allocation->patient->FullName ?? 'Unknown' }}</td>
                                 </tr>
                                 <tr>
                                     <th>Ward:</th>
@@ -55,7 +55,7 @@
                                 </tr>
                                 <tr>
                                     <th>Allocated By:</th>
-                                    <td>{{ $allocation->allocatedBy->name ?? 'System' }}</td>
+                                    <td>{{ $allocation->allocatedBy->FullName ?? 'System' }}</td>
                                 </tr>
                                 <tr>
                                     <th>Created At:</th>
@@ -93,33 +93,33 @@
                                                 <div class="form-group mb-3">
                                                     <label for="DischargeDate">Discharge Date</label>
                                                     <input type="datetime-local" name="DischargeDate" id="DischargeDate" 
-                                                        class="form-control @error('DischargeDate') is-invalid @enderror" 
+                                                        class="form-control {{ $errors->has('DischargeDate') ? 'is-invalid' : '' }}" 
                                                         value="{{ old('DischargeDate', date('Y-m-d\TH:i')) }}" required>
-                                                    @error('DischargeDate')
-                                                        <div class="invalid-feedback">{{ $message }}</div>
-                                                    @enderror
+                                                    @if($errors->has('DischargeDate'))
+                                                        <div class="invalid-feedback">{{ $errors->first('DischargeDate') }}</div>
+                                                    @endif
                                                 </div>
                                             </div>
                                             <div class="col-md-4">
                                                 <div class="form-group mb-3">
                                                     <label for="BedStatus">Bed Status After Discharge</label>
-                                                    <select name="BedStatus" id="BedStatus" class="form-select @error('BedStatus') is-invalid @enderror" required>
+                                                    <select name="BedStatus" id="BedStatus" class="form-select {{ $errors->has('BedStatus') ? 'is-invalid' : '' }}" required>
                                                         <option value="maintenance">Maintenance (Cleaning)</option>
                                                         <option value="available">Available (Skip Cleaning)</option>
                                                     </select>
-                                                    @error('BedStatus')
-                                                        <div class="invalid-feedback">{{ $message }}</div>
-                                                    @enderror
+                                                    @if($errors->has('BedStatus'))
+                                                        <div class="invalid-feedback">{{ $errors->first('BedStatus') }}</div>
+                                                    @endif
                                                 </div>
                                             </div>
                                             <div class="col-md-4">
                                                 <div class="form-group mb-3">
                                                     <label for="DischargeNotes">Discharge Notes</label>
                                                     <textarea name="DischargeNotes" id="DischargeNotes" rows="2" 
-                                                        class="form-control @error('DischargeNotes') is-invalid @enderror">{{ old('DischargeNotes') }}</textarea>
-                                                    @error('DischargeNotes')
-                                                        <div class="invalid-feedback">{{ $message }}</div>
-                                                    @enderror
+                                                        class="form-control {{ $errors->has('DischargeNotes') ? 'is-invalid' : '' }}">{{ old('DischargeNotes') }}</textarea>
+                                                    @if($errors->has('DischargeNotes'))
+                                                        <div class="invalid-feedback">{{ $errors->first('DischargeNotes') }}</div>
+                                                    @endif
                                                 </div>
                                             </div>
                                         </div>
@@ -163,7 +163,7 @@
                                                 @endif
                                             </td>
                                             <td>{{ $history->Note ?? '-' }}</td>
-                                            <td>{{ $history->updatedBy->name ?? 'System' }}</td>
+                                            <td>{{ $history->updatedBy->FullName ?? 'System' }}</td>
                                         </tr>
                                         @empty
                                         <tr>

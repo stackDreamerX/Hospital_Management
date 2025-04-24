@@ -16,6 +16,37 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 <!-- Custom CSS -->
 <link href="{{ asset('public/css/admin_layout.css') }}" rel="stylesheet">
 
+<style>
+    /* Submenu styles */
+    .sidebar-menu .collapse {
+        padding-left: 20px;
+    }
+    
+    .sidebar-menu .collapse li a {
+        padding: 10px 10px 10px 30px;
+        font-size: 14px;
+        border-left: 3px solid transparent;
+    }
+    
+    .sidebar-menu .collapse li.active a {
+        background: rgba(255, 255, 255, 0.1);
+        border-left: 3px solid #fff;
+    }
+    
+    .sidebar-menu .dropdown-toggle::after {
+        display: inline-block;
+        float: right;
+        content: "\f107";
+        font-family: "Font Awesome 6 Free";
+        font-weight: 900;
+        transition: transform 0.3s;
+    }
+    
+    .sidebar-menu .dropdown-toggle[aria-expanded="true"]::after {
+        transform: rotate(180deg);
+    }
+</style>
+
 <?php use Illuminate\Support\Facades\Session; ?>
 
 @stack('styles')
@@ -141,6 +172,35 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
                         <span>feedback</span>
                     </a>
                 </li>
+
+                <li class="{{ Request::is('beds*') || Request::is('allocations*') || Request::is('bed-history*') ? 'active' : '' }}">
+                    <a class="dropdown-toggle" href="#bedManagement" data-bs-toggle="collapse" aria-expanded="false">
+                        <i class="fa-solid fa-bed"></i>
+                        <span>Bed Management</span>
+                    </a>
+                    <ul class="collapse list-unstyled {{ Request::is('beds*') || Request::is('allocations*') || Request::is('bed-history*') ? 'show' : '' }}" id="bedManagement">
+                        <li class="{{ Request::is('beds*') && !Request::is('beds/*/history') ? 'active' : '' }}">
+                            <a href="{{ route('beds.index') }}">
+                                <i class="fa-solid fa-bed"></i> Beds List
+                            </a>
+                        </li>
+                        <li class="{{ Request::is('allocations*') ? 'active' : '' }}">
+                            <a href="{{ route('allocations.index') }}">
+                                <i class="fa-solid fa-user-plus"></i> Patient Allocations
+                            </a>
+                        </li>
+                        <li class="{{ Request::is('bed-history*') || Request::is('beds/*/history') ? 'active' : '' }}">
+                            <a href="{{ route('bed-history.index') }}">
+                                <i class="fa-solid fa-clock-rotate-left"></i> Bed History
+                            </a>
+                        </li>
+                        <li class="{{ Request::is('bed-utilization-report') ? 'active' : '' }}">
+                            <a href="{{ route('bed-history.report') }}">
+                                <i class="fa-solid fa-chart-pie"></i> Utilization Report
+                            </a>
+                        </li>
+                    </ul>
+                </li>
             </ul>
 		</div>
         <!-- sidebar menu end-->
@@ -207,6 +267,25 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
         $(document).on('click', function(e) {
             if (!$(e.target).closest('.dropdown').length) {
                 $('.dropdown-menu').removeClass('show');
+            }
+        });
+        
+        // Sidebar submenu toggle
+        $('.sidebar-menu .dropdown-toggle').on('click', function(e) {
+            e.preventDefault();
+            
+            // Toggle the collapse element
+            const target = $(this).attr('href');
+            $(target).collapse('toggle');
+            
+            // Toggle the arrow icon
+            $(this).find('.fa-angle-down, .fa-angle-up').toggleClass('fa-angle-down fa-angle-up');
+        });
+        
+        // Auto-expand active submenus on page load
+        $('.sidebar-menu .collapse').each(function() {
+            if ($(this).find('li.active').length) {
+                $(this).addClass('show');
             }
         });
     });

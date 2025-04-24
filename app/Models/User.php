@@ -96,4 +96,29 @@ class User extends Authenticatable
     {
         return $this->hasOne(Doctor::class, 'UserID', 'UserID');
     }
+
+    /**
+     * Get patient profile if user is a patient
+     */
+    public function patient()
+    {
+        return $this->hasOne(Patient::class, 'UserID', 'UserID');
+    }
+    
+    /**
+     * Get all bed allocations for this user (when user is a patient)
+     */
+    public function bedAllocations()
+    {
+        return $this->hasMany(PatientWardAllocation::class, 'PatientID', 'UserID');
+    }
+    
+    /**
+     * Get the current active bed allocation for this user (when user is a patient)
+     */
+    public function currentBedAllocation()
+    {
+        return $this->hasOne(PatientWardAllocation::class, 'PatientID', 'UserID')
+            ->whereNull('DischargeDate');
+    }
 }

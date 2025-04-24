@@ -23,7 +23,7 @@ class CreatePatientWardAllocationsTable extends Migration
             $table->unsignedBigInteger('AllocatedByUserID');
             $table->timestamps();
 
-            $table->foreign('PatientID')->references('PatientID')->on('patients')->onDelete('cascade');
+            $table->foreign('PatientID')->references('UserID')->on('users')->onDelete('cascade');
             $table->foreign('WardBedID')->references('WardBedID')->on('ward_beds')->onDelete('cascade');
             $table->foreign('AllocatedByUserID')->references('UserID')->on('users')->onDelete('cascade');
         });

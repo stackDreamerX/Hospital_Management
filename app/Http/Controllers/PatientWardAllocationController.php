@@ -40,9 +40,7 @@ class PatientWardAllocationController extends Controller
 
         if ($search) {
             $query->whereHas('patient', function ($q) use ($search) {
-                $q->whereHas('user', function ($uq) use ($search) {
-                    $uq->where('name', 'like', "%{$search}%");
-                });
+                $q->where('FullName', 'like', "%{$search}%");
             })->orWhereHas('wardBed', function ($q) use ($search) {
                 $q->where('BedNumber', 'like', "%{$search}%");
             });
@@ -63,9 +61,19 @@ class PatientWardAllocationController extends Controller
      */
     public function create()
     {
-        $patients = Patient::whereDoesntHave('currentBedAllocation')
-                          ->with('user')
-                          ->get();
+        // Get users with patient role (RoleID) without active bed allocation
+        $patients = \App\Models\User::where('RoleID', 'patient')
+                          ->whereDoesntHave('bedAllocations', function($query) {
+                              $query->whereNull('DischargeDate');
+                          })
+                          ->get()
+                          ->map(function($user) {
+                              return [
+                                  'PatientID' => $user->UserID,
+                                  'FullName' => $user->FullName,
+                              ];
+                          });
+        
         $wards = Ward::orderBy('WardName')->get();
         
         return view('allocations.create', compact('patients', 'wards'));
@@ -80,7 +88,7 @@ class PatientWardAllocationController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'PatientID' => 'required|exists:patients,PatientID',
+            'PatientID' => 'required|exists:users,UserID',
             'WardBedID' => 'required|exists:ward_beds,WardBedID',
             'AllocationDate' => 'required|date',
             'Notes' => 'nullable|string|max:255',
@@ -112,7 +120,7 @@ class PatientWardAllocationController extends Controller
                 'WardBedID' => $request->WardBedID,
                 'AllocationDate' => $request->AllocationDate,
                 'Notes' => $request->Notes,
-                'AllocatedByUserID' => Auth::id(),
+                'AllocatedByUserID' => Auth::user()->UserID,
             ]);
 
             // Update bed status
@@ -131,7 +139,7 @@ class PatientWardAllocationController extends Controller
                 'ToDate' => null,
                 'Status' => 'occupied',
                 'Note' => 'Assigned to patient',
-                'UpdatedByUserID' => Auth::id(),
+                'UpdatedByUserID' => Auth::user()->UserID,
             ]);
         });
 
@@ -147,7 +155,7 @@ class PatientWardAllocationController extends Controller
      */
     public function show(PatientWardAllocation $allocation)
     {
-        $allocation->load('patient.user', 'wardBed.ward', 'allocatedBy');
+        $allocation->load('patient', 'wardBed.ward', 'allocatedBy');
         return view('allocations.show', compact('allocation'));
     }
 
@@ -229,7 +237,7 @@ class PatientWardAllocationController extends Controller
                 'ToDate' => null,
                 'Status' => $request->BedStatus,
                 'Note' => 'Patient discharged, bed status set to ' . $request->BedStatus,
-                'UpdatedByUserID' => Auth::id(),
+                'UpdatedByUserID' => Auth::user()->UserID,
             ]);
         });
 
@@ -242,15 +250,17 @@ class PatientWardAllocationController extends Controller
      */
     public function getAvailablePatients()
     {
-        $patients = Patient::whereDoesntHave('currentBedAllocation')
-                          ->with('user')
+        $patients = \App\Models\User::where('RoleID', 'patient')
+                          ->whereDoesntHave('bedAllocations', function($query) {
+                              $query->whereNull('DischargeDate');
+                          })
                           ->get()
-                          ->map(function ($patient) {
+                          ->map(function($user) {
                               return [
-                                  'id' => $patient->PatientID,
-                                  'name' => $patient->user->name,
-                                  'gender' => $patient->Gender,
-                                  'dob' => $patient->DateOfBirth,
+                                  'PatientID' => $user->UserID,
+                                  'FullName' => $user->FullName,
+                                  'Gender' => $user->Gender ?? 'Unknown',
+                                  'DateOfBirth' => $user->DateOfBirth ?? 'Unknown',
                               ];
                           });
         

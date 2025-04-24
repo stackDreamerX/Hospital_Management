@@ -46,7 +46,7 @@
                                 <table class="table table-bordered">
                                     <tr>
                                         <th>Patient:</th>
-                                        <td>{{ $bed->currentAllocation->patient->user->name ?? 'Unknown' }}</td>
+                                        <td>{{ $bed->currentAllocation->patient->FullName ?? 'Unknown' }}</td>
                                     </tr>
                                     <tr>
                                         <th>Allocated On:</th>
@@ -54,7 +54,7 @@
                                     </tr>
                                     <tr>
                                         <th>Allocated By:</th>
-                                        <td>{{ $bed->currentAllocation->allocatedBy->name ?? 'N/A' }}</td>
+                                        <td>{{ $bed->currentAllocation->allocatedBy->FullName ?? 'N/A' }}</td>
                                     </tr>
                                     <tr>
                                         <th>Actions:</th>
@@ -138,13 +138,13 @@
                                                     </td>
                                                     <td>
                                                         @if($history->PatientID && $history->patient)
-                                                            {{ $history->patient->user->name ?? 'Unknown' }}
+                                                            {{ $history->patient->FullName ?? 'Unknown' }}
                                                         @else
                                                             -
                                                         @endif
                                                     </td>
                                                     <td>{{ $history->Note ?? '-' }}</td>
-                                                    <td>{{ $history->updatedBy->name ?? 'System' }}</td>
+                                                    <td>{{ $history->updatedBy->FullName ?? 'System' }}</td>
                                                 </tr>
                                                 @empty
                                                 <tr>

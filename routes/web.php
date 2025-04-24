@@ -233,6 +233,9 @@ Route::get('/feedback', [App\Http\Controllers\FeedbackController::class, 'public
     Route::put('/allocations/{allocation}/discharge', [PatientWardAllocationController::class, 'discharge'])->name('allocations.discharge');
     Route::get('/available-patients', [PatientWardAllocationController::class, 'getAvailablePatients'])->name('allocations.available-patients');
 
+    // Debug route to check patients
+    Route::get('/debug-patients', [PatientWardAllocationController::class, 'debugPatients'])->name('debug-patients');
+
     // Bed history routes
     Route::get('/bed-history', [WardBedHistoryController::class, 'index'])->name('bed-history.index');
     Route::get('/bed-history/{history}', [WardBedHistoryController::class, 'show'])->name('bed-history.show');

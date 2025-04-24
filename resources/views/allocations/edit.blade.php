@@ -15,7 +15,7 @@
                             <table class="table table-bordered mb-4">
                                 <tr>
                                     <th width="30%">Patient:</th>
-                                    <td>{{ $allocation->patient->user->name ?? 'Unknown' }}</td>
+                                    <td>{{ $allocation->patient->FullName ?? 'Unknown' }}</td>
                                 </tr>
                                 <tr>
                                     <th>Bed Number:</th>

@@ -19,7 +19,7 @@ class Invoice extends Model
 
     public function patient()
     {
-        return $this->belongsTo(Patient::class, 'PatientID', 'PatientID');
+        return $this->belongsTo(User::class, 'UserID', 'UserID');
     }
 
     public function invoiceTreatments()

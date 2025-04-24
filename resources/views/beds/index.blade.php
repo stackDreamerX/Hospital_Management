@@ -71,8 +71,8 @@
                                         @endif
                                     </td>
                                     <td>
-                                        @if($bed->Status == 'occupied' && $bed->currentAllocation && $bed->currentAllocation->patient)
-                                            {{ $bed->currentAllocation->patient->user->name ?? 'Unknown' }}
+                                        @if($bed->Status === 'occupied' && $bed->currentAllocation)
+                                            {{ $bed->currentAllocation->patient->FullName ?? 'Unknown' }}
                                         @else
                                             -
                                         @endif

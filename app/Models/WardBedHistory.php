@@ -38,7 +38,7 @@ class WardBedHistory extends Model
      */
     public function patient()
     {
-        return $this->belongsTo(Patient::class, 'PatientID', 'PatientID');
+        return $this->belongsTo(User::class, 'PatientID', 'UserID');
     }
 
     /**
@@ -46,7 +46,7 @@ class WardBedHistory extends Model
      */
     public function updatedBy()
     {
-        return $this->belongsTo(User::class, 'UpdatedByUserID', 'id');
+        return $this->belongsTo(User::class, 'UpdatedByUserID', 'UserID');
     }
 
     /**

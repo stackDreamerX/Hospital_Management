@@ -29,7 +29,7 @@ class PatientWardAllocation extends Model
      */
     public function patient()
     {
-        return $this->belongsTo(Patient::class, 'PatientID', 'PatientID');
+        return $this->belongsTo(User::class, 'PatientID', 'UserID');
     }
 
     /**
@@ -45,7 +45,7 @@ class PatientWardAllocation extends Model
      */
     public function allocatedBy()
     {
-        return $this->belongsTo(User::class, 'AllocatedByUserID', 'id');
+        return $this->belongsTo(User::class, 'AllocatedByUserID', 'UserID');
     }
 
     /**

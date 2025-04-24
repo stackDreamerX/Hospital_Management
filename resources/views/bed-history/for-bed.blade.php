@@ -45,7 +45,7 @@
                                     @if($bed->Status == 'occupied' && $bed->currentAllocation)
                                     <tr>
                                         <th>Current Patient:</th>
-                                        <td>{{ $bed->currentAllocation->patient->user->name ?? 'Unknown' }}</td>
+                                        <td>{{ $bed->currentAllocation->patient->FullName ?? 'None' }}</td>
                                     </tr>
                                     <tr>
                                         <th>Allocated Since:</th>
@@ -115,7 +115,7 @@
                                     </td>
                                     <td>
                                         @if($record->PatientID && $record->patient)
-                                            {{ $record->patient->user->name ?? 'Unknown' }}
+                                            {{ $record->patient->FullName ?? 'Unknown' }}
                                         @else
                                             -
                                         @endif
@@ -142,7 +142,7 @@
                                             }
                                         @endphp
                                     </td>
-                                    <td>{{ $record->updatedBy->name ?? 'System' }}</td>
+                                    <td>{{ $record->updatedBy->FullName ?? 'System' }}</td>
                                 </tr>
                                 @empty
                                 <tr>

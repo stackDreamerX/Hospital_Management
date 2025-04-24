@@ -17,8 +17,8 @@
                             <select name="PatientID" id="PatientID" class="form-select @error('PatientID') is-invalid @enderror" required>
                                 <option value="">Select Patient</option>
                                 @foreach($patients as $patient)
-                                    <option value="{{ $patient->PatientID }}" {{ old('PatientID') == $patient->PatientID ? 'selected' : '' }}>
-                                        {{ $patient->user->name ?? 'Unknown' }}
+                                    <option value="{{ $patient['PatientID'] }}" {{ old('PatientID') == $patient['PatientID'] ? 'selected' : '' }}>
+                                        {{ $patient['FullName'] ?? 'Unknown' }}
                                     </option>
                                 @endforeach
                             </select>
