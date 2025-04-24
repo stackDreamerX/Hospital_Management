@@ -3,94 +3,205 @@
 @push('styles')
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+<style>
+    /* Reset and improved modal styling */
+    body .modal {
+        display: none;
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        z-index: 1050 !important;
+        width: 100% !important;
+        height: 100% !important;
+        overflow: hidden !important;
+        outline: 0 !important;
+        background-color: rgba(0, 0, 0, 0.5) !important;
+    }
+
+    body .modal.fade {
+        opacity: 0;
+        transition: opacity 0.15s linear;
+    }
+
+    body .modal.show {
+        display: block !important;
+        opacity: 1 !important;
+    }
+
+    body .modal-dialog {
+        position: relative !important;
+        margin: 1.75rem auto !important;
+        max-width: 500px !important;
+        pointer-events: auto !important;
+        transform: none !important;
+    }
+
+    body .modal-dialog.modal-lg {
+        max-width: 800px !important;
+    }
+
+    body .modal-content {
+        position: relative !important;
+        display: flex !important;
+        flex-direction: column !important;
+        width: 100% !important;
+        background-color: #fff !important;
+        border: none !important;
+        border-radius: 0.5rem !important;
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+        pointer-events: auto !important;
+        outline: 0 !important;
+    }
+
+    body .modal-header {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        padding: 1rem !important;
+        border-bottom: 1px solid #dee2e6 !important;
+        border-top-left-radius: 0.5rem !important;
+        border-top-right-radius: 0.5rem !important;
+        background: linear-gradient(135deg, #2bb0ed 0%, #3f8cff 100%) !important;
+        color: white !important;
+    }
+
+    body .modal-title {
+        margin-bottom: 0 !important;
+        line-height: 1.5 !important;
+        font-weight: 600 !important;
+        color: white !important;
+    }
+
+    body .btn-close {
+        background: rgba(255, 255, 255, 0.5) !important;
+        border-radius: 50% !important;
+        opacity: 1 !important;
+        padding: 0.6rem !important;
+        border: none !important;
+        -webkit-appearance: none !important;
+    }
+
+    body .modal-body {
+        position: relative !important;
+        flex: 1 1 auto !important;
+        padding: 1.5rem !important;
+        overflow-y: auto !important;
+        max-height: 70vh !important;
+        color: #212529 !important; /* Dark text color */
+    }
+
+    body .modal-footer {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: flex-end !important;
+        padding: 1rem !important;
+        border-top: 1px solid #dee2e6 !important;
+    }
+
+    /* Ensure the modal backdrop is visible */
+    body .modal-backdrop {
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        z-index: 1040 !important;
+        width: 100vw !important;
+        height: 100vh !important;
+        background-color: rgba(0, 0, 0, 0.5) !important;
+    }
+
+    body .modal-backdrop.fade {
+        opacity: 0 !important;
+    }
+
+    body .modal-backdrop.show {
+        opacity: 0.5 !important;
+    }
+    
+    /* Additional CSS to ensure modals appear correctly */
+    body.modal-open {
+        overflow: hidden !important;
+        padding-right: 15px !important;
+    }
+    
+    /* Force modal display when .show-force is applied */
+    body .modal.show-force {
+        display: block !important;
+        opacity: 1 !important;
+        visibility: visible !important;
+        overflow-x: hidden !important;
+        overflow-y: auto !important;
+    }
+    
+    /* Force backdrop to display */
+    body .modal-backdrop-force {
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        z-index: 1040 !important;
+        width: 100vw !important;
+        height: 100vh !important;
+        background-color: rgba(0, 0, 0, 0.5) !important;
+        opacity: 0.5 !important;
+    }
+    
+    /* Enhanced form controls */
+    body .form-control {
+        border-radius: 0.25rem !important;
+        border: 1px solid #ced4da !important;
+        transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out !important;
+    }
+    
+    body .form-control:focus {
+        border-color: #86b7fe !important;
+        outline: 0 !important;
+        box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25) !important;
+    }
+    
+    body .form-label {
+        margin-bottom: 0.5rem !important;
+        font-weight: 500 !important;
+        color: #212529 !important;
+    }
+    
+    /* Button styling */
+    body .btn-primary {
+        background: linear-gradient(135deg, #2bb0ed 0%, #3f8cff 100%) !important;
+        border: none !important;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+    }
+    
+    body .btn-primary:hover {
+        background: linear-gradient(135deg, #1a9fd6 0%, #2e75e0 100%) !important;
+        transform: translateY(-1px) !important;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1) !important;
+    }
+    
+    /* Card styling improvements */
+    .card {
+        border: none !important;
+        border-radius: 0.5rem !important;
+        box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075) !important;
+        transition: box-shadow 0.3s ease-in-out !important;
+    }
+    
+    .card:hover {
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1) !important;
+    }
+    
+    .card-header {
+        background: #f8f9fa !important;
+        border-bottom: 1px solid rgba(0,0,0,0.05) !important;
+        font-weight: 600 !important;
+    }
+</style>
 @endpush
 
 
 @section('admin_content')
 
-
-<style>
-     modal {
-    display: none; /* Ẩn modal ban đầu */
-    position: fixed;
-    top: 0;
-    left: 0;
-    z-index: 1050; /* Bootstrap 5 modal z-index */
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-    background-color: rgba(0, 0, 0, 0.5); /* Overlay mờ */
-    }
-
-    .modal.fade {
-    opacity: 0; /* Modal mờ khi chưa được hiển thị */
-    transition: opacity 0.15s linear;
-    }
-
-    .modal.show {
-    display: block; /* Hiển thị modal */
-    opacity: 1;
-    }
-
-    .modal-dialog {
-    position: relative;
-    margin: 1.75rem auto; /* Center modal vertically */
-    pointer-events: auto;
-    max-width: 500px; /* Độ rộng mặc định */
-    }
-
-    .modal-dialog.modal-lg {
-    max-width: 800px; /* Độ rộng modal lớn */
-    }
-
-    .modal-content {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    background-color: #fff;
-    border: none;
-    border-radius: 0.5rem; /* Bo góc */
-    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15); /* Đổ bóng */
-    }
-
-    .modal-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 1rem 1rem;
-    border-bottom: 1px solid #dee2e6; /* Border dưới */
-    border-top-left-radius: 0.5rem;
-    border-top-right-radius: 0.5rem;
-    }
-
-    .modal-title {
-    margin-bottom: 0;
-    line-height: 1.5;
-    }
-
-    .btn-close {
-    background: none;
-    border: none;
-    -webkit-appearance: none;
-    }
-
-    .modal-body {
-    position: relative;
-    flex: 1 1 auto;
-    padding: 1rem;
-    }
-
-    .modal-footer {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    padding: 1rem;
-    border-top: 1px solid #dee2e6;
-    }
-
-</style>
 <div class="container" style="padding: 20px;">
     <h2 style="color: #333; margin-bottom: 20px;">User Management</h2>
+        
 
     <!-- User List -->
     <div class="card mb-4" style="box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
@@ -165,12 +276,10 @@
                         <td style="padding: 12px;">Male</td>                        
                         <td style="padding: 12px;">{{ $user->RoleID }}</td>
                         <td style="padding: 12px;">
-                            <button onclick="editUser({{ json_encode($user) }})"
-                                    class="btn btn-primary btn-sm" style="margin-right: 5px;">
+                            <button class="btn btn-primary btn-sm edit-user" data-user='{!! json_encode($user) !!}' style="margin-right: 5px;">
                                 <i class="fa fa-edit"></i> Edit
                             </button>
-                            <button onclick="deleteUser({{ $user->UserID }})"
-                                    class="btn btn-danger btn-sm">
+                            <button class="btn btn-danger btn-sm delete-user" data-id="{{ $user->UserID }}">
                                 <i class="fa fa-trash"></i> Delete
                             </button>
                         </td>
@@ -183,56 +292,57 @@
 </div>
 
 <!-- Include Edit Modal -->
-<div class="modal fade" id="userModal" tabindex="-1">
+<div class="modal fade" id="userModal" tabindex="-1" aria-labelledby="userModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Edit User</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                <h5 class="modal-title" id="userModalLabel"><i class="fas fa-user-edit me-2"></i>Edit User</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form>
+                <form id="editUserForm">
+                    <input type="hidden" name="user_id" id="edit_user_id">
                     <div class="mb-3">
-                        <label for="name">Full Name</label>
-                        <input type="text" name="name" class="form-control" required>
+                        <label for="edit_name" class="form-label"><i class="fas fa-user me-2"></i>Full Name</label>
+                        <input type="text" id="edit_name" name="name" class="form-control" required>
                     </div>
                     <div class="mb-3">
-                        <label for="email">Email</label>
-                        <input type="email" name="email" class="form-control" required>
+                        <label for="edit_email" class="form-label"><i class="fas fa-envelope me-2"></i>Email</label>
+                        <input type="email" id="edit_email" name="email" class="form-control" required>
                     </div>
                     <div class="mb-3">
-                        <label for="phone">Phone</label>
-                        <input type="tel" name="phone" class="form-control" required>
+                        <label for="edit_phone" class="form-label"><i class="fas fa-phone me-2"></i>Phone</label>
+                        <input type="tel" id="edit_phone" name="phone" class="form-control" required>
                     </div>
                     <div class="mb-3">
-                        <label for="gender">Gender</label>
-                        <select name="gender" class="form-control" required>
+                        <label for="edit_gender" class="form-label"><i class="fas fa-venus-mars me-2"></i>Gender</label>
+                        <select id="edit_gender" name="gender" class="form-control" required>
                             <option value="male">Male</option>
                             <option value="female">Female</option>
                             <option value="other">Other</option>
                         </select>
                     </div>
                     <div class="mb-3">
-                        <label for="date_of_birth">Date of Birth</label>
-                        <input type="date" name="date_of_birth" class="form-control" required>
+                        <label for="edit_date_of_birth" class="form-label"><i class="fas fa-birthday-cake me-2"></i>Date of Birth</label>
+                        <input type="date" id="edit_date_of_birth" name="date_of_birth" class="form-control" required>
                     </div>
                     <div class="mb-3">
-                        <label for="role">Role</label>
-                        <select name="role" class="form-control" required>
+                        <label for="edit_role" class="form-label"><i class="fas fa-user-tag me-2"></i>Role</label>
+                        <select id="edit_role" name="role" class="form-control" required>
                             <option value="admin">Admin</option>
                             <option value="doctor">Doctor</option>
                             <option value="patient">Patient</option>
                         </select>
                     </div>
                     <div class="mb-3">
-                        <label for="address">Address</label>
-                        <textarea name="address" class="form-control"></textarea>
+                        <label for="edit_address" class="form-label"><i class="fas fa-map-marker-alt me-2"></i>Address</label>
+                        <textarea id="edit_address" name="address" class="form-control"></textarea>
                     </div>
                 </form>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-primary btn-save">Save Changes</button>
+                <button type="button" class="btn btn-primary" id="saveUserBtn">Save Changes</button>
             </div>
         </div>
     </div>
@@ -243,84 +353,277 @@
 @section('scripts')
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
+    // Helper function to show modal reliably
+    function showModalReliably(modalElement, modalInstance) {
+        console.log('Showing modal reliably:', modalElement.id);
+        
+        try {
+            // First attempt: Bootstrap modal method
+            if (modalInstance && typeof modalInstance.show === 'function') {
+                modalInstance.show();
+                console.log('Modal shown via Bootstrap API');
+                return true;
+            }
+        } catch (error) {
+            console.warn('Error showing modal via Bootstrap API:', error);
+        }
+        
+        try {
+            // Second attempt: jQuery if available
+            if (typeof $ !== 'undefined') {
+                $(modalElement).modal('show');
+                console.log('Modal shown via jQuery');
+                return true;
+            }
+        } catch (error) {
+            console.warn('Error showing modal via jQuery:', error);
+        }
+        
+        // Final attempt: Direct DOM manipulation
+        try {
+            console.log('Trying direct DOM manipulation for modal');
+            // Add classes to modal
+            modalElement.classList.add('show', 'show-force');
+            modalElement.style.display = 'block';
+            modalElement.setAttribute('aria-modal', 'true');
+            modalElement.removeAttribute('aria-hidden');
+            
+            // Add class to body
+            document.body.classList.add('modal-open');
+            
+            // Create backdrop if needed
+            if (!document.querySelector('.modal-backdrop')) {
+                const backdrop = document.createElement('div');
+                backdrop.className = 'modal-backdrop fade show modal-backdrop-force';
+                document.body.appendChild(backdrop);
+                console.log('Modal backdrop created');
+            }
+            
+            console.log('Modal shown via direct DOM manipulation');
+            return true;
+        } catch (error) {
+            console.error('All methods to show modal failed:', error);
+            return false;
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize modals
+        const userModal = new bootstrap.Modal(document.getElementById('userModal'));
+        
+        // Add event listeners to edit user buttons
+        document.querySelectorAll('.edit-user').forEach(button => {
+            button.addEventListener('click', function() {
+                try {
+                    const user = JSON.parse(this.getAttribute('data-user'));
+                    editUser(user);
+                } catch (error) {
+                    console.error('Error parsing user data:', error);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Could not load user details. Please try again.'
+                    });
+                }
+            });
+        });
+        
+        // Add event listeners to delete user buttons
+        document.querySelectorAll('.delete-user').forEach(button => {
+            button.addEventListener('click', function() {
+                const id = this.getAttribute('data-id');
+                deleteUser(id);
+            });
+        });
+        
+        // Connect save button event handler
+        document.getElementById('saveUserBtn').addEventListener('click', function() {
+            const userId = document.getElementById('edit_user_id').value;
+            updateUser(userId);
+        });
+    });
 
     document.getElementById('addUserForm').addEventListener('submit', function(e) {
         e.preventDefault();
 
         const formData = new FormData(this);
+        
+        Swal.fire({
+            title: 'Adding User...',
+            text: 'Please wait while we create the user',
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
 
-        fetch('{{ route('admin.users.store') }}', {
+        fetch("{{ route('admin.users.store') }}", {
             method: 'POST',
             headers: {
-                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
             },
             body: formData,
         })
-            .then(response => response.json())
-            .then(data => {
-                Swal.fire('Success', data.message, 'success').then(() => {
-                    window.location.reload();
-                });
-            })
-            .catch(error => {
-                console.error(error);
-                Swal.fire('Error', 'Failed to add user.', 'error');
+        .then(response => response.json())
+        .then(data => {
+            Swal.fire({
+                icon: 'success',
+                title: 'Success',
+                text: data.message || 'User added successfully'
+            }).then(() => {
+                window.location.reload();
             });
+        })
+        .catch(error => {
+            console.error(error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Failed to add user.'
+            });
+        });
     });
 
-
     function editUser(user) {
-    const modal = document.getElementById('userModal');
-    modal.querySelector('input[name="name"]').value = user.name;
-    modal.querySelector('input[name="email"]').value = user.email;
-    modal.querySelector('input[name="phone"]').value = user.phone;
-    modal.querySelector('select[name="gender"]').value = user.gender;
-    modal.querySelector('input[name="date_of_birth"]').value = user.date_of_birth;
-    modal.querySelector('select[name="role"]').value = user.role;
-    modal.querySelector('textarea[name="address"]').value = user.address;
+        // Set user data in the form
+        document.getElementById('edit_user_id').value = user.UserID;
+        document.getElementById('edit_name').value = user.FullName || '';
+        document.getElementById('edit_email').value = user.Email || '';
+        document.getElementById('edit_phone').value = user.PhoneNumber || '';
+        
+        // Set optional fields if available
+        if (user.Gender) {
+            document.getElementById('edit_gender').value = user.Gender.toLowerCase();
+        }
+        
+        if (user.DateOfBirth) {
+            document.getElementById('edit_date_of_birth').value = user.DateOfBirth;
+        }
+        
+        if (user.RoleID) {
+            const roleMap = {
+                '1': 'admin',
+                '2': 'doctor',
+                '3': 'patient'
+            };
+            document.getElementById('edit_role').value = roleMap[user.RoleID] || 'patient';
+        }
+        
+        if (user.Address) {
+            document.getElementById('edit_address').value = user.Address;
+        }
 
-    const saveButton = modal.querySelector('.btn-save');
-    saveButton.onclick = function () {
-        const formData = new FormData(modal.querySelector('form'));
-        fetch(`/admin/users/${user.id}`, {
-            method: 'PUT',
+        // Show the modal
+        const modalElement = document.getElementById('userModal');
+        const modalInstance = new bootstrap.Modal(modalElement);
+        showModalReliably(modalElement, modalInstance);
+    }
+
+    function updateUser(userId) {
+        // Get form data
+        const formData = new FormData(document.getElementById('editUserForm'));
+        
+        Swal.fire({
+            title: 'Updating...',
+            text: 'Please wait while we update the user',
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
+        
+        // Create the URL with the user ID
+    //   const url = `/admin/patient/${userId}`;
+        const url = `{{ route('admin.patient.update', ['id' => '__id__']) }}`.replace('__id__', userId);
+       console.log(url);
+        fetch(url, {
+            method: 'POST', // Use POST as defined in the routes
             headers: {
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
             },
             body: formData,
         })
-            .then(response => response.json())
-            .then(data => {
-                alert(data.message);
-                window.location.reload();
-            })
-            .catch(error => console.error('Error:', error));
-    };
-
-    new bootstrap.Modal(modal).show();
-}
-
-function deleteUser(id) {
-    if (confirm('Are you sure you want to delete this user?')) {
-        const url =  `{{ route('admin.patient.destroy', ['id' => '__id__']) }}`.replace('__id__', id);
-        fetch(url, {
-            method: 'DELETE',
-            headers: {
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-            },
+        .then(response => {
+            // Check if the response is OK
+            if (!response.ok) {
+                // Get the response text for debugging
+                return response.text().then(text => {
+                    console.error('Response not OK:', response.status, text);
+                    throw new Error(`HTTP error! status: ${response.status}, body: ${text}`);
+                });
+            }
+            return response.json();
         })
-            .then(response => response.json())
-            .then(data => {
-                alert(data.message);
+        .then(data => {
+            Swal.fire({
+                icon: 'success',
+                title: 'Success',
+                text: data.message || 'User updated successfully'
+            }).then(() => {
                 window.location.reload();
-            })
-            .catch(error => console.error('Error:', error));
+            });
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Failed to update user information. Check console for details.'
+            });
+        });
     }
-}
 
+    function deleteUser(id) {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Yes, delete it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                const url = `{{ route('admin.patient.destroy', ['id' => '__id__']) }}`.replace('__id__', id);
+                
+                Swal.fire({
+                    title: 'Deleting...',
+                    text: 'Please wait while we delete the user',
+                    allowOutsideClick: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
+                
+                fetch(url, {
+                    method: 'DELETE',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                })
+                .then(response => response.json())
+                .then(data => {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Deleted!',
+                        text: data.message || 'User has been deleted.'
+                    }).then(() => {
+                        window.location.reload();
+                    });
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Failed to delete user.'
+                    });
+                });
+            }
+        });
+    }
 </script>
 @endsection
-
 
 @push('scripts')
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>

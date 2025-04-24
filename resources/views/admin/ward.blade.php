@@ -3,6 +3,14 @@
 @push('styles')
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+<style>
+    /* Fix for labels not displaying properly */
+    label {
+        display: block !important;
+        visibility: visible !important;
+        color: #333 !important;
+    }
+</style>
 @endpush
 
 
@@ -16,6 +24,7 @@
         <div class="card-header" style="background-color: #f8f9fa; padding: 15px;">Create New Ward</div>
         <div class="card-body" style="padding: 20px;">
             <form id="createWardForm">
+                @csrf
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label style="font-weight: bold; margin-bottom: 5px;">Ward Name</label>
@@ -96,12 +105,10 @@
                             <span class="badge bg-{{ $class }}">{{ $status }}</span>
                         </td>
                         <td style="padding: 12px;">
-                            <button onclick="editWard({{ json_encode($ward) }})"
-                                    class="btn btn-primary btn-sm" style="margin-right: 5px;">
+                            <button class="btn btn-primary btn-sm edit-ward" data-ward="{{ json_encode($ward) }}" style="margin-right: 5px;">
                                 <i class="fa fa-edit"></i> Edit
                             </button>
-                            <button onclick="deleteWard({{ $ward['WardID'] }})"
-                                    class="btn btn-danger btn-sm">
+                            <button class="btn btn-danger btn-sm delete-ward" data-id="{{ $ward['WardID'] }}">
                                 <i class="fa fa-trash"></i> Delete
                             </button>
                         </td>
@@ -114,7 +121,53 @@
 </div>
 
 <!-- Edit Modal -->
-@include('admin.modals.ward_modal')
+<div class="modal fade" id="wardModal" tabindex="-1" aria-labelledby="wardModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="wardModalLabel">Edit Ward</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="editWardForm">
+                    @csrf
+                    @method('PUT')
+                    <input type="hidden" id="edit_id" name="edit_id">
+                    <div class="mb-3">
+                        <label for="edit_ward_name" class="form-label">Ward Name</label>
+                        <input type="text" class="form-control" id="edit_ward_name" name="ward_name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="edit_ward_type" class="form-label">Ward Type</label>
+                        <select class="form-select" id="edit_ward_type" name="ward_type" required>
+                            <option value="">Select Ward Type</option>
+                            @foreach($wardTypes as $type)
+                                <option value="{{ $type['WardTypeID'] }}">{{ $type['TypeName'] }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="edit_capacity" class="form-label">Capacity</label>
+                        <input type="number" class="form-control" id="edit_capacity" name="capacity" min="1" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="edit_doctor" class="form-label">Doctor In Charge</label>
+                        <select class="form-select" id="edit_doctor" name="doctor_id" required>
+                            <option value="">Select Doctor</option>
+                            @foreach($doctors as $doctor)
+                                <option value="{{ $doctor['DoctorID'] }}">{{ $doctor['FullName'] }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="saveWardChanges">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 @endsection
 
@@ -126,15 +179,137 @@
     document.addEventListener('DOMContentLoaded', function() {
         editModal = new bootstrap.Modal(document.getElementById('wardModal'));
         
-        // Add form submit handler
+        // Create ward form handler
         document.getElementById('createWardForm').addEventListener('submit', function(e) {
             e.preventDefault();
-            Swal.fire({
-                icon: 'success',
-                title: 'Success',
-                text: 'Ward created successfully!'
-            }).then(() => {
-                window.location.reload();
+            
+            const formData = new FormData(this);
+            
+            fetch('{{ route("admin.wards.store") }}', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.message) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success',
+                        text: data.message
+                    }).then(() => {
+                        window.location.reload();
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'An error occurred while creating the ward.'
+                });
+            });
+        });
+
+        // Edit ward button handler
+        document.querySelectorAll('.edit-ward').forEach(button => {
+            button.addEventListener('click', function() {
+                const ward = JSON.parse(this.getAttribute('data-ward'));
+                
+                document.getElementById('edit_id').value = ward.WardID;
+                document.getElementById('edit_ward_name').value = ward.WardName;
+                document.getElementById('edit_ward_type').value = ward.WardTypeID;
+                document.getElementById('edit_capacity').value = ward.Capacity;
+                document.getElementById('edit_doctor').value = ward.DoctorID;
+                
+                editModal.show();
+            });
+        });
+        
+        // Save changes button handler
+        document.getElementById('saveWardChanges').addEventListener('click', function() {
+            const form = document.getElementById('editWardForm');
+            const formData = new FormData(form);
+            const wardId = document.getElementById('edit_id').value;
+            
+            fetch(`{{ route('admin.wards.update', ['id' => '_ID_']) }}`.replace('_ID_', wardId), {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.message) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success',
+                        text: data.message
+                    }).then(() => {
+                        editModal.hide();
+                        window.location.reload();
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'An error occurred while updating the ward.'
+                });
+            });
+        });
+
+        // Delete ward button handler
+        document.querySelectorAll('.delete-ward').forEach(button => {
+            button.addEventListener('click', function() {
+                const wardId = this.getAttribute('data-id');
+                
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: "This action cannot be undone!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Yes, delete it!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        const formData = new FormData();
+                        formData.append('_token', '{{ csrf_token() }}');
+                        formData.append('_method', 'DELETE');
+                        
+                        fetch(`{{ route('admin.wards.destroy', ['id' => '_ID_']) }}`.replace('_ID_', wardId), {
+                            method: 'POST',
+                            body: formData,
+                            headers: {
+                                'X-Requested-With': 'XMLHttpRequest'
+                            }
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.message) {
+                                Swal.fire('Deleted!', data.message, 'success')
+                                .then(() => {
+                                    window.location.reload();
+                                });
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: 'An error occurred while deleting the ward.'
+                            });
+                        });
+                    }
+                });
             });
         });
 
@@ -161,46 +336,6 @@
             });
         });
     });
-
-    function editWard(ward) {
-        document.getElementById('edit_id').value = ward.WardID;
-        document.getElementById('edit_ward_name').value = ward.WardName;
-        document.getElementById('edit_ward_type').value = ward.WardTypeID;
-        document.getElementById('edit_capacity').value = ward.Capacity;
-        document.getElementById('edit_doctor').value = ward.DoctorID;
-        
-        editModal.show();
-    }
-
-    function updateWard() {
-        Swal.fire({
-            icon: 'success',
-            title: 'Success',
-            text: 'Ward updated successfully!'
-        }).then(() => {
-            editModal.hide();
-            window.location.reload();
-        });
-    }
-
-    function deleteWard(id) {
-        Swal.fire({
-            title: 'Are you sure?',
-            text: "This action cannot be undone!",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#d33',
-            cancelButtonColor: '#3085d6',
-            confirmButtonText: 'Yes, delete it!'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                Swal.fire('Deleted!', 'Ward has been deleted.', 'success')
-                .then(() => {
-                    window.location.reload();
-                });
-            }
-        });
-    }
 </script>
 @endsection
 

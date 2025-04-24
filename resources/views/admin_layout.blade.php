@@ -30,7 +30,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 <!--logo start-->
 <div class="brand">
     <a href="{{ url('admin/dashboard')  }}" class="logo">
-        <img alt="" src="../public/logo.ico" height="40px">
+        <img alt="" src="{{ asset('public/logo.ico') }}" height="40px">
         <span>Admin</span>
     </a>
     <div class="sidebar-toggle-box">
@@ -53,16 +53,9 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
         <!-- user login dropdown start-->
         <li class="dropdown">
             <a class="dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                <img alt="" src="../public/2.png">
-                <span class="username">
-					<?php
-						$name = Session::get("admin_name");
-						if ($name) {
-								echo $name;
-						}
-					?>
-				</span>
-                <b class="caret"></b>
+                <img alt="" src="{{ asset('public/2.png') }}">
+                <span class="username">{{ auth()->user()->FullName ?? 'Admin' }}</span>
+                <b class="caret"></b>   
             </a>
             <ul class="dropdown-menu dropdown-menu-end logout">
                 <li><a class="dropdown-item" href="#"><i class="fa-solid fa-suitcase"></i> Profile</a></li>
@@ -133,6 +126,21 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
                         <span>Patient</span>
                     </a>
                 </li>
+
+                <li class="{{ Request::is('admin/ward*') ? 'active' : '' }}">
+                    <a href="{{ url('/admin/ward') }}">
+                        <i class="fa-solid fa-hospital"></i>
+                        <span>ward</span>
+                    </a>
+                </li>
+
+
+                <li class="{{ Request::is('admin/feedback*') ? 'active' : '' }}">
+                    <a href="{{ url('/admin/feedback') }}">
+                        <i class="fa-solid fa-comment-dots"></i>
+                        <span>feedback</span>
+                    </a>
+                </li>
             </ul>
 		</div>
         <!-- sidebar menu end-->
@@ -167,44 +175,41 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 
 @stack('scripts')
 <script>
-    $(document).ready(function () {
-    // Toggle sidebar on mobile
-    $('.sidebar-toggle-box').on('click', function() {
-        $('#sidebar').toggleClass('show');
-    });
-    
-    // Xử lý sự kiện click vào sidebar menu
-    $('.sidebar-menu li a').on('click', function () {
-        // Xóa class active ở tất cả các mục
-        $('.sidebar-menu li').removeClass('active');
-        // Thêm class active vào mục đang được click
-        $(this).parent('li').addClass('active');
-    });
-
-    // Ensure all Bootstrap dropdowns work properly
+    // Initialize Bootstrap dropdowns when DOM is fully loaded
     document.addEventListener('DOMContentLoaded', function() {
         // Initialize Bootstrap 5 dropdowns
         var dropdownElementList = [].slice.call(document.querySelectorAll('.dropdown-toggle'));
-        dropdownElementList.map(function(element) {
-            return new bootstrap.Dropdown(element);
+        dropdownElementList.map(function(dropdown) {
+            return new bootstrap.Dropdown(dropdown);
         });
     });
 
-    // Alternative direct click handling if Bootstrap initialization fails
-    $('.dropdown-toggle').on('click', function(e) {
-        e.preventDefault();
-        e.stopPropagation();
-        $(this).siblings('.dropdown-menu').toggleClass('show');
-    });
+    $(document).ready(function () {
+        // Toggle sidebar on mobile
+        $('.sidebar-toggle-box').on('click', function() {
+            $('#sidebar').toggleClass('show');
+        });
+        
+        // Handle sidebar menu click events
+        $('.sidebar-menu li a').on('click', function () {
+            // Remove active class from all items
+            $('.sidebar-menu li').removeClass('active');
+            // Add active class to clicked item
+            $(this).parent('li').addClass('active');
+        });
 
-    // Close dropdowns when clicking outside
-    $(document).on('click', function(e) {
-        if (!$(e.target).closest('.dropdown').length) {
-            $('.dropdown-menu').removeClass('show');
-        }
-    });
-});
+        // Manual dropdown handling (backup in case Bootstrap initialization fails)
+        $('.dropdown-toggle').on('click', function(e) {
+            $(this).siblings('.dropdown-menu').toggleClass('show');
+        });
 
+        // Close dropdowns when clicking outside
+        $(document).on('click', function(e) {
+            if (!$(e.target).closest('.dropdown').length) {
+                $('.dropdown-menu').removeClass('show');
+            }
+        });
+    });
 </script>
 @yield('scripts')
 </body>
