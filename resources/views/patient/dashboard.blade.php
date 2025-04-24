@@ -226,13 +226,15 @@
                                 <td>
                                     <div class="progress" style="height: 8px;">
                                         @php
-                                            $progress = intval(str_replace('%', '', $treatment['Progress']));
-                                        @endphp
-                                        <div class="progress-bar bg-success" role="progressbar" style="width: {{ $progress }}%;" 
-                                            aria-valuenow="{{ $progress }}" aria-valuemin="0" aria-valuemax="100"></div>
-                                    </div>
-                                    <small class="text-muted">{{ $treatment['Progress'] }}</small>
-                                </td>
+                                            @php
+                                                $progress = intval(str_replace('%', '', $treatment['Progress']));
+                                            @endphp
+                                            <div class="progress" style="height: 8px;">
+                                                <div class="progress-bar bg-success" role="progressbar" style="width: {{ $progress }}%;" 
+                                                    aria-valuenow="{{ $progress }}" aria-valuemin="0" aria-valuemax="100"></div>
+                                            </div>
+                                            <small class="text-muted">{{ $treatment['Progress'] }}</small>
+                                        </td>
                                 <td>
                                     <span class="badge bg-warning rounded-pill">
                                         {{ $treatment['Status'] }}

@@ -13,7 +13,11 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Doctor\DashboardController;
 use App\Http\Controllers\Patient\RatingController as PatientRatingController;
 use App\Http\Controllers\RatingController;
+use App\Http\Controllers\WardBedController;
+use App\Http\Controllers\PatientWardAllocationController;
+use App\Http\Controllers\WardBedHistoryController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\FeedbackController;
 
 
 
@@ -23,7 +27,7 @@ Route::get('/dashboard', [HomeController::class, 'index'])->name(name: 'users.da
 
 Route::get('/trang-chu', [HomeController::class, 'index'])->name('trang-chu');
 Route::get('/sign-in', [HomeController::class, 'sign_in'])->name('sign_in');
-Route::get('/home-logout', [HomeController::class, 'home_logout'])->name('home_logout');
+Route::get('/home-logout', [HomeController::class, 'home_logout'])->name('home.logout');
 
 Route::get('/login', [HomeController::class, 'sign_in'])->name('login');
 Route::get('/sign-up', [HomeController::class, 'sign_up'])->name('sign_up');
@@ -41,11 +45,11 @@ Route::get('/search-doctors', [HomeController::class, 'search'])->name('users.se
 // Public doctor ratings
 Route::get('/doctors/{id}/ratings', [RatingController::class, 'doctorRatings'])->name('doctor.public.ratings');
 
-Route::prefix('admin')->group(function () {
-    Route::get('/', [AdminController::class, 'index'])->name('admin');
-    Route::get('/dashboard', [AdminController::class, 'show_dashboard'])->name('show_dashboard');
-    Route::get('/logout', [AdminController::class, 'logout'])->name('logout');
-    Route::post('/admin-dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
+Route::prefix('admin')->middleware('auth')->group(function () {
+    Route::get('/', [AdminController::class, 'show_dashboard'])->name('admin');
+    Route::get('/dashboard', [AdminController::class, 'show_dashboard'])->name('admin.dashboard');
+    Route::get('/logout', [HomeController::class, 'home_logout'])->name('logout');
+    // Route::post('/adminDashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
 
     //staff
     Route::get('/staff', [StaffController::class,'staff'])->name('staff');
@@ -71,7 +75,10 @@ Route::prefix('admin')->group(function () {
     Route::delete('/lab/{id}/delete', [LabController::class, 'destroyLab'])->name('admin.lab.delete');
 
     //ward
-    Route::get('/ward', [WardController::class,'ward'])->name('admin.ward');
+    Route::get('/ward', [WardController::class,'index'])->name('admin.ward');
+    Route::post('/wards', [WardController::class, 'store'])->name('admin.wards.store');
+    Route::post('/wards/{id}', [WardController::class, 'update'])->name('admin.wards.update');
+    Route::delete('/wards/{id}', [WardController::class, 'destroy'])->name('admin.wards.destroy');
 
     //treatment
     Route::get('/treatment', [TreatmentController::class,'index'])->name('admin.treatment');
@@ -84,7 +91,7 @@ Route::prefix('admin')->group(function () {
     
     //patient
     Route::get('/patient', [PatientController::class, 'index'])->name('admin.patient'); // Danh sách user
-    Route::put('/patient/{id}', [PatientController::class, 'update'])->name('admin.patient.update'); // Cập nhật user
+    Route::post('/patient/{id}', [PatientController::class, 'update'])->name('admin.patient.update'); // Cập nhật user
     Route::delete('/patient/{id}', [PatientController::class, 'destroy'])->name('admin.patient.destroy'); // Xóa user
     Route::post('/patient', [PatientController::class, 'store'])->name('admin.users.store');
 
@@ -130,7 +137,7 @@ Route::prefix('doctor')->middleware('auth')->group(function () {
     Route::get('/treatments',[App\Http\Controllers\Doctor\TreatmentController::class,'index']) -> name('doctor.treatments');
     Route::post('/treatments/create', [App\Http\Controllers\Doctor\TreatmentController::class, 'store'])->name('doctor.treatment.store');
     Route::get('/treatments/details/{id}', [App\Http\Controllers\Doctor\TreatmentController::class, 'show'])->name('doctor.treatments.show');
-    Route::put('/treatments/{id}/updateTreatment', [App\Http\Controllers\Doctor\TreatmentController::class, 'update'])->name('doctor.treatments.update');
+    Route::post('/treatments/{id}/updateTreatment', [App\Http\Controllers\Doctor\TreatmentController::class, 'update'])->name('doctor.treatments.update');
     Route::delete('/treatments/{id}/delete', [App\Http\Controllers\Doctor\TreatmentController::class, 'destroy'])->name('doctor.treatments.destroy');
 
     Route::get('/profile', function() { return 1; })->name('doctor.profile');
@@ -179,3 +186,56 @@ Route::prefix('patient')->middleware('auth')->group(function () {
 
 
 // ->middleware('auth')
+
+// Feedback routes
+Route::middleware(['auth'])->group(function () {
+    Route::get('/feedback/create', [App\Http\Controllers\FeedbackController::class, 'create'])->name('feedback.create');
+    Route::post('/feedback', [App\Http\Controllers\FeedbackController::class, 'store'])->name('feedback.store');
+    Route::get('/feedback/thank-you', [App\Http\Controllers\FeedbackController::class, 'thankYou'])->name('feedback.thank-you');
+    Route::get('/my-feedback', [App\Http\Controllers\FeedbackController::class, 'userFeedback'])->name('feedback.user');
+});
+
+// Admin feedback routes
+Route::middleware(['auth'])->prefix('admin')->group(function () {
+    Route::get('/feedback', [App\Http\Controllers\FeedbackController::class, 'adminDashboard'])->name('admin.feedback');
+    Route::get('/feedback/index', [App\Http\Controllers\FeedbackController::class, 'index'])->name('admin.feedback.index');
+    Route::get('/feedback/{feedback}', [App\Http\Controllers\FeedbackController::class, 'show'])->name('feedback.show');
+    Route::get('/feedback/{feedback}/edit', [App\Http\Controllers\FeedbackController::class, 'edit'])->name('feedback.edit');
+    Route::put('/feedback/{feedback}', [App\Http\Controllers\FeedbackController::class, 'update'])->name('feedback.update');
+    Route::delete('/feedback/{feedback}', [App\Http\Controllers\FeedbackController::class, 'destroy'])->name('feedback.destroy');
+    Route::patch('/feedback/{feedback}/status', [App\Http\Controllers\FeedbackController::class, 'updateStatus'])->name('feedback.updateStatus');
+});
+
+// Public feedback route
+Route::get('/feedback', [App\Http\Controllers\FeedbackController::class, 'publicFeedback'])->name('feedback.public');
+
+// Bed Management Routes
+// Route::middleware(['auth'])->group(function () {
+    // WardBed routes
+    Route::get('/beds', [WardBedController::class, 'index'])->name('beds.index');
+
+    Route::get('/beds/create', [WardBedController::class, 'create'])->name('beds.create');
+    Route::post('/beds', [WardBedController::class, 'store'])->name('beds.store');
+    Route::get('/beds/{bed}', [WardBedController::class, 'show'])->name('beds.show');
+    Route::get('/beds/{bed}/edit', [WardBedController::class, 'edit'])->name('beds.edit');
+    Route::put('/beds/{bed}', [WardBedController::class, 'update'])->name('beds.update');
+    Route::delete('/beds/{bed}', [WardBedController::class, 'destroy'])->name('beds.destroy');
+    Route::put('/beds/{bed}/change-status', [WardBedController::class, 'changeStatus'])->name('beds.change-status');
+    Route::get('/available-beds', [WardBedController::class, 'getAvailableBeds'])->name('beds.available');
+
+    // Patient allocation routes
+    Route::get('/allocations', [PatientWardAllocationController::class, 'index'])->name('allocations.index');
+    Route::get('/allocations/create', [PatientWardAllocationController::class, 'create'])->name('allocations.create');
+    Route::post('/allocations', [PatientWardAllocationController::class, 'store'])->name('allocations.store');
+    Route::get('/allocations/{allocation}', [PatientWardAllocationController::class, 'show'])->name('allocations.show');
+    Route::get('/allocations/{allocation}/edit', [PatientWardAllocationController::class, 'edit'])->name('allocations.edit');
+    Route::put('/allocations/{allocation}', [PatientWardAllocationController::class, 'update'])->name('allocations.update');
+    Route::put('/allocations/{allocation}/discharge', [PatientWardAllocationController::class, 'discharge'])->name('allocations.discharge');
+    Route::get('/available-patients', [PatientWardAllocationController::class, 'getAvailablePatients'])->name('allocations.available-patients');
+
+    // Bed history routes
+    Route::get('/bed-history', [WardBedHistoryController::class, 'index'])->name('bed-history.index');
+    Route::get('/bed-history/{history}', [WardBedHistoryController::class, 'show'])->name('bed-history.show');
+    Route::get('/beds/{bed}/history', [WardBedHistoryController::class, 'forBed'])->name('bed-history.for-bed');
+    Route::get('/bed-utilization-report', [WardBedHistoryController::class, 'report'])->name('bed-history.report');
+// });

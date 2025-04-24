@@ -30,7 +30,7 @@
 <header class="header fixed-top clearfix">
     <!--logo start-->
     <div class="brand">
-        <a href="{{ route('patient.dashboard') }}" class="logo">
+        <a href="{{ route('users.dashboard') }}" class="logo">
             <img src="{{ asset('public/logo.ico') }}" alt="Logo" height="40">
             <span>Patient Portal</span>
         </a>
@@ -98,6 +98,18 @@
                     <a href="{{ route('patient.pharmacy') }}">
                         <i class="fas fa-pills"></i>
                         <span>Prescriptions</span>
+                    </a>
+                </li>
+                <li class="{{ Request::is('feedback*') ? 'active' : '' }}">
+                    <a href="{{ route('feedback.create') }}">
+                        <i class="fas fa-comment-dots"></i>
+                        <span>Provide Feedback</span>
+                    </a>
+                </li>
+                <li class="{{ Request::is('my-feedback*') ? 'active' : '' }}">
+                    <a href="{{ route('feedback.user') }}">
+                        <i class="fas fa-comments"></i>
+                        <span>My Feedback</span>
                     </a>
                 </li>
             </ul>

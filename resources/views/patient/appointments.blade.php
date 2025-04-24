@@ -3,90 +3,185 @@
 @push('styles')
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+<style>
+    /* Reset and improved modal styling */
+    body .modal {
+        display: none;
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        z-index: 1050 !important;
+        width: 100% !important;
+        height: 100% !important;
+        overflow: hidden !important;
+        outline: 0 !important;
+        background-color: rgba(0, 0, 0, 0.5) !important;
+    }
+
+    body .modal.fade {
+        opacity: 0;
+        transition: opacity 0.15s linear;
+    }
+
+    body .modal.show {
+        display: block !important;
+        opacity: 1 !important;
+    }
+
+    body .modal-dialog {
+        position: relative !important;
+        margin: 1.75rem auto !important;
+        max-width: 500px !important;
+        pointer-events: auto !important;
+        transform: none !important;
+    }
+
+    body .modal-dialog.modal-lg {
+        max-width: 800px !important;
+    }
+
+    body .modal-content {
+        position: relative !important;
+        display: flex !important;
+        flex-direction: column !important;
+        width: 100% !important;
+        background-color: #fff !important;
+        border: none !important;
+        border-radius: 0.5rem !important;
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+        pointer-events: auto !important;
+        outline: 0 !important;
+    }
+
+    body .modal-header {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        padding: 1rem !important;
+        border-bottom: 1px solid #dee2e6 !important;
+        border-top-left-radius: 0.5rem !important;
+        border-top-right-radius: 0.5rem !important;
+        background: linear-gradient(135deg, #2bb0ed 0%, #3f8cff 100%) !important;
+        color: white !important;
+    }
+
+    body .modal-title {
+        margin-bottom: 0 !important;
+        line-height: 1.5 !important;
+        font-weight: 600 !important;
+        color: white !important;
+    }
+
+    body .btn-close {
+        background: rgba(255, 255, 255, 0.5) !important;
+        border-radius: 50% !important;
+        opacity: 1 !important;
+        padding: 0.6rem !important;
+        border: none !important;
+        -webkit-appearance: none !important;
+    }
+
+    body .modal-body {
+        position: relative !important;
+        flex: 1 1 auto !important;
+        padding: 1.5rem !important;
+        overflow-y: auto !important;
+        max-height: 70vh !important;
+        color: #212529 !important;
+    }
+
+    body .modal-footer {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: flex-end !important;
+        padding: 1rem !important;
+        border-top: 1px solid #dee2e6 !important;
+    }
+
+    /* Ensure the modal backdrop is visible */
+    body .modal-backdrop {
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        z-index: 1040 !important;
+        width: 100vw !important;
+        height: 100vh !important;
+        background-color: rgba(0, 0, 0, 0.5) !important;
+    }
+
+    body .modal-backdrop.fade {
+        opacity: 0 !important;
+    }
+
+    body .modal-backdrop.show {
+        opacity: 0.5 !important;
+    }
+    
+    /* Additional CSS to ensure modals appear correctly */
+    body.modal-open {
+        overflow: hidden !important;
+        padding-right: 15px !important;
+    }
+    
+    /* Force modal display when .show-force is applied */
+    body .modal.show-force {
+        display: block !important;
+        opacity: 1 !important;
+        visibility: visible !important;
+        overflow-x: hidden !important;
+        overflow-y: auto !important;
+    }
+    
+    /* Force backdrop to display */
+    body .modal-backdrop-force {
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        z-index: 1040 !important;
+        width: 100vw !important;
+        height: 100vh !important;
+        background-color: rgba(0, 0, 0, 0.5) !important;
+        opacity: 0.5 !important;
+    }
+    
+    /* Better badge styling */
+    body .modal-body .badge {
+        padding: 0.4rem 0.6rem !important;
+        font-size: 0.9rem !important;
+        display: inline-block !important;
+        margin-left: 0.5rem !important;
+    }
+    
+    /* Detail item styling */
+    body .modal-body .mb-3 {
+        display: flex !important;
+        flex-direction: column !important;
+        margin-bottom: 1rem !important;
+        padding: 0.8rem !important;
+        background-color: #f8f9fa !important;
+        border-radius: 8px !important;
+        border-left: 4px solid #3f8cff !important;
+    }
+    
+    body .modal-body .mb-3 strong {
+        font-weight: 600 !important;
+        color: #212529 !important;
+        margin-bottom: 0.3rem !important;
+        display: block !important;
+    }
+    
+    body .modal-body .mb-3 span {
+        color: #212529 !important;
+        font-size: 1rem !important;
+    }
+    
+    body .modal-body .fas {
+        color: #3f8cff !important;
+    }
+</style>
 @endpush
 
 @section('content')
-
-<style>
-     modal {
-    display: none; /* Ẩn modal ban đầu */
-    position: fixed;
-    top: 0;
-    left: 0;
-    z-index: 1050; /* Bootstrap 5 modal z-index */
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-    background-color: rgba(0, 0, 0, 0.5); /* Overlay mờ */
-    }
-
-    .modal.fade {
-    opacity: 0; /* Modal mờ khi chưa được hiển thị */
-    transition: opacity 0.15s linear;
-    }
-
-    .modal.show {
-    display: block; /* Hiển thị modal */
-    opacity: 1;
-    }
-
-    .modal-dialog {
-    position: relative;
-    margin: 1.75rem auto; /* Center modal vertically */
-    pointer-events: auto;
-    max-width: 500px; /* Độ rộng mặc định */
-    }
-
-    .modal-dialog.modal-lg {
-    max-width: 800px; /* Độ rộng modal lớn */
-    }
-
-    .modal-content {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    background-color: #fff;
-    border: none;
-    border-radius: 0.5rem; /* Bo góc */
-    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15); /* Đổ bóng */
-    }
-
-    .modal-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 1rem 1rem;
-    border-bottom: 1px solid #dee2e6; /* Border dưới */
-    border-top-left-radius: 0.5rem;
-    border-top-right-radius: 0.5rem;
-    }
-
-    .modal-title {
-    margin-bottom: 0;
-    line-height: 1.5;
-    }
-
-    .btn-close {
-    background: none;
-    border: none;
-    -webkit-appearance: none;
-    }
-
-    .modal-body {
-    position: relative;
-    flex: 1 1 auto;
-    padding: 1rem;
-    }
-
-    .modal-footer {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    padding: 1rem;
-    border-top: 1px solid #dee2e6;
-    }
-
-</style>
 
 <div class="container mt-4">
     <!-- Statistics Cards -->
@@ -186,6 +281,8 @@
                                 <input type="text" id="searchInput" class="form-control" placeholder="Search appointments...">
                             </div>
                             
+                       
+                            
                             <!-- Reload Button -->
                             <button class="btn btn-outline-secondary ms-3" id="reloadButton">
                                 <i class="fas fa-sync"></i> Reload
@@ -224,21 +321,18 @@
                             </td>
                             <td>
                                 <div class="btn-group btn-group-sm">
-                                    <button class="btn btn-info"
-                                             onclick="viewDetails({{ $appointment->AppointmentID  }})">
+                                    <button class="btn btn-info view-appointment" data-id="{{ $appointment->AppointmentID }}">
                                         <i class="fas fa-eye"></i>
                                         View
                                     </button>
                                     @if($appointment['Status'] == 'pending')
-                                        <button class="btn btn-primary"
-                                                onclick="editAppointment({{ $appointment->AppointmentID  }})">
+                                        <button class="btn btn-primary edit-appointment" data-id="{{ $appointment->AppointmentID }}">
                                             <i class="fas fa-edit"></i>
                                             Edit
                                         </button>
-                                        <button class="btn btn-danger"
-                                                onclick="cancelAppointment({{ $appointment->AppointmentID  }})">
+                                        <button class="btn btn-danger cancel-appointment" data-id="{{ $appointment->AppointmentID }}">
                                             <i class="fas fa-times"></i>
-                                            Cancle
+                                            Cancel
                                         </button>
                                     @endif
                                 </div>
@@ -257,12 +351,12 @@
 </div>
 
 <!-- Details Modal -->
-<div class="modal fade" id="detailsModal" tabindex="-1">
+<div class="modal fade" id="detailsModal" tabindex="-1" aria-labelledby="detailsModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Appointment Details</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                <h5 class="modal-title" id="detailsModalLabel"><i class="fas fa-calendar-check me-2"></i> Appointment Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body" id="detailsContent">
                 <!-- Content will be loaded dynamically -->
@@ -275,12 +369,12 @@
 </div>
 
 <!-- Edit Modal -->
-<div class="modal fade" id="editModal" tabindex="-1">
+<div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Edit Appointment</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                <h5 class="modal-title" id="editModalLabel"><i class="fas fa-edit me-2"></i> Edit Appointment</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <form id="editForm">
@@ -330,42 +424,125 @@
 @endsection
 
 @section('scripts')
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
-    let detailsModal, editModal;
-
-    document.addEventListener('DOMContentLoaded', function () {
-        // Khởi tạo Bootstrap Modal
-        detailsModal = new bootstrap.Modal(document.getElementById('detailsModal'));
-        editModal = new bootstrap.Modal(document.getElementById('editModal'));
-       
-
-        // Xử lý sự kiện gửi form tạo cuộc hẹn mới
-        document.getElementById('appointmentForm').addEventListener('submit', function (e) {
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('DOM fully loaded');
+        
+        // Verify Bootstrap is loaded
+        if (typeof bootstrap === 'undefined') {
+            console.error('Bootstrap JS not loaded!');
+            // Try to load it dynamically
+            const script = document.createElement('script');
+            script.src = 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js';
+            document.head.appendChild(script);
+            script.onload = initializeComponents;
+        } else {
+            console.log('Bootstrap JS detected');
+            initializeComponents();
+        }
+    });
+    
+    function initializeComponents() {
+        console.log('Initializing components');
+        // Initialize Bootstrap Modals
+        try {
+            const detailsModalEl = document.getElementById('detailsModal');
+            const editModalEl = document.getElementById('editModal');
+            
+            if (!detailsModalEl) console.error('Details modal element not found!');
+            if (!editModalEl) console.error('Edit modal element not found!');
+            
+            // Define the modals both as global variables and window properties
+            detailsModal = new bootstrap.Modal(detailsModalEl);
+            editModal = new bootstrap.Modal(editModalEl);
+            
+            // Also assign to window for redundancy
+            window.detailsModal = detailsModal;
+            window.editModal = editModal;
+            
+            console.log('Modals initialized successfully:', detailsModal, editModal);
+            
+            // Add test modal button listener
+            const testBtn = document.getElementById('testModalBtn');
+            if (testBtn) {
+                testBtn.addEventListener('click', function() {
+                    console.log('Test button clicked, showing modal directly');
+                    const content = document.getElementById('detailsContent');
+                    content.innerHTML = '<div class="alert alert-info">This is a test modal</div>';
+                    
+                    const modalElement = document.getElementById('detailsModal');
+                    if (modalElement) {
+                        showModalReliably(modalElement, detailsModal);
+                    } else {
+                        console.error('Modal element not found for test');
+                    }
+                });
+            }
+            
+        } catch (error) {
+            console.error('Error initializing modals:', error);
+        }
+        
+        setupEventListeners();
+    }
+    
+    function setupEventListeners() {
+        // Handle new appointment form submission
+        document.getElementById('appointmentForm').addEventListener('submit', function(e) {
             e.preventDefault();
             createAppointment();
         });
       
-        const searchInput = document.getElementById('searchInput');
-        const reloadButton = document.getElementById('reloadButton');
-        const tableBody = document.querySelector('tbody');
-        const rows = tableBody.querySelectorAll('tr');
-
-        searchInput.addEventListener('keyup', function(e) {
-            const searchTerm = e.target.value.toLowerCase();
-
-            rows.forEach(row => {
-                const text = row.textContent.toLowerCase();
-                row.style.display = text.includes(searchTerm) ? '' : 'none';
+        // Add event listeners for view, edit, and cancel buttons
+        document.querySelectorAll('.view-appointment').forEach(button => {
+            button.addEventListener('click', function() {
+                const id = this.getAttribute('data-id');
+                viewDetails(id);
             });
         });
-
-    
-        reloadButton.addEventListener('click', function() {
-            window.location.reload();
+        
+        document.querySelectorAll('.edit-appointment').forEach(button => {
+            button.addEventListener('click', function() {
+                const id = this.getAttribute('data-id');
+                editAppointment(id);
+            });
         });
+        
+        document.querySelectorAll('.cancel-appointment').forEach(button => {
+            button.addEventListener('click', function() {
+                const id = this.getAttribute('data-id');
+                cancelAppointment(id);
+            });
+        });
+      
+        // Search functionality
+        const searchInput = document.getElementById('searchInput');
+        if (searchInput) {
+            const tableBody = document.querySelector('tbody');
+            const rows = tableBody.querySelectorAll('tr');
+            
+            searchInput.addEventListener('keyup', function(e) {
+                const searchTerm = e.target.value.toLowerCase();
+                
+                rows.forEach(row => {
+                    const text = row.textContent.toLowerCase();
+                    row.style.display = text.includes(searchTerm) ? '' : 'none';
+                });
+            });
+        }
+        
+        // Reload button
+        const reloadButton = document.getElementById('reloadButton');
+        if (reloadButton) {
+            reloadButton.addEventListener('click', function() {
+                window.location.reload();
+            });
+        }
+    }
 
-    });
-
+    let detailsModal, editModal;
 
     function createAppointment() {
         const data = {
@@ -376,6 +553,17 @@
             notes: document.getElementById('notes').value,
             doctor_id: document.getElementById('doctor_id').value
         };
+        
+        // Show loading state
+        const loadingSwal = Swal.fire({
+            title: 'Processing...',
+            text: 'Creating your appointment',
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
+        
         const url = `{{ route('patient.appointments.store') }}`;
         
         fetch(url, {
@@ -388,85 +576,265 @@
         })
             .then(response => response.json())
             .then(result => {
+                // Close loading dialog
+                loadingSwal.close();
+                
                 if (result.message) {
-                    Swal.fire('Thành công', result.message, 'success').then(() => {
+                    Swal.fire('Success', result.message, 'success').then(() => {
                         document.getElementById('appointmentForm').reset();
                         window.location.reload();
                     });
                 } else {
-                    console.error('Error:', error);
-                    Swal.fire('Lỗi', 'Không thể tạo cuộc hẹn.', 'error');
+                    Swal.fire('Error', 'Could not create appointment.', 'error');
                 }
             })
             .catch(error => {
+                // Close loading dialog
+                loadingSwal.close();
+                
                 console.error('Error:', error);
-                Swal.fire('Lỗi', 'Đã xảy ra lỗi khi tạo cuộc hẹn. <br> kiểm tra ngày hẹn phải sau ngày hiện tại', 'error');
+                Swal.fire('Error', 'An error occurred while creating the appointment. <br> Please ensure the appointment date is in the future.', 'error');
             });
     }
 
+    // Helper function to show modal reliably
+    function showModalReliably(modalElement, modalInstance) {
+        console.log('Showing modal reliably:', modalElement.id, modalInstance);
+        
+        try {
+            // First attempt: Bootstrap modal method
+            if (modalInstance && typeof modalInstance.show === 'function') {
+                modalInstance.show();
+                console.log('Modal shown via Bootstrap API');
+                return true;
+            }
+        } catch (error) {
+            console.warn('Error showing modal via Bootstrap API:', error);
+        }
+        
+        try {
+            // Second attempt: jQuery if available
+            if (typeof $ !== 'undefined') {
+                $(modalElement).modal('show');
+                console.log('Modal shown via jQuery');
+                return true;
+            }
+        } catch (error) {
+            console.warn('Error showing modal via jQuery:', error);
+        }
+        
+        // Final attempt: Direct DOM manipulation
+        try {
+            console.log('Trying direct DOM manipulation for modal');
+            // Add classes to modal
+            modalElement.classList.add('show', 'show-force');
+            modalElement.style.display = 'block';
+            modalElement.setAttribute('aria-modal', 'true');
+            modalElement.removeAttribute('aria-hidden');
+            
+            // Add class to body
+            document.body.classList.add('modal-open');
+            
+            // Create backdrop if needed
+            if (!document.querySelector('.modal-backdrop')) {
+                const backdrop = document.createElement('div');
+                backdrop.className = 'modal-backdrop fade show modal-backdrop-force';
+                document.body.appendChild(backdrop);
+                console.log('Modal backdrop created');
+            }
+            
+            console.log('Modal shown via direct DOM manipulation');
+            return true;
+        } catch (error) {
+            console.error('All methods to show modal failed:', error);
+            return false;
+        }
+    }
 
     function viewDetails(appointmentId) {
-        const url =  `{{ route('patient.appointments.showDetail', ['id' => '__id__']) }}`.replace('__id__', appointmentId);
+        // Show loading state
+        const loadingSwal = Swal.fire({
+            title: 'Loading...',
+            text: 'Fetching appointment details',
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
+        
+        const url = `{{ route('patient.appointments.showDetail', ['id' => '__id__']) }}`.replace('__id__', appointmentId);
 
         fetch(url)
             .then(response => {
                 if (!response.ok) {
-                    throw new Error('Network response was not ok');
+                    throw new Error('Network response was not ok: ' + response.status);
                 }
                 return response.json();
             })
             .then(appointment => {
-                const content = document.getElementById('detailsContent');
-                content.innerHTML = `
-                    <div class="mb-3">
-                        <strong>Ngày & Giờ:</strong> ${appointment.AppointmentDate} ${appointment.AppointmentTime}
-                    </div>
-                    <div class="mb-3">
-                        <strong>Bác sĩ:</strong> ${appointment.DoctorName || 'Chưa được chỉ định'}
-                    </div>
-                    <div class="mb-3">
-                        <strong>Trạng thái:</strong> ${appointment.Status}
-                    </div>
-                    <div class="mb-3">
-                        <strong>Lý do:</strong> ${appointment.Reason}
-                    </div>
-                    <div class="mb-3">
-                        <strong>Triệu chứng:</strong> ${appointment.Symptoms}
-                    </div>
-                    ${
-                        appointment.Notes
-                            ? `<div class="mb-3"><strong>Ghi chú:</strong> ${appointment.Notes}</div>`
-                            : ''
+                // Close loading dialog
+                loadingSwal.close();
+                
+                // Log the response for debugging
+                console.log('Appointment data:', appointment);
+                
+                try {
+                    const content = document.getElementById('detailsContent');
+                    if (!content) {
+                        throw new Error('detailsContent element not found');
                     }
-                `;
-                detailsModal.show();
+                    
+                    // Ensure we have complete data or provide fallbacks
+                    const doctorName = appointment.DoctorName || 'Not assigned';
+                    const status = appointment.Status || 'Unknown';
+                    const reason = appointment.Reason || 'Not specified';
+                    const symptoms = appointment.Symptoms || 'Not specified';
+                    const notes = appointment.Notes || 'No notes provided';
+                    
+                    // Format the status with badge
+                    const statusBadge = `
+                        <span class="badge bg-${
+                            status === 'approved' ? 'success' : 
+                            (status === 'pending' ? 'warning' : 'danger')
+                        }">
+                            ${status}
+                        </span>
+                    `;
+                    
+                    // Create a nicely formatted content
+                    content.innerHTML = `
+                        <div class="appointment-details">
+                            <div class="mb-3">
+                                <strong><i class="fas fa-calendar me-2"></i>Date</strong>
+                                <span>${appointment.AppointmentDate || 'Not specified'}</span>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <strong><i class="fas fa-clock me-2"></i>Time</strong>
+                                <span>${appointment.AppointmentTime || 'Not specified'}</span>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <strong><i class="fas fa-user-md me-2"></i>Doctor</strong>
+                                <span>${doctorName}</span>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <strong><i class="fas fa-info-circle me-2"></i>Status</strong>
+                                <span>${statusBadge}</span>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <strong><i class="fas fa-comment-medical me-2"></i>Reason for Visit</strong>
+                                <span>${reason}</span>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <strong><i class="fas fa-heartbeat me-2"></i>Symptoms</strong>
+                                <span>${symptoms}</span>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <strong><i class="fas fa-sticky-note me-2"></i>Notes</strong>
+                                <span>${notes}</span>
+                            </div>
+                        </div>
+                    `;
+                    
+                    // Ensure the modal element exists
+                    const modalElement = document.getElementById('detailsModal');
+                    if (!modalElement) {
+                        throw new Error('Modal element not found');
+                    }
+                    
+                    // Show the modal with our reliable function
+                    setTimeout(() => {
+                        const shown = showModalReliably(modalElement, detailsModal);
+                        if (shown) {
+                            console.log('Modal shown successfully');
+                        } else {
+                            throw new Error('Failed to show modal with all methods');
+                        }
+                    }, 100);
+                } catch (error) {
+                    console.error('Error processing appointment details:', error);
+                    Swal.fire('Error', 'Failed to display appointment details: ' + error.message, 'error');
+                }
             })
             .catch(error => {
+                // Close loading dialog
+                loadingSwal.close();
+                
                 console.error('Error fetching appointment details:', error);
-                Swal.fire('Lỗi', 'Không thể tải thông tin cuộc hẹn.', 'error');
+                Swal.fire('Error', 'Could not load appointment details. Please try again.', 'error');
             });
     }
 
-
-
     function editAppointment(id) {
-        const url =  `{{ route('patient.appointments.show', ['id' => '__id__']) }}`.replace('__id__', id);
+        // Show loading state
+        const loadingSwal = Swal.fire({
+            title: 'Loading...',
+            text: 'Fetching appointment details',
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
+        
+        const url = `{{ route('patient.appointments.show', ['id' => '__id__']) }}`.replace('__id__', id);
 
         fetch(url)
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok: ' + response.status);
+                }
+                return response.json();
+            })
             .then(appointment => {
-                document.getElementById('edit_id').value = appointment.AppointmentID;
-                document.getElementById('edit_date').value = appointment.AppointmentDate;
-                document.getElementById('edit_time').value = appointment.AppointmentTime;
-                document.getElementById('edit_reason').value = appointment.Reason;
-                document.getElementById('edit_symptoms').value = appointment.Symptoms;
-                document.getElementById('edit_notes').value = appointment.Notes || '';
-                document.getElementById('edit_doctor').value = appointment.DoctorID || '';
-                editModal.show();
+                // Close loading dialog
+                loadingSwal.close();
+                
+                // Log the response for debugging
+                console.log('Appointment data for edit:', appointment);
+                
+                try {
+                    document.getElementById('edit_id').value = appointment.AppointmentID;
+                    document.getElementById('edit_date').value = appointment.AppointmentDate;
+                    document.getElementById('edit_time').value = appointment.AppointmentTime;
+                    document.getElementById('edit_reason').value = appointment.Reason || '';
+                    document.getElementById('edit_symptoms').value = appointment.Symptoms || '';
+                    document.getElementById('edit_notes').value = appointment.Notes || '';
+                    
+                    if (appointment.DoctorID) {
+                        document.getElementById('edit_doctor').value = appointment.DoctorID;
+                    }
+                    
+                    // Get the modal element
+                    const modalElement = document.getElementById('editModal');
+                    if (!modalElement) {
+                        throw new Error('Edit modal element not found');
+                    }
+                    
+                    // Show the modal with our reliable function
+                    setTimeout(() => {
+                        const shown = showModalReliably(modalElement, editModal);
+                        if (shown) {
+                            console.log('Edit modal shown successfully');
+                        } else {
+                            throw new Error('Failed to show edit modal with all methods');
+                        }
+                    }, 100);
+                } catch (error) {
+                    console.error('Error setting form values:', error);
+                    Swal.fire('Error', 'Failed to prepare edit form: ' + error.message, 'error');
+                }
             })
             .catch(error => {
+                // Close loading dialog
+                loadingSwal.close();
+                
                 console.error('Error:', error);
-                Swal.fire('Lỗi', 'Không thể tải thông tin cuộc hẹn.', 'error');
+                Swal.fire('Error', 'Could not load appointment details. Please try again.', 'error');
             });
     }
 
@@ -480,7 +848,19 @@
             notes: document.getElementById('edit_notes').value,
             doctor_id: document.getElementById('edit_doctor').value,
         };
-        const url =  `{{ route('patient.appointments.update', ['id' => '__id__']) }}`.replace('__id__', id);
+        
+        // Show loading state
+        const loadingSwal = Swal.fire({
+            title: 'Processing...',
+            text: 'Updating your appointment',
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
+        
+        const url = `{{ route('patient.appointments.update', ['id' => '__id__']) }}`.replace('__id__', id);
+        
         fetch(url, {
             method: 'PUT',
             headers: {
@@ -489,64 +869,89 @@
             },
             body: JSON.stringify(data)
         })
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok: ' + response.status);
+                }
+                return response.json();
+            })
             .then(result => {
+                // Close loading dialog
+                loadingSwal.close();
+                
                 if (result.message) {
-                    Swal.fire('Thành công', result.message, 'success').then(() => {
+                    Swal.fire('Success', result.message, 'success').then(() => {
                         editModal.hide();
                         window.location.reload();
                     });
                 } else {
-                    Swal.fire('Lỗi', 'Không thể cập nhật cuộc hẹn.', 'error');
+                    Swal.fire('Error', 'Could not update appointment.', 'error');
                 }
             })
             .catch(error => {
+                // Close loading dialog
+                loadingSwal.close();
+                
                 console.error('Error:', error);
-                Swal.fire('Lỗi', 'Đã xảy ra lỗi khi cập nhật cuộc hẹn.', 'error');
+                Swal.fire('Error', 'An error occurred while updating the appointment.', 'error');
             });
     }
 
-
     function cancelAppointment(id) {
-        const url =  `{{ route('patient.appointments.destroy', ['id' => '__id__']) }}`.replace('__id__', id);
+        const url = `{{ route('patient.appointments.destroy', ['id' => '__id__']) }}`.replace('__id__', id);
 
         Swal.fire({
-            title: 'Hủy cuộc hẹn',
-            text: 'Bạn có chắc chắn muốn hủy cuộc hẹn này không?',
+            title: 'Cancel Appointment',
+            text: 'Are you sure you want to cancel this appointment?',
             icon: 'warning',
             showCancelButton: true,
-            confirmButtonText: 'Đồng ý',
-            cancelButtonText: 'Hủy'
+            confirmButtonText: 'Yes, cancel it',
+            cancelButtonText: 'No, keep it'
         }).then((result) => {
             if (result.isConfirmed) {
+                // Show loading state
+                const loadingSwal = Swal.fire({
+                    title: 'Processing...',
+                    text: 'Cancelling your appointment',
+                    allowOutsideClick: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
+                
                 fetch(url, {
                     method: 'DELETE',
                     headers: {
                         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
                     }
                 })
-                    .then(response => response.json())
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok: ' + response.status);
+                        }
+                        return response.json();
+                    })
                     .then(result => {
+                        // Close loading dialog
+                        loadingSwal.close();
+                        
                         if (result.message) {
-                            Swal.fire('Thành công', result.message, 'success').then(() => {
+                            Swal.fire('Success', result.message, 'success').then(() => {
                                 window.location.reload();
                             });
                         } else {
-                            Swal.fire('Lỗi', 'Không thể hủy cuộc hẹn.', 'error');
+                            Swal.fire('Error', 'Could not cancel appointment.', 'error');
                         }
                     })
                     .catch(error => {
+                        // Close loading dialog
+                        loadingSwal.close();
+                        
                         console.error('Error:', error);
-                        Swal.fire('Lỗi', 'Đã xảy ra lỗi khi hủy cuộc hẹn.', 'error');
+                        Swal.fire('Error', 'An error occurred while cancelling the appointment.', 'error');
                     });
             }
         });
     }
-
 </script>
 @endsection
-
-
-@push('scripts')
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
-@endpush

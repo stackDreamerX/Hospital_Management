@@ -1,8 +1,11 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">    
     <meta name="viewport" content="width=device-width, initial-scale=1.0">    
-     <title>Medic Hospital</title>
-     <link rel="icon" type="image/x-icon" href="{{ asset('public/logo.ico') }}">
+    <title>Medic Hospital</title>
+    <link rel="icon" type="image/x-icon" href="{{ asset('public/logo.ico') }}">
+    @php
+        use Illuminate\Support\Facades\Auth;
+    @endphp
   
         <meta name="description" content="Medic Hospital, a non-profit academic medical center, provides clinical and hospital care and is a leader in research, education and health information.">
         <meta property="og:title" content="Access Anytime Anywhere | Medic Hospital">
@@ -12,15 +15,15 @@
         <meta property="og:image" content="public/images/logo-ccf.png">
         <meta property="twitter:image" content="public/images/logo-ccf.png">
         <meta property="twitter:card" content="summary">
-        <link rel="canonical" href="{{ url('/trang-chu') }}">
-        <meta property="og:url" content="{{ url('/trang-chu') }}">
+        <link rel="canonical" href="{{ url('/users.dashboard') }}">
+        <meta property="og:url" content="{{ url('/users.dashboard') }}">
         <meta property="og:type" content="website">
         <meta property="og:site_name" content="Medic Hospital">
         <meta property="twitter:site" content="@MedicHospital">
         <meta property="twitter:creator" content="@MedicHospital">
     
                
-        <link rel="alternate" href="{{ url('/trang-chu') }}" hreflang="x-default">
+        <link rel="alternate" href="{{ url('/users.dashboard') }}" hreflang="x-default">
 
 <!-- Add Google Fonts -->
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -31,6 +34,29 @@
 
 <!-- Custom CSS -->
 <link rel="stylesheet" href="{{ asset('public/css/layout.css') }}">
+
+<style>
+    .avatar-circle {
+        width: 32px;
+        height: 32px;
+        background-color: var(--primary-color);
+        border-radius: 50%;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+    }
+    .avatar-initials {
+        font-size: 14px;
+        line-height: 1;
+        text-transform: uppercase;
+    }
+    .dropdown-item i {
+        width: 20px;
+        text-align: center;
+    }
+</style>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
 
@@ -62,6 +88,7 @@
                 <li class="nav-item"><a class="nav-link text-dark" title="Need help?" href="/help">Need help?</a></li>
                 <li class="nav-item"><a class="nav-link text-dark" href="/search" aria-label="Search" aria-controls="search-box">Search</a></li>
 
+                @guest
                 <li class="nav-item ms-2">
                     <a class="btn btn-outline-primary btn-sm" href="{{ url('/sign-in') }}">
                         <i class="fas fa-sign-in-alt me-1"></i> Sign In
@@ -72,6 +99,26 @@
                         Sign Up
                     </a>
                 </li>
+                @else
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <div class="avatar-circle me-2">
+                            <span class="avatar-initials">{{ substr(Auth::user()->FullName, 0, 1) }}</span>
+                        </div>
+                        <span>{{ Auth::user()->FullName }}</span>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                        <li><a class="dropdown-item" href="#"><i class="fas fa-user me-2"></i>Profile</a></li>
+                        <li><a class="dropdown-item" href="#"><i class="fas fa-cog me-2"></i>Settings</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li>
+                            <a class="dropdown-item" href="{{ route('home.logout') }}">
+                                <i class="fas fa-sign-out-alt me-2"></i>Logout
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                @endguest
             </ul>
         </div>
     </nav>
@@ -80,8 +127,8 @@
     
         <!-- Logo -->
         <span class="header__logo">
-            <a href="{{ url('/trang-chu') }}">
-                <img src="public/images/logo-ccf.png" alt="Medic Hospital logo">
+            <a href="{{ url('/users.dashboard') }}">
+                <img src="{{ asset('public/images/logo-ccf.png') }}" alt="Medic Hospital logo">
             </a>
         </span>
 
@@ -102,6 +149,9 @@
                 </li>
                 <li class="nav-item">
                     <a class="nav-link {{ request()->is('appointments') ? 'active' : '' }}" href="{{ route('users.appointments') }}">Appointments</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {{ request()->is('feedback*') ? 'active' : '' }}" href="{{ route('feedback.public') }}">FeedBack</a>
                 </li>
             </ul>
         </nav>
@@ -222,7 +272,7 @@
     </div>
 </footer>
 
-          
+<script lang="javascript">var __vnp = {code : 24859,key:'', secret : '01a01bf0569564fa3230269838262e78'};(function() {var ga = document.createElement('script');ga.type = 'text/javascript';ga.async=true; ga.defer=true;ga.src = '//core.vchat.vn/code/tracking.js?v=44821'; var s = document.getElementsByTagName('script');s[0].parentNode.insertBefore(ga, s[0]);})();</script>
 <script>
     // Initialize AOS animations
     document.addEventListener('DOMContentLoaded', function() {
@@ -233,6 +283,7 @@
             mirror: false
         });
     });
+    
 </script>
              
         

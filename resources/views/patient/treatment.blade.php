@@ -177,10 +177,10 @@
                             <td>Rs. {{ number_format($treatment['Cost']) }}</td>
                             <td>
                                 <div class="btn-group btn-group-sm">
-                                    <button class="btn btn-info" onclick="viewDetails({{ json_encode($treatment) }})">
+                                    <button class="btn btn-info" onclick="viewDetails('{{ json_encode($treatment) }}')">
                                         <i class="fas fa-eye"></i>
                                     </button>
-                                    <button class="btn btn-primary" onclick="downloadReport({{ $treatment['TreatmentID'] }})">
+                                    <button class="btn btn-primary download-btn" data-id="{{ $treatment['TreatmentID'] }}">
                                         <i class="fas fa-download"></i>
                                     </button>
                                 </div>
@@ -236,6 +236,14 @@ document.addEventListener('DOMContentLoaded', function() {
         rows.forEach(row => {
             const text = row.textContent.toLowerCase();
             row.style.display = text.includes(searchTerm) ? '' : 'none';
+        });
+    });
+    
+    // Add event listeners for download buttons
+    document.querySelectorAll('.download-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            const id = this.getAttribute('data-id');
+            downloadReport(id);
         });
     });
 });
