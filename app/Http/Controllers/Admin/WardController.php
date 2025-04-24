@@ -4,138 +4,134 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Models\Ward;
+use App\Models\WardType;
+use App\Models\Doctor;
 
 class WardController extends Controller
 {
-    private $sampleWardTypes = [
-        [
-            'WardTypeID' => 1,
-            'TypeName' => 'General Ward',
-            'Description' => 'For general medical care and observation'
-        ],
-        [
-            'WardTypeID' => 2,
-            'TypeName' => 'ICU',
-            'Description' => 'Intensive Care Unit for critical patients'
-        ],
-        [
-            'WardTypeID' => 3,
-            'TypeName' => 'Pediatric Ward',
-            'Description' => 'Specialized care for children'
-        ],
-        [
-            'WardTypeID' => 4,
-            'TypeName' => 'Maternity Ward',
-            'Description' => 'For pregnancy and childbirth care'
-        ],
-        [
-            'WardTypeID' => 5,
-            'TypeName' => 'Surgery Ward',
-            'Description' => 'Post-operative care and recovery'
-        ]
-    ];
-
-    private $sampleWards = [
-        [
-            'WardID' => 1,
-            'WardTypeID' => 1,
-            'TypeName' => 'General Ward',
-            'WardName' => 'General Ward A',
-            'Capacity' => 30,
-            'CurrentOccupancy' => 25,
-            'DoctorID' => 1,
-            'DoctorName' => 'Dr. Sarah Wilson'
-        ],
-        [
-            'WardID' => 2,
-            'WardTypeID' => 2,
-            'TypeName' => 'ICU',
-            'WardName' => 'ICU-1',
-            'Capacity' => 10,
-            'CurrentOccupancy' => 9,
-            'DoctorID' => 2,
-            'DoctorName' => 'Dr. Michael Brown'
-        ],
-        [
-            'WardID' => 3,
-            'WardTypeID' => 3,
-            'TypeName' => 'Pediatric Ward',
-            'WardName' => 'Children Ward',
-            'Capacity' => 20,
-            'CurrentOccupancy' => 12,
-            'DoctorID' => 3,
-            'DoctorName' => 'Dr. Emily Davis'
-        ],
-        [
-            'WardID' => 4,
-            'WardTypeID' => 4,
-            'TypeName' => 'Maternity Ward',
-            'WardName' => 'Maternity A',
-            'Capacity' => 15,
-            'CurrentOccupancy' => 8,
-            'DoctorID' => 4,
-            'DoctorName' => 'Dr. Jessica Taylor'
-        ],
-        [
-            'WardID' => 5,
-            'WardTypeID' => 5,
-            'TypeName' => 'Surgery Ward',
-            'WardName' => 'Post-Op Care',
-            'Capacity' => 25,
-            'CurrentOccupancy' => 20,
-            'DoctorID' => 5,
-            'DoctorName' => 'Dr. James Anderson'
-        ]
-    ];
-
-    private $sampleDoctors = [
-        ['DoctorID' => 1, 'FullName' => 'Dr. Sarah Wilson'],
-        ['DoctorID' => 2, 'FullName' => 'Dr. Michael Brown'],
-        ['DoctorID' => 3, 'FullName' => 'Dr. Emily Davis'],
-        ['DoctorID' => 4, 'FullName' => 'Dr. Jessica Taylor'],
-        ['DoctorID' => 5, 'FullName' => 'Dr. James Anderson']
-    ];
-
-    public function ward()
+    /**
+     * Display ward management page
+     */
+    public function index()
     {
-        $wardTypes = collect($this->sampleWardTypes);
-        $wards = collect($this->sampleWards);
-        $doctors = collect($this->sampleDoctors);
+        $wardTypes = WardType::all();
+        $wards = Ward::with(['wardType', 'doctor.user'])->get()->map(function($ward) {
+            // Add doctor name from the user model
+            if ($ward->doctor && $ward->doctor->user) {
+                $ward->DoctorName = $ward->doctor->user->FullName;
+            } else {
+                $ward->DoctorName = 'N/A';
+            }
+            
+            // Add ward type name
+            if ($ward->wardType) {
+                $ward->TypeName = $ward->wardType->TypeName;
+            } else {
+                $ward->TypeName = 'N/A';
+            }
+            
+            return $ward;
+        });
+        
+        // Get doctors with their names from the users table
+        $doctors = Doctor::with('user')->get()->map(function($doctor) {
+            return [
+                'DoctorID' => $doctor->DoctorID,
+                'FullName' => $doctor->user ? $doctor->user->FullName : 'Unknown', 
+                'Speciality' => $doctor->Speciality,
+                'Title' => $doctor->Title
+            ];
+        });
 
         return view('admin.ward', compact('wardTypes', 'wards', 'doctors'));
     }
 
+    /**
+     * Store a newly created ward
+     */
     public function store(Request $request)
     {
         // Validate request
-        $request->validate([
+        $validated = $request->validate([
             'ward_name' => 'required|string|max:100',
             'ward_type' => 'required|integer',
             'capacity' => 'required|integer|min:1',
             'doctor_id' => 'required|integer'
         ]);
 
-        // In a real application, you would save to database here
-        return response()->json(['message' => 'Ward created successfully']);
+        try {
+            $ward = new Ward();
+            $ward->WardName = $validated['ward_name'];
+            $ward->WardTypeID = $validated['ward_type'];
+            $ward->Capacity = $validated['capacity'];
+            $ward->DoctorID = $validated['doctor_id'];
+            $ward->CurrentOccupancy = 0;
+            $ward->save();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Ward created successfully',
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error creating ward: ' . $e->getMessage()
+            ], 500);
+        }
     }
 
+    /**
+     * Update the specified ward
+     */
     public function update(Request $request, $id)
     {
         // Validate request
-        $request->validate([
+        $validated = $request->validate([
             'ward_name' => 'required|string|max:100',
             'ward_type' => 'required|integer',
             'capacity' => 'required|integer|min:1',
             'doctor_id' => 'required|integer'
         ]);
 
-        // In a real application, you would update the database here
-        return response()->json(['message' => 'Ward updated successfully']);
+        try {
+            $ward = Ward::findOrFail($id);
+            $ward->WardName = $validated['ward_name'];
+            $ward->WardTypeID = $validated['ward_type'];
+            $ward->Capacity = $validated['capacity'];
+            $ward->DoctorID = $validated['doctor_id'];
+            $ward->save();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Ward updated successfully',
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error updating ward: ' . $e->getMessage()
+            ], 500);
+        }
     }
 
+    /**
+     * Remove the specified ward
+     */
     public function destroy($id)
     {
-        // In a real application, you would delete from database here
-        return response()->json(['message' => 'Ward deleted successfully']);
+        try {
+            $ward = Ward::findOrFail($id);
+            $ward->delete();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Ward deleted successfully',
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error deleting ward: ' . $e->getMessage()
+            ], 500);
+        }
     }
 }

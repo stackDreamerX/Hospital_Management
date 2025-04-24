@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Treatment;
 use App\Models\User;
+use Illuminate\Support\Facades\Log;
 
 class TreatmentController extends Controller
 {
@@ -75,8 +76,7 @@ class TreatmentController extends Controller
     }
 
     public function show($id)
-    {
-        dd($id);
+    {      
         $treatment = Treatment::with(['user', 'treatmentType'])
             ->where('TreatmentID', $id)
             ->firstOrFail();
@@ -103,17 +103,44 @@ class TreatmentController extends Controller
         try {
             $treatment = Treatment::findOrFail($id);
 
-            $request->validate([
-                'status' => 'required|string|max:255',
-            ]);
+            Log::info('Update request received for treatment ID: ' . $id);
+            Log::info('Request method: ' . $request->method());
+            Log::info('Request data: ' . json_encode($request->all()));
 
-            $treatment->Status = $request->status;
-            $treatment->save();
-
+            // Get status from the request - handle both direct POST and form data
+            $status = $request->input('status');
+            
+            if (empty($status)) {
+                Log::warning('Status is empty in the request');
+                return response()->json(['message' => 'Status field is required'], 422);
+            }
+            
+            Log::info('Status value: ' . $status);
+            
+            // Check the status field length to prevent truncation
+            if (strlen($status) > 50) {
+                Log::warning('Status value is too long: ' . $status);
+                return response()->json(['message' => 'Status value is too long (max 50 characters)'], 422);
+            }
+            
+            // Update the treatment status using query builder to ensure proper quoting
+            $treatment->Status = trim($status);
+            
+            // Try to save with error handling
+            try {
+                $result = $treatment->save();
+                Log::info('Treatment save result: ' . ($result ? 'true' : 'false'));
+            } catch (\Exception $saveError) {
+                Log::error('Error saving treatment: ' . $saveError->getMessage());
+                throw $saveError;
+            }
+            
+            Log::info('Treatment updated successfully');
             return response()->json(['message' => 'Treatment updated successfully']);
         } catch (\Exception $e) {
-            \Log::error('Error updating treatment: ' . $e->getMessage());
-            return response()->json(['message' => 'Failed to update treatment'], 500);
+            Log::error('Error updating treatment: ' . $e->getMessage());
+            Log::error('Stack trace: ' . $e->getTraceAsString());
+            return response()->json(['message' => 'Failed to update treatment: ' . $e->getMessage()], 500);
         }
     }
 

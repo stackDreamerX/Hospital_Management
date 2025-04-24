@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Patient;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Log;
 use App\Models\Appointment;
 use App\Models\User;
 use App\Models\Doctor;
@@ -54,7 +55,7 @@ class AppointmentController extends Controller
 
             return response()->json(['message' => 'Appointment created successfully']);
         } catch (\Exception $e) {
-            \Log::error('Error creating appointment: ' . $e->getMessage());
+            Log::error('Error creating appointment: ' . $e->getMessage());
             return response()->json(['error' => 'Failed to create appointment.'], 500);
         }
     }

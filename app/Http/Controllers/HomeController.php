@@ -46,6 +46,10 @@ class HomeController extends Controller
         if (Auth::attempt(['username' => $request->username, 'password' => $request->password])) {
             // Điều hướng đến trang dashboard
             $request->session()->regenerate();
+            
+            // Set the last activity time for session timeout
+            Session::put('lastActivityTime', \Carbon\Carbon::now());
+            
             if (Auth::user()->RoleID === 'patient') {
                 return redirect()->route('patient.dashboard');
             } elseif (Auth::user()->RoleID === 'doctor') {
@@ -64,7 +68,7 @@ class HomeController extends Controller
         // Đăng xuất người dùng
         Auth::logout();
         // Chuyển hướng về trang chủ
-        return redirect('/trang-chu')->withErrors(['message' => 'You have been logged out successfully']);
+        return redirect('/')->with('success', 'You have been logged out successfully');
     }
 
     public function register(Request $request)

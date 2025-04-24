@@ -45,37 +45,10 @@ class AdminController extends Controller
     ];
 
     public function index() {
-        return view('admin_login');
+        return view('pages.sign_in');
     }
 
-    // public function show_dashboard() {
-        
-
-    //     // Calculate available beds
-    //     $totalBeds = collect($this->sampleWards)->sum('Capacity');
-    //     $occupiedBeds = collect($this->sampleWards)->sum('CurrentOccupancy');
-    //     $availableBeds = $totalBeds - $occupiedBeds;
-
-    //     // Get today's appointments
-    //     $todayAppointments = collect($this->sampleAppointments)
-    //         ->where('AppointmentDate', date('Y-m-d'))
-    //         ->count();
-
-    //     // Get recent appointments
-    //     $recentAppointments = collect($this->sampleAppointments)
-    //         ->sortByDesc('AppointmentDate')
-    //         ->take(5);
-
-    //     return view('admin.dashboard', [
-    //         'doctors' => $this->sampleDoctors,
-    //         'patients' => $this->samplePatients,
-    //         'recentAppointments' => $recentAppointments,
-    //         'wards' => $this->sampleWards,
-    //         'todayAppointments' => $todayAppointments,
-    //         'availableBeds' => $availableBeds
-    //     ]);
-    // }
-
+  
     public function show_dashboard()
     {
         // Lấy tất cả cuộc hẹn

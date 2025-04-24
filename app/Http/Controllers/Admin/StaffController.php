@@ -7,6 +7,8 @@ use App\Models\User;
 use App\Models\Doctor;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
+
 class StaffController extends Controller
 {
 
@@ -22,31 +24,44 @@ class StaffController extends Controller
     public function createDoctor(Request $request)
     {    
         $validated = $request->validate([
-            'username' => 'required|string',
+            'username' => 'required|string|max:50|unique:users,username',
+            'fullname' => 'required|string|max:100',
+            'email' => 'required|email|max:100|unique:users,Email',
+            'phone' => 'required|string|max:15',
+            'password' => 'required|string|min:6',
+            'confirm_password' => 'required|same:password',
             'speciality' => 'required|string|max:100',
             'title' => 'required|string|max:100',
         ]);
 
-        $user = User::where('username', $request->username)->first();
+        // Start a database transaction to ensure both user and doctor are created
+        DB::beginTransaction();
 
-        if (!$user) {
-            return response()->json(['success' => false, 'message' => 'Username not exist!']);
+        try {
+            // Create the user first
+            $user = User::create([
+                'username' => $request->username,
+                'FullName' => $request->fullname,
+                'Email' => $request->email,
+                'PhoneNumber' => $request->phone,
+                'password' => bcrypt($request->password),
+                'RoleID' => 'doctor',
+            ]);
+
+            // Then create the doctor record
+            Doctor::create([
+                'UserID' => $user->UserID,
+                'Speciality' => $request->speciality,
+                'Title' => $request->title,
+            ]);
+
+            DB::commit();
+            return response()->json(['success' => true, 'message' => 'Doctor created successfully!']);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Error creating doctor: ' . $e->getMessage());
+            return response()->json(['success' => false, 'message' => 'Failed to create doctor: ' . $e->getMessage()]);
         }
-
-        if ($user->RoleID === 'doctor') {
-            return response()->json(['success' => false, 'message' => 'This user is already a doctor!']);
-        }
-
-        $user->RoleID = 'doctor';
-        $user->save();
-
-        Doctor::create([
-            'UserID' => $user->UserID,
-            'Speciality' => $request->speciality,
-            'Title' => $request->title,
-        ]);
-
-        return response()->json(['success' => true, 'message' => 'Doctor created successfully!']);
     }
 
 

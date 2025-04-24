@@ -25,6 +25,7 @@ class DatabaseSeeder extends Seeder
             LaboratoryTypeSeeder::class,
             MedicineStockSeeder::class,
             MedicineSeeder::class,
+            WardTypeSeeder::class,
         ]);
     }
 }

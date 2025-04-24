@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\User;
-
+use Illuminate\Support\Facades\Log;
 class PatientController extends Controller
 {
     public function index()
@@ -17,17 +17,18 @@ class PatientController extends Controller
 
     public function update(Request $request, $id)
     {
+        log::info(1);
         $user = User::findOrFail($id);
 
-        $user->update($request->only([
-            'name',
-            'email',
-            'phone',
-            'gender',
-            'date_of_birth',
-            'role',
-            'address',
-        ]));
+        $user->update([
+            'FullName' => $request->input('name'),
+            'Email' => $request->input('email'),
+            'PhoneNumber' => $request->input('phone'),
+            'Gender' => $request->input('gender'),
+            'DateOfBirth' => $request->input('date_of_birth'),
+            'RoleID' => $request->input('role'),
+            'Address' => $request->input('address'),
+        ]);
 
         return response()->json(['message' => 'User updated successfully']);
     }

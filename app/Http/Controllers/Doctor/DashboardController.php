@@ -33,6 +33,55 @@ class DashboardController extends Controller
                 'Type' => 'Follow-up',
                 'Status' => 'Completed',
                 'Notes' => 'Post-surgery checkup'
+            ],
+            [
+                'Time' => '10:30',
+                'PatientName' => 'Jane Smith',
+                'Type' => 'Follow-up',
+                'Status' => 'Completed',
+                'Notes' => 'Post-surgery checkup'
+            ],
+            [
+                'Time' => '10:30',
+                'PatientName' => 'Jane Smith',
+                'Type' => 'Follow-up',
+                'Status' => 'Completed',
+                'Notes' => 'Post-surgery checkup'
+            ],
+            [
+                'Time' => '10:30',
+                'PatientName' => 'Jane Smith',
+                'Type' => 'Follow-up',
+                'Status' => 'Completed',
+                'Notes' => 'Post-surgery checkup'
+            ],
+            [
+                'Time' => '10:30',
+                'PatientName' => 'Jane Smith',
+                'Type' => 'Follow-up',
+                'Status' => 'Completed',
+                'Notes' => 'Post-surgery checkup'
+            ],
+            [
+                'Time' => '10:30',
+                'PatientName' => 'Jane Smith',
+                'Type' => 'Follow-up',
+                'Status' => 'Completed',
+                'Notes' => 'Post-surgery checkup'
+            ],
+            [
+                'Time' => '10:30',
+                'PatientName' => 'Jane Smith',
+                'Type' => 'Follow-up',
+                'Status' => 'Completed',
+                'Notes' => 'Post-surgery checkup'
+            ],
+            [
+                'Time' => '10:30',
+                'PatientName' => 'Jane Smith',
+                'Type' => 'Follow-up',
+                'Status' => 'Completed',
+                'Notes' => 'Post-surgery checkup'
             ]
         ];
 
