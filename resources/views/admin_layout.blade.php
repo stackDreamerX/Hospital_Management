@@ -226,6 +226,27 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 
 </section>
 
+<!-- Session Timeout Modal -->
+<div class="modal fade" id="sessionTimeoutModal" tabindex="-1" aria-labelledby="sessionTimeoutModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-warning">
+                <h5 class="modal-title" id="sessionTimeoutModalLabel">Session Timeout Warning</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Your session is about to expire due to inactivity.</p>
+                <p>You will be logged out in <span id="sessionCountdown">60</span> seconds.</p>
+                <p>Would you like to stay logged in?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="logoutNowBtn">Logout Now</button>
+                <button type="button" class="btn btn-primary" id="stayLoggedInBtn">Stay Logged In</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.7/dist/umd/popper.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
@@ -244,54 +265,111 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
         });
     });
 
-    // Session activity variables
-    let lastActivity = new Date();
-    let isIdle = false;
-    const sessionTimeout = {{ config('session.lifetime', 30) * 60 * 1000 }}; // Convert minutes to milliseconds
+    // Session management
+    $(document).ready(function() {
+        // Session variables
+        let lastActivity = new Date();
+        let isIdle = false;
+        let countdownTimer = null;
+        let timeoutModal = null;
+        let secondsRemaining = 60; // Countdown time in seconds
 
-    // Update last activity time on user interaction
-    function updateActivity() {
-        const now = new Date();
-        // If user was idle and is now active, refresh the page to ensure proper state
-        if (isIdle) {
-            location.reload();
-            return;
+        // Session timeout in milliseconds (set your desired timeout)
+        const sessionTimeout = 15 * 60 * 1000; // 15 minutes
+        const warningTime = 60 * 1000; // Show warning 1 minute before timeout
+        
+        // Update last activity time on user interaction
+        function updateActivity() {
+            // Only update if user wasn't already idle
+            if (!isIdle) {
+                lastActivity = new Date();
+            }
         }
-        lastActivity = now;
-    }
 
-    // Check if session might be expired
-    function checkSession() {
-        const now = new Date();
-        const timeSinceLastActivity = now - lastActivity;
-        
-        // If we've been inactive for more than session timeout minus 1 minute
-        if (timeSinceLastActivity > (sessionTimeout - 60000)) {
-            isIdle = true;
-        }
-        
-        // Keep the session alive if user is active
-        if (timeSinceLastActivity < (sessionTimeout / 2)) {
-            // Send heartbeat to keep session alive
-            fetch('{{ route("admin.dashboard") }}', {
-                method: 'HEAD',
-                headers: {
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                    'X-Requested-With': 'XMLHttpRequest'
+        // Initialize the modal
+        timeoutModal = new bootstrap.Modal(document.getElementById('sessionTimeoutModal'));
+
+        // Start countdown timer
+        function startCountdown() {
+            secondsRemaining = 60;
+            updateCountdown();
+            
+            countdownTimer = setInterval(function() {
+                secondsRemaining--;
+                updateCountdown();
+                
+                if (secondsRemaining <= 0) {
+                    clearInterval(countdownTimer);
+                    performLogout();
                 }
-            }).catch(error => console.error('Session heartbeat error:', error));
+            }, 1000);
         }
-    }
+        
+        // Update countdown display
+        function updateCountdown() {
+            document.getElementById('sessionCountdown').textContent = secondsRemaining;
+        }
+        
+        // Reset the session timeout
+        function resetSession() {
+            isIdle = false;
+            lastActivity = new Date();
+            if (countdownTimer) {
+                clearInterval(countdownTimer);
+                countdownTimer = null;
+            }
+            if (timeoutModal) {
+                timeoutModal.hide();
+            }
+        }
+        
+        // Perform logout
+        function performLogout() {
+            window.location.href = "{{ route('logout') }}";
+        }
 
-    // Set up event listeners for user activity
-    ['mousemove', 'mousedown', 'keypress', 'touchstart', 'scroll'].forEach(event => {
-        document.addEventListener(event, updateActivity, true);
-    });
+        // Check if session might be expired
+        function checkSession() {
+            const now = new Date();
+            const timeSinceLastActivity = now - lastActivity;
+            
+            // If we're about to timeout (less than warning time left)
+            if (timeSinceLastActivity > (sessionTimeout - warningTime) && !isIdle) {
+                isIdle = true;
+                timeoutModal.show();
+                startCountdown();
+            }
+            
+            // Keep the session alive if user is active and not in countdown mode
+            if (timeSinceLastActivity < (sessionTimeout / 2) && !isIdle) {
+                // Send heartbeat to keep session alive
+                fetch('{{ route("admin.dashboard") }}', {
+                    method: 'HEAD',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                }).catch(error => console.error('Session heartbeat error:', error));
+            }
+        }
 
-    // Check session every minute
-    setInterval(checkSession, 60000);
+        // Set up event listeners for user activity
+        ['mousemove', 'mousedown', 'keypress', 'touchstart', 'scroll'].forEach(function(event) {
+            document.addEventListener(event, updateActivity, true);
+        });
 
-    $(document).ready(function () {
+        // Set up button event listeners
+        document.getElementById('stayLoggedInBtn').addEventListener('click', function() {
+            resetSession();
+        });
+        
+        document.getElementById('logoutNowBtn').addEventListener('click', function() {
+            performLogout();
+        });
+
+        // Check session every minute
+        setInterval(checkSession, 60000);
+
         // Toggle sidebar on mobile
         $('.sidebar-toggle-box').on('click', function() {
             $('#sidebar').toggleClass('show');
@@ -305,18 +383,6 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
             $(this).parent('li').addClass('active');
         });
 
-        // Manual dropdown handling (backup in case Bootstrap initialization fails)
-        $('.dropdown-toggle').on('click', function(e) {
-            $(this).siblings('.dropdown-menu').toggleClass('show');
-        });
-
-        // Close dropdowns when clicking outside
-        $(document).on('click', function(e) {
-            if (!$(e.target).closest('.dropdown').length) {
-                $('.dropdown-menu').removeClass('show');
-            }
-        });
-        
         // Sidebar submenu toggle
         $('.sidebar-menu .dropdown-toggle').on('click', function(e) {
             e.preventDefault();

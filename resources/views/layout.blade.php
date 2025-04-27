@@ -273,6 +273,28 @@
 </footer>
 
 <script lang="javascript">var __vnp = {code : 24859,key:'', secret : '01a01bf0569564fa3230269838262e78'};(function() {var ga = document.createElement('script');ga.type = 'text/javascript';ga.async=true; ga.defer=true;ga.src = '//core.vchat.vn/code/tracking.js?v=44821'; var s = document.getElementsByTagName('script');s[0].parentNode.insertBefore(ga, s[0]);})();</script>
+
+<!-- Session Timeout Modal -->
+<div class="modal fade" id="sessionTimeoutModal" tabindex="-1" aria-labelledby="sessionTimeoutModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-warning">
+                <h5 class="modal-title" id="sessionTimeoutModalLabel">Session Timeout Warning</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Your session is about to expire due to inactivity.</p>
+                <p>You will be logged out in <span id="sessionCountdown">60</span> seconds.</p>
+                <p>Would you like to stay logged in?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="logoutNowBtn">Logout Now</button>
+                <button type="button" class="btn btn-primary" id="stayLoggedInBtn">Stay Logged In</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
     // Initialize AOS animations
     document.addEventListener('DOMContentLoaded', function() {
@@ -283,8 +305,117 @@
             mirror: false
         });
     });
-    
 </script>
+
+@if(Auth::check())
+<!-- Session Management Script - Only for authenticated users -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Session activity variables
+        let lastActivity = new Date();
+        let isIdle = false;
+        let countdownTimer = null;
+        let timeoutModal = null;
+        let secondsRemaining = 60; // Countdown time in seconds
+        
+        // Session timeout in milliseconds
+        const sessionTimeout = 1 * 60 * 1000; // 15 minutes
+        const warningTime = 60 * 1000; // Show warning 1 minute before timeout
+        
+        // Initialize the modal
+        timeoutModal = new bootstrap.Modal(document.getElementById('sessionTimeoutModal'));
+        
+        // Update last activity time on user interaction
+        function updateActivity() {
+            // Only update if user wasn't already idle
+            if (!isIdle) {
+                lastActivity = new Date();
+            }
+        }
+        
+        // Start countdown timer
+        function startCountdown() {
+            secondsRemaining = 60;
+            updateCountdown();
+            
+            countdownTimer = setInterval(function() {
+                secondsRemaining--;
+                updateCountdown();
+                
+                if (secondsRemaining <= 0) {
+                    clearInterval(countdownTimer);
+                    performLogout();
+                }
+            }, 1000);
+        }
+        
+        // Update countdown display
+        function updateCountdown() {
+            document.getElementById('sessionCountdown').textContent = secondsRemaining;
+        }
+        
+        // Reset the session timeout
+        function resetSession() {
+            isIdle = false;
+            lastActivity = new Date();
+            if (countdownTimer) {
+                clearInterval(countdownTimer);
+                countdownTimer = null;
+            }
+            if (timeoutModal) {
+                timeoutModal.hide();
+            }
+        }
+        
+        // Perform logout
+        function performLogout() {
+            window.location.href = "{{ route('home.logout') }}";
+        }
+        
+        // Check if session might be expired
+        function checkSession() {
+            const now = new Date();
+            const timeSinceLastActivity = now - lastActivity;
+            
+            // If we're about to timeout (less than warning time left)
+            if (timeSinceLastActivity > (sessionTimeout - warningTime) && !isIdle) {
+                isIdle = true;
+                timeoutModal.show();
+                startCountdown();
+            }
+            
+            // Keep the session alive if user is active and not in countdown mode
+            if (timeSinceLastActivity < (sessionTimeout / 2) && !isIdle) {
+                // Send heartbeat to keep session alive
+                fetch('{{ url("/users.dashboard") }}', {
+                    method: 'HEAD',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                }).catch(error => console.error('Session heartbeat error:', error));
+            }
+        }
+        
+        // Set up event listeners for user activity
+        ['mousemove', 'mousedown', 'keypress', 'touchstart', 'scroll'].forEach(function(event) {
+            document.addEventListener(event, updateActivity, true);
+        });
+        
+        // Set up button event listeners
+        document.getElementById('stayLoggedInBtn').addEventListener('click', function() {
+            resetSession();
+        });
+        
+        document.getElementById('logoutNowBtn').addEventListener('click', function() {
+            performLogout();
+        });
+        
+        // Check session every minute
+        setInterval(checkSession, 60000);
+    });
+</script>
+@endif
              
         
 
