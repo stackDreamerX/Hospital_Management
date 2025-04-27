@@ -1,182 +1,41 @@
 @extends('patient_layout')
 
 @push('styles')
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
-<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+
 <style>
-    /* Reset and improved modal styling */
-    body .modal {
-        display: none;
-        position: fixed !important;
-        top: 0 !important;
-        left: 0 !important;
-        z-index: 1050 !important;
-        width: 100% !important;
-        height: 100% !important;
-        overflow: hidden !important;
-        outline: 0 !important;
-        background-color: rgba(0, 0, 0, 0.5) !important;
-    }
-
-    body .modal.fade {
-        opacity: 0;
-        transition: opacity 0.15s linear;
-    }
-
-    body .modal.show {
-        display: block !important;
-        opacity: 1 !important;
-    }
-
-    body .modal-dialog {
-        position: relative !important;
-        margin: 1.75rem auto !important;
-        max-width: 500px !important;
-        pointer-events: auto !important;
-        transform: none !important;
-    }
-
-    body .modal-dialog.modal-lg {
-        max-width: 800px !important;
-    }
-
-    body .modal-content {
-        position: relative !important;
-        display: flex !important;
-        flex-direction: column !important;
-        width: 100% !important;
-        background-color: #fff !important;
-        border: none !important;
-        border-radius: 0.5rem !important;
-        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
-        pointer-events: auto !important;
-        outline: 0 !important;
-    }
-
-    body .modal-header {
-        display: flex !important;
-        align-items: center !important;
-        justify-content: space-between !important;
-        padding: 1rem !important;
-        border-bottom: 1px solid #dee2e6 !important;
-        border-top-left-radius: 0.5rem !important;
-        border-top-right-radius: 0.5rem !important;
-        background: linear-gradient(135deg, #2bb0ed 0%, #3f8cff 100%) !important;
-        color: white !important;
-    }
-
-    body .modal-title {
-        margin-bottom: 0 !important;
-        line-height: 1.5 !important;
-        font-weight: 600 !important;
-        color: white !important;
-    }
-
-    body .btn-close {
-        background: rgba(255, 255, 255, 0.5) !important;
-        border-radius: 50% !important;
-        opacity: 1 !important;
-        padding: 0.6rem !important;
-        border: none !important;
-        -webkit-appearance: none !important;
-    }
-
-    body .modal-body {
-        position: relative !important;
-        flex: 1 1 auto !important;
-        padding: 1.5rem !important;
-        overflow-y: auto !important;
-        max-height: 70vh !important;
-        color: #212529 !important;
-    }
-
-    body .modal-footer {
-        display: flex !important;
-        align-items: center !important;
-        justify-content: flex-end !important;
-        padding: 1rem !important;
-        border-top: 1px solid #dee2e6 !important;
-    }
-
-    /* Ensure the modal backdrop is visible */
-    body .modal-backdrop {
-        position: fixed !important;
-        top: 0 !important;
-        left: 0 !important;
-        z-index: 1040 !important;
-        width: 100vw !important;
-        height: 100vh !important;
-        background-color: rgba(0, 0, 0, 0.5) !important;
-    }
-
-    body .modal-backdrop.fade {
-        opacity: 0 !important;
-    }
-
-    body .modal-backdrop.show {
-        opacity: 0.5 !important;
+    /* Improved badge styling */
+    .badge {
+        padding: 0.4rem 0.6rem;
+        font-size: 0.9rem;
+        display: inline-block;
+        margin-left: 0.5rem;
     }
     
-    /* Additional CSS to ensure modals appear correctly */
-    body.modal-open {
-        overflow: hidden !important;
-        padding-right: 15px !important;
+    /* Detail item styling for appointments */
+    .appointment-details .mb-3 {
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 1rem;
+        padding: 0.8rem;
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        border-left: 4px solid #3f8cff;
     }
     
-    /* Force modal display when .show-force is applied */
-    body .modal.show-force {
-        display: block !important;
-        opacity: 1 !important;
-        visibility: visible !important;
-        overflow-x: hidden !important;
-        overflow-y: auto !important;
+    .appointment-details .mb-3 strong {
+        font-weight: 600;
+        color: #212529;
+        margin-bottom: 0.3rem;
+        display: block;
     }
     
-    /* Force backdrop to display */
-    body .modal-backdrop-force {
-        position: fixed !important;
-        top: 0 !important;
-        left: 0 !important;
-        z-index: 1040 !important;
-        width: 100vw !important;
-        height: 100vh !important;
-        background-color: rgba(0, 0, 0, 0.5) !important;
-        opacity: 0.5 !important;
+    .appointment-details .mb-3 span {
+        color: #212529;
+        font-size: 1rem;
     }
     
-    /* Better badge styling */
-    body .modal-body .badge {
-        padding: 0.4rem 0.6rem !important;
-        font-size: 0.9rem !important;
-        display: inline-block !important;
-        margin-left: 0.5rem !important;
-    }
-    
-    /* Detail item styling */
-    body .modal-body .mb-3 {
-        display: flex !important;
-        flex-direction: column !important;
-        margin-bottom: 1rem !important;
-        padding: 0.8rem !important;
-        background-color: #f8f9fa !important;
-        border-radius: 8px !important;
-        border-left: 4px solid #3f8cff !important;
-    }
-    
-    body .modal-body .mb-3 strong {
-        font-weight: 600 !important;
-        color: #212529 !important;
-        margin-bottom: 0.3rem !important;
-        display: block !important;
-    }
-    
-    body .modal-body .mb-3 span {
-        color: #212529 !important;
-        font-size: 1rem !important;
-    }
-    
-    body .modal-body .fas {
-        color: #3f8cff !important;
+    .appointment-details .fas {
+        color: #3f8cff;
     }
 </style>
 @endpush
@@ -424,69 +283,21 @@
 @endsection
 
 @section('scripts')
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 <script>
+    // Global modal instances
+    let detailsModal, editModal;
+    
     document.addEventListener('DOMContentLoaded', function() {
         console.log('DOM fully loaded');
         
-        // Verify Bootstrap is loaded
-        if (typeof bootstrap === 'undefined') {
-            console.error('Bootstrap JS not loaded!');
-            // Try to load it dynamically
-            const script = document.createElement('script');
-            script.src = 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js';
-            document.head.appendChild(script);
-            script.onload = initializeComponents;
-        } else {
-            console.log('Bootstrap JS detected');
-            initializeComponents();
-        }
-    });
-    
-    function initializeComponents() {
-        console.log('Initializing components');
-        // Initialize Bootstrap Modals
-        try {
-            const detailsModalEl = document.getElementById('detailsModal');
-            const editModalEl = document.getElementById('editModal');
-            
-            if (!detailsModalEl) console.error('Details modal element not found!');
-            if (!editModalEl) console.error('Edit modal element not found!');
-            
-            // Define the modals both as global variables and window properties
-            detailsModal = new bootstrap.Modal(detailsModalEl);
-            editModal = new bootstrap.Modal(editModalEl);
-            
-            // Also assign to window for redundancy
-            window.detailsModal = detailsModal;
-            window.editModal = editModal;
-            
-            console.log('Modals initialized successfully:', detailsModal, editModal);
-            
-            // Add test modal button listener
-            const testBtn = document.getElementById('testModalBtn');
-            if (testBtn) {
-                testBtn.addEventListener('click', function() {
-                    console.log('Test button clicked, showing modal directly');
-                    const content = document.getElementById('detailsContent');
-                    content.innerHTML = '<div class="alert alert-info">This is a test modal</div>';
-                    
-                    const modalElement = document.getElementById('detailsModal');
-                    if (modalElement) {
-                        showModalReliably(modalElement, detailsModal);
-                    } else {
-                        console.error('Modal element not found for test');
-                    }
-                });
-            }
-            
-        } catch (error) {
-            console.error('Error initializing modals:', error);
-        }
+        // Initialize Bootstrap modals
+        detailsModal = new bootstrap.Modal(document.getElementById('detailsModal'));
+        editModal = new bootstrap.Modal(document.getElementById('editModal'));
         
+        // Set up event listeners
         setupEventListeners();
-    }
+    });
     
     function setupEventListeners() {
         // Handle new appointment form submission
@@ -542,8 +353,6 @@
         }
     }
 
-    let detailsModal, editModal;
-
     function createAppointment() {
         const data = {
             appointment_date: document.getElementById('appointment_date').value,
@@ -597,60 +406,6 @@
             });
     }
 
-    // Helper function to show modal reliably
-    function showModalReliably(modalElement, modalInstance) {
-        console.log('Showing modal reliably:', modalElement.id, modalInstance);
-        
-        try {
-            // First attempt: Bootstrap modal method
-            if (modalInstance && typeof modalInstance.show === 'function') {
-                modalInstance.show();
-                console.log('Modal shown via Bootstrap API');
-                return true;
-            }
-        } catch (error) {
-            console.warn('Error showing modal via Bootstrap API:', error);
-        }
-        
-        try {
-            // Second attempt: jQuery if available
-            if (typeof $ !== 'undefined') {
-                $(modalElement).modal('show');
-                console.log('Modal shown via jQuery');
-                return true;
-            }
-        } catch (error) {
-            console.warn('Error showing modal via jQuery:', error);
-        }
-        
-        // Final attempt: Direct DOM manipulation
-        try {
-            console.log('Trying direct DOM manipulation for modal');
-            // Add classes to modal
-            modalElement.classList.add('show', 'show-force');
-            modalElement.style.display = 'block';
-            modalElement.setAttribute('aria-modal', 'true');
-            modalElement.removeAttribute('aria-hidden');
-            
-            // Add class to body
-            document.body.classList.add('modal-open');
-            
-            // Create backdrop if needed
-            if (!document.querySelector('.modal-backdrop')) {
-                const backdrop = document.createElement('div');
-                backdrop.className = 'modal-backdrop fade show modal-backdrop-force';
-                document.body.appendChild(backdrop);
-                console.log('Modal backdrop created');
-            }
-            
-            console.log('Modal shown via direct DOM manipulation');
-            return true;
-        } catch (error) {
-            console.error('All methods to show modal failed:', error);
-            return false;
-        }
-    }
-
     function viewDetails(appointmentId) {
         // Show loading state
         const loadingSwal = Swal.fire({
@@ -675,14 +430,8 @@
                 // Close loading dialog
                 loadingSwal.close();
                 
-                // Log the response for debugging
-                console.log('Appointment data:', appointment);
-                
                 try {
                     const content = document.getElementById('detailsContent');
-                    if (!content) {
-                        throw new Error('detailsContent element not found');
-                    }
                     
                     // Ensure we have complete data or provide fallbacks
                     const doctorName = appointment.DoctorName || 'Not assigned';
@@ -741,21 +490,8 @@
                         </div>
                     `;
                     
-                    // Ensure the modal element exists
-                    const modalElement = document.getElementById('detailsModal');
-                    if (!modalElement) {
-                        throw new Error('Modal element not found');
-                    }
-                    
-                    // Show the modal with our reliable function
-                    setTimeout(() => {
-                        const shown = showModalReliably(modalElement, detailsModal);
-                        if (shown) {
-                            console.log('Modal shown successfully');
-                        } else {
-                            throw new Error('Failed to show modal with all methods');
-                        }
-                    }, 100);
+                    // Show the modal
+                    detailsModal.show();
                 } catch (error) {
                     console.error('Error processing appointment details:', error);
                     Swal.fire('Error', 'Failed to display appointment details: ' + error.message, 'error');
@@ -794,9 +530,6 @@
                 // Close loading dialog
                 loadingSwal.close();
                 
-                // Log the response for debugging
-                console.log('Appointment data for edit:', appointment);
-                
                 try {
                     document.getElementById('edit_id').value = appointment.AppointmentID;
                     document.getElementById('edit_date').value = appointment.AppointmentDate;
@@ -809,21 +542,8 @@
                         document.getElementById('edit_doctor').value = appointment.DoctorID;
                     }
                     
-                    // Get the modal element
-                    const modalElement = document.getElementById('editModal');
-                    if (!modalElement) {
-                        throw new Error('Edit modal element not found');
-                    }
-                    
-                    // Show the modal with our reliable function
-                    setTimeout(() => {
-                        const shown = showModalReliably(modalElement, editModal);
-                        if (shown) {
-                            console.log('Edit modal shown successfully');
-                        } else {
-                            throw new Error('Failed to show edit modal with all methods');
-                        }
-                    }, 100);
+                    // Show edit modal
+                    editModal.show();
                 } catch (error) {
                     console.error('Error setting form values:', error);
                     Swal.fire('Error', 'Failed to prepare edit form: ' + error.message, 'error');
