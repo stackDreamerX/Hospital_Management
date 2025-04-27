@@ -25,6 +25,12 @@
                         </div>
                     @endif
                     
+                    @if (session('success'))
+                        <div class="alert alert-success">
+                            <i class="fas fa-check-circle me-2"></i> {{ session('success') }}
+                        </div>
+                    @endif
+                    
                     <!-- Form -->
                     <form action="{{ url('/sign-up') }}" method="POST">
                         @csrf

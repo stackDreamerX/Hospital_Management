@@ -1,8 +1,7 @@
 @extends('admin_layout')
 
 @push('styles')
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
-<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+
 <style>
     /* Reset and improved modal styling */
     body .modal {
@@ -216,7 +215,7 @@
                     <div class="col-md-6 mb-3">
                         <label style="font-weight: bold; margin-bottom: 5px;">Username</label>
                         <input type="text" name="username" class="form-control" required
-                               pattern="^[a-zA-Z0-9._-]{3,50}$" style="padding: 8px;">
+                               pattern="[a-zA-Z0-9._\-]{3,50}" style="padding: 8px;">
                     </div>
                     <div class="col-md-6 mb-3">
                         <label style="font-weight: bold; margin-bottom: 5px;">Email</label>
@@ -225,7 +224,7 @@
                     <div class="col-md-6 mb-3">
                         <label style="font-weight: bold; margin-bottom: 5px;">Phone Number</label>
                         <input type="tel" name="phone" class="form-control" required
-                               pattern="^0[0-9]{9}$" style="padding: 8px;">
+                               pattern="0[0-9]{9}" style="padding: 8px;">
                     </div>
                     <div class="col-md-6 mb-3">
                         <label style="font-weight: bold; margin-bottom: 5px;">Role</label>
@@ -238,7 +237,7 @@
                     <div class="col-md-6 mb-3">
                         <label style="font-weight: bold; margin-bottom: 5px;">Password</label>
                         <input type="password" name="password" class="form-control" required
-                               pattern="^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$"
+                               pattern="(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}"
                                style="padding: 8px;">
                     </div>
                 </div>
@@ -441,6 +440,23 @@
             const userId = document.getElementById('edit_user_id').value;
             updateUser(userId);
         });
+
+        // Implement search functionality
+        const searchInput = document.getElementById('searchInput');
+        searchInput.addEventListener('keyup', function() {
+            const searchValue = this.value.toLowerCase().trim();
+            const table = document.querySelector('table');
+            const rows = table.querySelectorAll('tbody tr');
+            
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                if (text.includes(searchValue)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        });
     });
 
     document.getElementById('addUserForm').addEventListener('submit', function(e) {
@@ -625,6 +641,3 @@
 </script>
 @endsection
 
-@push('scripts')
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
-@endpush

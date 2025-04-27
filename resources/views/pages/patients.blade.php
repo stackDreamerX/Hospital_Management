@@ -234,6 +234,7 @@
 
 .badge-item i {
     margin-right: 8px;
+    font-size: 0.9rem;
 }
 
 .link-list {
@@ -258,6 +259,9 @@
 .link-item i {
     color: var(--primary-color);
     margin-right: 10px;
+    font-size: 1rem;
+    width: 20px;
+    text-align: center;
     transition: all 0.3s ease;
 }
 
@@ -282,7 +286,9 @@
 }
 
 .resources-list .list-group-item i {
-    font-size: 1.2rem;
+    font-size: 1rem;
+    width: 20px;
+    text-align: center;
     transition: all 0.3s ease;
 }
 
@@ -382,6 +388,29 @@
 .contact-card .card-body {
     position: relative;
     z-index: 1;
+}
+
+/* Fix for the service card icons */
+.card-body > i.fas {
+    font-size: 2rem;
+    display: inline-block;
+    margin-bottom: 1rem;
+}
+
+/* Fix alignment of card body elements */
+.info-card .card-body {
+    display: flex;
+    flex-direction: column;
+}
+
+.info-card .card-body i.fas {
+    align-self: center;
+}
+
+/* Ensure consistent spacing and alignment */
+.info-card .card-title,
+.info-card .card-text {
+    text-align: center;
 }
 </style>
 @endsection

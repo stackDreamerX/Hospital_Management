@@ -98,9 +98,8 @@ class HomeController extends Controller
 
         ]);
 
-
         // Chuyển hướng sau khi đăng ký thành công
-        return redirect('/sign-in')->with('success', 'Account created successfully! Please log in.');
+        return redirect('/sign-in')->with('success', 'Tài khoản đã được tạo thành công! Vui lòng đăng nhập.');
     }
 
     public function staff()

@@ -66,7 +66,7 @@
                 <img src="{{ asset('public/images/DaKhoa-location.jpg') }}" class="card-img-top" alt="Da Khoa Thu Duc Location">
                 <div class="card-body">
                     <div class="card-content">
-                        <h5 class="card-title">Medic Hospital Da Khoa Thu Duc</h5>
+                        <h5 class="card-title">Medic Hospital Da Khoa</h5>
                         <p class="card-text">64 Lê Văn Chí, Phường Linh Trung, Thủ Đức, Hồ Chí Minh, Việt Nam
                         </p>
                     </div>
