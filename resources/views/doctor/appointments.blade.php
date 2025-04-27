@@ -368,6 +368,16 @@ function updateStatus(appointmentId, status) {
         confirmButtonColor: status === 'Approved' ? '#28a745' : '#dc3545'
     }).then((result) => {
         if (result.isConfirmed) {
+            // Show processing modal
+            Swal.fire({
+                title: status === 'Approved' ? 'Approving...' : 'Rejecting...',
+                html: 'Please wait while we process your request and send email notification...',
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+            
             const notes = result.value || '';
             const url = `{{ route('doctor.appointments.updateStatus', ['id' => '__id__']) }}`.replace('__id__', appointmentId);
 
