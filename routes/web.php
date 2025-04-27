@@ -40,7 +40,8 @@ Route::get('/staff', [HomeController::class, 'staff'])->name('users.staff');
 Route::get('/locations', [HomeController::class, 'locations'])->name('users.locations');
 Route::get('/patients', [HomeController::class, 'patients'])->name('users.patients');
 Route::get('/appointments', [HomeController::class, 'appointments'])->name('users.appointments');
-Route::get('/search-doctors', [HomeController::class, 'search'])->name('users.search.doctors');
+Route::get('/search-doctors', [HomeController::class, 'searchDoctors'])->name('search.doctors');
+Route::get('/doctor-profile/{id}', [HomeController::class, 'doctorProfile'])->name('doctor.public.profile');
 
 // Public doctor ratings
 Route::get('/doctors/{id}/ratings', [RatingController::class, 'doctorRatings'])->name('doctor.public.ratings');

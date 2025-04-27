@@ -15,6 +15,8 @@ class Doctor extends Model
         'UserID',
         'Speciality',
         'Title',
+        'WorkLocation',
+        'AvailableHours',
     ];
 
     public function appointments()

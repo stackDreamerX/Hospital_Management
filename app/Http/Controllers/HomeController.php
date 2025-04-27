@@ -105,42 +105,80 @@ class HomeController extends Controller
 
     public function staff()
     {
-        return view('pages.staff');
+        // Get list of specialties for the dropdown
+        $specialties = Doctor::distinct()->pluck('Speciality')->toArray();
+        
+        // Get all doctors with their user information and ratings
+        $doctors = Doctor::with(['user', 'ratings'])->get();
+        
+        // Calculate average rating for each doctor
+        foreach ($doctors as $doctor) {
+            $doctor->avgRating = $doctor->getAverageRatingAttribute() ?? 0;
+            $doctor->ratingCount = $doctor->ratings->where('status', 'approved')
+                            ->whereNotNull('doctor_rating')->count();
+        }
+        
+        return view('pages.staff', [
+            'doctors' => $doctors,
+            'specialties' => $specialties,
+            'search' => false
+        ]);
     }
 
     public function searchDoctors(Request $request)
     {
         // Retrieve search inputs
+        $name = $request->input('doctor_name', '');
         $specialty = $request->input('specialty');
-        // $location = $request->input('location');
-        // $insurance = $request->input('insurance');
-        // $name = $request->input('doctor_name');
+        $location = $request->input('location');
+        $insurance = $request->input('insurance');
 
-        // Query using Eloquent model
-        $query = Doctor::query();
+        // Get list of specialties for the dropdown
+        $specialties = Doctor::distinct()->pluck('Speciality')->toArray();
+
+        // Start the query with doctor relationships
+        $query = Doctor::with(['user', 'ratings']);
 
         // Apply filters if present
         if ($specialty) {
             $query->where('Speciality', $specialty);
         }
 
-        // if ($location) {
-        //     $query->where('Location', $location);
-        // }
+        // Name search needs to check the user table
+        if ($name) {
+            $query->whereHas('user', function($q) use ($name) {
+                $q->where('FullName', 'LIKE', "%$name%");
+            });
+        }
 
-        // if ($insurance) {
-        //     $query->where('Insurance', $insurance);
-        // }
+        // For location and insurance, you'd need to add these to your database schema
+        // This is placeholder code assuming these fields exist or will exist
+        if ($location) {
+            // $query->where('Location', $location);
+            // Comment out until location field is added to schema
+        }
 
-        // if ($name) {
-        //     $query->where('Name', 'LIKE', "%$name%");
-        // }
+        if ($insurance) {
+            // $query->where('Insurance', $insurance);
+            // Comment out until insurance field is added to schema
+        }
 
-        // Fetch all doctors or filtered results
+        // Fetch filtered results
         $doctors = $query->get();
+        
+        // Calculate average rating for each doctor
+        foreach ($doctors as $doctor) {
+            $doctor->avgRating = $doctor->getAverageRatingAttribute() ?? 0;
+            $doctor->ratingCount = $doctor->ratings->where('status', 'approved')
+                            ->whereNotNull('doctor_rating')->count();
+        }
 
         // Return the view with the results
-        return view('staff', ['doctors' => $doctors]);
+        return view('pages.staff', [
+            'doctors' => $doctors,
+            'specialties' => $specialties,
+            'search' => true
+        ]);
     }
 
 
@@ -161,6 +199,43 @@ class HomeController extends Controller
         }
 
         return redirect('/patient/dashboard');
+    }
+
+    public function doctorProfile($id)
+    {
+        // Find the doctor by ID with related data
+        $doctor = Doctor::with(['user', 'ratings' => function($query) {
+            $query->where('status', 'approved')
+                  ->whereNotNull('doctor_rating');
+        }])->findOrFail($id);
+        
+        // Calculate average rating
+        $doctor->avgRating = $doctor->getAverageRatingAttribute() ?? 0;
+        $doctor->ratingCount = $doctor->ratings->count();
+        
+        // Get recent reviews (latest 5)
+        $recentReviews = $doctor->ratings()
+            ->where('status', 'approved')
+            ->whereNotNull('doctor_rating')
+            ->with('user')
+            ->latest()
+            ->limit(5)
+            ->get();
+        
+        // Get the doctor's upcoming appointments to show availability
+        // This is simplified - in a real app you would check against available slots
+        $upcomingAppointments = $doctor->appointments()
+            ->where('AppointmentDate', '>=', now()->format('Y-m-d'))
+            ->orderBy('AppointmentDate')
+            ->orderBy('AppointmentTime')
+            ->get()
+            ->groupBy('AppointmentDate');
+            
+        return view('pages.doctor_profile', [
+            'doctor' => $doctor,
+            'recentReviews' => $recentReviews,
+            'upcomingAppointments' => $upcomingAppointments
+        ]);
     }
 }
 // php artisan make:controller HomeController
