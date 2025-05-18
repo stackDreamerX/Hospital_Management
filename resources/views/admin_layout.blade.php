@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <head>
 <title>Admin Dashboard</title>
-<link rel="icon" type="image/x-icon" href="{{ asset('public/logo.ico') }}">
+<link rel="icon" type="image/x-icon" href="{{ asset('logo.ico') }}">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="keywords" content="Visitors Responsive web template, Bootstrap Web Templates, Flat Web Templates, Android Compatible web template,
@@ -14,25 +14,25 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 <!-- Font Awesome CSS -->
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 <!-- Custom CSS -->
-<link href="{{ asset('public/css/admin_layout.css') }}" rel="stylesheet">
+<link href="{{ asset('css/admin_layout.css') }}" rel="stylesheet">
 
 <style>
     /* Submenu styles */
     .sidebar-menu .collapse {
         padding-left: 20px;
     }
-    
+
     .sidebar-menu .collapse li a {
         padding: 10px 10px 10px 30px;
         font-size: 14px;
         border-left: 3px solid transparent;
     }
-    
+
     .sidebar-menu .collapse li.active a {
         background: rgba(255, 255, 255, 0.1);
         border-left: 3px solid #fff;
     }
-    
+
     .sidebar-menu .dropdown-toggle::after {
         display: inline-block;
         float: right;
@@ -41,7 +41,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
         font-weight: 900;
         transition: transform 0.3s;
     }
-    
+
     .sidebar-menu .dropdown-toggle[aria-expanded="true"]::after {
         transform: rotate(180deg);
     }
@@ -61,7 +61,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 <!--logo start-->
 <div class="brand">
     <a href="{{ url('admin/dashboard')  }}" class="logo">
-        <img alt="" src="{{ asset('public/logo.ico') }}" height="40px">
+        <img alt="" src="{{ asset('logo.ico') }}" height="40px">
         <span>Admin</span>
     </a>
     <div class="sidebar-toggle-box">
@@ -72,7 +72,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 
 
 <div class="nav notify-row" id="top_menu">
-    
+
 </div>
 
 <div class="top-nav clearfix">
@@ -84,9 +84,9 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
         <!-- user login dropdown start-->
         <li class="dropdown">
             <a class="dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                <img alt="" src="{{ asset('public/2.png') }}">
+                <img alt="" src="{{ asset('2.png') }}">
                 <span class="username">{{ auth()->user()->FullName ?? 'Admin' }}</span>
-                <b class="caret"></b>   
+                <b class="caret"></b>
             </a>
             <ul class="dropdown-menu dropdown-menu-end logout">
                 <li><a class="dropdown-item" href="#"><i class="fa-solid fa-suitcase"></i> Profile</a></li>
@@ -97,7 +97,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
         </li>
         <!-- user login dropdown end -->
 
-       
+
     </ul>
     <!--search & user info end-->
 </div>
@@ -115,7 +115,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
                         <span>Dashboard</span>
                     </a>
                 </li>
-                
+
                 <li class="{{ Request::is('admin/staff') ? 'active' : '' }}">
                     <a href="{{ url('/admin/staff') }}">
                         <i class="fa-solid fa-users"></i>
@@ -129,7 +129,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
                         <span>Lab</span>
                     </a>
                 </li>
-<!-- 
+<!--
                 <li class="{{ Request::is('admin/ward') ? 'active' : '' }}">
                     <a href="{{ url('/admin/ward') }}">
                         <i class="fa-solid fa-hospital"></i>
@@ -277,7 +277,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
         // Session timeout in milliseconds (set your desired timeout)
         const sessionTimeout = 15 * 60 * 1000; // 15 minutes
         const warningTime = 60 * 1000; // Show warning 1 minute before timeout
-        
+
         // Update last activity time on user interaction
         function updateActivity() {
             // Only update if user wasn't already idle
@@ -293,23 +293,23 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
         function startCountdown() {
             secondsRemaining = 60;
             updateCountdown();
-            
+
             countdownTimer = setInterval(function() {
                 secondsRemaining--;
                 updateCountdown();
-                
+
                 if (secondsRemaining <= 0) {
                     clearInterval(countdownTimer);
                     performLogout();
                 }
             }, 1000);
         }
-        
+
         // Update countdown display
         function updateCountdown() {
             document.getElementById('sessionCountdown').textContent = secondsRemaining;
         }
-        
+
         // Reset the session timeout
         function resetSession() {
             isIdle = false;
@@ -322,7 +322,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
                 timeoutModal.hide();
             }
         }
-        
+
         // Perform logout
         function performLogout() {
             window.location.href = "{{ route('logout') }}";
@@ -332,14 +332,14 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
         function checkSession() {
             const now = new Date();
             const timeSinceLastActivity = now - lastActivity;
-            
+
             // If we're about to timeout (less than warning time left)
             if (timeSinceLastActivity > (sessionTimeout - warningTime) && !isIdle) {
                 isIdle = true;
                 timeoutModal.show();
                 startCountdown();
             }
-            
+
             // Keep the session alive if user is active and not in countdown mode
             if (timeSinceLastActivity < (sessionTimeout / 2) && !isIdle) {
                 // Send heartbeat to keep session alive
@@ -362,7 +362,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
         document.getElementById('stayLoggedInBtn').addEventListener('click', function() {
             resetSession();
         });
-        
+
         document.getElementById('logoutNowBtn').addEventListener('click', function() {
             performLogout();
         });
@@ -374,7 +374,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
         $('.sidebar-toggle-box').on('click', function() {
             $('#sidebar').toggleClass('show');
         });
-        
+
         // Handle sidebar menu click events
         $('.sidebar-menu li a').on('click', function () {
             // Remove active class from all items
@@ -386,15 +386,15 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
         // Sidebar submenu toggle
         $('.sidebar-menu .dropdown-toggle').on('click', function(e) {
             e.preventDefault();
-            
+
             // Toggle the collapse element
             const target = $(this).attr('href');
             $(target).collapse('toggle');
-            
+
             // Toggle the arrow icon
             $(this).find('.fa-angle-down, .fa-angle-up').toggleClass('fa-angle-down fa-angle-up');
         });
-        
+
         // Auto-expand active submenus on page load
         $('.sidebar-menu .collapse').each(function() {
             if ($(this).find('li.active').length) {

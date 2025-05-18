@@ -1,19 +1,19 @@
 <!DOCTYPE html>
-<html lang="en" dir="ltr"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">    
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">    
+<html lang="en" dir="ltr"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Medic Hospital</title>
-    <link rel="icon" type="image/x-icon" href="{{ asset('public/logo.ico') }}">
+    <link rel="icon" type="image/x-icon" href="{{ asset('logo.ico') }}">
     @php
         use Illuminate\Support\Facades\Auth;
     @endphp
-  
+
         <meta name="description" content="Medic Hospital, a non-profit academic medical center, provides clinical and hospital care and is a leader in research, education and health information.">
         <meta property="og:title" content="Access Anytime Anywhere | Medic Hospital">
         <meta property="twitter:title" content="Access Anytime Anywhere | Medic Hospital">
         <meta property="og:description" content="Medic Hospital">
         <meta property="twitter:description" content="Medic Hospital">
-        <meta property="og:image" content="public/images/logo-ccf.png">
-        <meta property="twitter:image" content="public/images/logo-ccf.png">
+        <meta property="og:image" content="images/logo-ccf.png">
+        <meta property="twitter:image" content="images/logo-ccf.png">
         <meta property="twitter:card" content="summary">
         <link rel="canonical" href="{{ url('/users.dashboard') }}">
         <meta property="og:url" content="{{ url('/users.dashboard') }}">
@@ -21,8 +21,8 @@
         <meta property="og:site_name" content="Medic Hospital">
         <meta property="twitter:site" content="@MedicHospital">
         <meta property="twitter:creator" content="@MedicHospital">
-    
-               
+
+
         <link rel="alternate" href="{{ url('/users.dashboard') }}" hreflang="x-default">
 
 <!-- Add Google Fonts -->
@@ -33,7 +33,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
 <!-- Custom CSS -->
-<link rel="stylesheet" href="{{ asset('public/css/layout.css') }}">
+<link rel="stylesheet" href="{{ asset('css/layout.css') }}">
 
 <style>
     .avatar-circle {
@@ -64,7 +64,7 @@
 <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
 <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 
-    
+
 <!-- header start -->
 
 <header id="site-header" class="header js-site-header site-header__has-banner">
@@ -77,7 +77,7 @@
                         <i class="fas fa-exclamation-circle text-warning"></i>
                     </a>
                 </li>
-                
+
                 <li class="nav-item">
                     <a class="nav-link text-dark" href="tel:037.864.9957">
                         <i class="fas fa-phone-alt me-1"></i> Hotline: 037.864.9957
@@ -124,11 +124,11 @@
     </nav>
 
     <div class="d-flex align-items-center px-4 py-2 bg-light shadow-sm">
-    
+
         <!-- Logo -->
         <span class="header__logo">
             <a href="{{ url('/users.dashboard') }}">
-                <img src="{{ asset('public/images/logo-ccf.png') }}" alt="Medic Hospital logo">
+                <img src="{{ asset('images/logo-ccf.png') }}" alt="Medic Hospital logo">
             </a>
         </span>
 
@@ -158,11 +158,11 @@
 
     </div>
 
-        
+
 </header>
 
 <!-- header end -->
-             
+
 @yield('content')
 
 
@@ -194,7 +194,7 @@
             <a href="https://www.pinterest.com/MedicHospital/" disablewebedit="True" class="footer-social__link" target="_blank">            <i class="icon-social-pinterest" role="img" aria-label="Pinterest Icon"></i> <span class="element-invisible">Pinterest</span>
             </a>
             <a href="https://www.snapchat.com/add/MedicHospital" disablewebedit="True" class="footer-social__link" target="_blank">            <i class="icon-social-snapchat" role="img" aria-label="Snapchat Icon"></i> <span class="element-invisible">Snapchat</span>
-            </a>    
+            </a>
         </div>
 </section>
 <footer class="footer bg-dark text-light pt-5 pb-3">
@@ -317,14 +317,14 @@
         let countdownTimer = null;
         let timeoutModal = null;
         let secondsRemaining = 60; // Countdown time in seconds
-        
+
         // Session timeout in milliseconds
-        const sessionTimeout = 1 * 60 * 1000; // 15 minutes
+        const sessionTimeout = 15 * 60 * 1000; // 15 minutes
         const warningTime = 60 * 1000; // Show warning 1 minute before timeout
-        
+
         // Initialize the modal
         timeoutModal = new bootstrap.Modal(document.getElementById('sessionTimeoutModal'));
-        
+
         // Update last activity time on user interaction
         function updateActivity() {
             // Only update if user wasn't already idle
@@ -332,28 +332,28 @@
                 lastActivity = new Date();
             }
         }
-        
+
         // Start countdown timer
         function startCountdown() {
             secondsRemaining = 60;
             updateCountdown();
-            
+
             countdownTimer = setInterval(function() {
                 secondsRemaining--;
                 updateCountdown();
-                
+
                 if (secondsRemaining <= 0) {
                     clearInterval(countdownTimer);
                     performLogout();
                 }
             }, 1000);
         }
-        
+
         // Update countdown display
         function updateCountdown() {
             document.getElementById('sessionCountdown').textContent = secondsRemaining;
         }
-        
+
         // Reset the session timeout
         function resetSession() {
             isIdle = false;
@@ -366,24 +366,24 @@
                 timeoutModal.hide();
             }
         }
-        
+
         // Perform logout
         function performLogout() {
             window.location.href = "{{ route('home.logout') }}";
         }
-        
+
         // Check if session might be expired
         function checkSession() {
             const now = new Date();
             const timeSinceLastActivity = now - lastActivity;
-            
+
             // If we're about to timeout (less than warning time left)
             if (timeSinceLastActivity > (sessionTimeout - warningTime) && !isIdle) {
                 isIdle = true;
                 timeoutModal.show();
                 startCountdown();
             }
-            
+
             // Keep the session alive if user is active and not in countdown mode
             if (timeSinceLastActivity < (sessionTimeout / 2) && !isIdle) {
                 // Send heartbeat to keep session alive
@@ -396,29 +396,29 @@
                 }).catch(error => console.error('Session heartbeat error:', error));
             }
         }
-        
+
         // Set up event listeners for user activity
         ['mousemove', 'mousedown', 'keypress', 'touchstart', 'scroll'].forEach(function(event) {
             document.addEventListener(event, updateActivity, true);
         });
-        
+
         // Set up button event listeners
         document.getElementById('stayLoggedInBtn').addEventListener('click', function() {
             resetSession();
         });
-        
+
         document.getElementById('logoutNowBtn').addEventListener('click', function() {
             performLogout();
         });
-        
+
         // Check session every minute
         setInterval(checkSession, 60000);
     });
 </script>
 @endif
-             
-        
 
-          
 
-    
+
+
+
+

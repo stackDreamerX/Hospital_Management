@@ -25,7 +25,7 @@
                         <div class="story-panel__card-content">
                             <a class="story-panel__image-link" href="{{ route('users.staff') }}">
                                 <div class="story-panel__image-overlay">
-                                    <img class="js-story-panel__image img-fluid" src="public/images/find-a-doctor-card-new.jpg" alt="Find a Doctor" style="height: 100%; object-fit: cover;">
+                                    <img class="js-story-panel__image img-fluid" src="images/find-a-doctor-card-new.jpg" alt="Find a Doctor" style="height: 100%; object-fit: cover;">
                                 </div>
                             </a>
                             <div class="p-4">
@@ -43,7 +43,7 @@
                         <div class="story-panel__card-content">
                             <a class="story-panel__image-link" href="{{ route('users.locations') }}">
                                 <div class="story-panel__image-overlay">
-                                    <img class="js-story-panel__image img-fluid" src="public/images/ChoRay-location.png" alt="Locations" style="height: 100%; object-fit: cover;">
+                                    <img class="js-story-panel__image img-fluid" src="images/ChoRay-location.png" alt="Locations" style="height: 100%; object-fit: cover;">
                                 </div>
                             </a>
                             <div class="p-4">
@@ -61,7 +61,7 @@
                         <div class="story-panel__card-content">
                             <a class="story-panel__image-link" href="{{ route('users.appointments') }}">
                                 <div class="story-panel__image-overlay">
-                                    <img class="js-story-panel__image img-fluid" src="public/images/appointments-card.jpg" alt="Appointments" style="height: 100%; object-fit: cover;">
+                                    <img class="js-story-panel__image img-fluid" src="images/appointments-card.jpg" alt="Appointments" style="height: 100%; object-fit: cover;">
                                 </div>
                             </a>
                             <div class="p-4">
@@ -118,7 +118,7 @@
         </div>
     </section>
 
-    
+
 
     <section class="py-5">
         <div class="container">
@@ -127,7 +127,7 @@
                 <div class="col-md-6 col-lg-3">
                     <div class="card h-100">
                         <div class="card-body text-center">
-                            <img src="public/images/patient-centered-care.svg" alt="patient centered care icon" class="mb-4" style="width: 80px;">
+                            <img src="images/patient-centered-care.svg" alt="patient centered care icon" class="mb-4" style="width: 80px;">
                             <h3 class="h4 mb-3">Patient-centered care</h3>
                             <p>We don't just care for your health conditions. We care about you. That means our providers take the time to listen to what's important to you.</p>
                         </div>
@@ -136,7 +136,7 @@
                 <div class="col-md-6 col-lg-3">
                     <div class="card h-100">
                         <div class="card-body text-center">
-                            <img src="public/images/national-recognition.svg" alt="national recognition icon" class="mb-4" style="width: 80px;">
+                            <img src="images/national-recognition.svg" alt="national recognition icon" class="mb-4" style="width: 80px;">
                             <h3 class="h4 mb-3">National recognition</h3>
                             <p>Medic Hospital is recognized in the country and throughout the world for its expertise and exceptional quality of care.</p>
                         </div>
@@ -145,7 +145,7 @@
                 <div class="col-md-6 col-lg-3">
                     <div class="card h-100">
                         <div class="card-body text-center">
-                            <img src="public/images/skilled-collaborative-providers.svg" alt="skilled and collaborative providers icon" class="mb-4" style="width: 80px;">
+                            <img src="images/skilled-collaborative-providers.svg" alt="skilled and collaborative providers icon" class="mb-4" style="width: 80px;">
                             <h3 class="h4 mb-3">Collaborative providers</h3>
                             <p>You'll get care from board-certified and fellowship trained experts who work together to create a treatment plan just for you.</p>
                         </div>
@@ -154,7 +154,7 @@
                 <div class="col-md-6 col-lg-3">
                     <div class="card h-100">
                         <div class="card-body text-center">
-                            <img src="public/images/innovation-research.svg" alt="Innovation and Research Icon" class="mb-4" style="width: 80px;">
+                            <img src="images/innovation-research.svg" alt="Innovation and Research Icon" class="mb-4" style="width: 80px;">
                             <h3 class="h4 mb-3">Innovation and research</h3>
                             <p>We're focused on today — and tomorrow. Our focus on research and offering the latest options means access to cutting-edge treatments.</p>
                         </div>
@@ -170,7 +170,7 @@
             <div class="row g-4">
                 <div class="col-md-6 col-lg-4">
                     <div class="location-card card h-100">
-                        <img class="card-img-top" src="public/images/cleveland-clinic-main-2.jpg" alt="Medic Hospital Main">
+                        <img class="card-img-top" src="images/cleveland-clinic-main-2.jpg" alt="Medic Hospital Main">
                         <div class="card-body">
                             <h3 class="card-title h5">Medic Hospital Main</h3>
                             <a href="{{ route('users.locations') }}" class="btn btn-primary mt-3">View Location</a>
@@ -179,7 +179,7 @@
                 </div>
                 <div class="col-md-6 col-lg-4">
                     <div class="location-card card h-100">
-                        <img class="card-img-top" src="public/images/cleveland-clinic-florida-2.jpg" alt="Medic Hospital North">
+                        <img class="card-img-top" src="images/cleveland-clinic-florida-2.jpg" alt="Medic Hospital North">
                         <div class="card-body">
                             <h3 class="card-title h5">Medic Hospital North</h3>
                             <a href="{{ route('users.locations') }}" class="btn btn-primary mt-3">View Location</a>
@@ -188,7 +188,7 @@
                 </div>
                 <div class="col-md-6 col-lg-4">
                     <div class="location-card card h-100">
-                        <img class="card-img-top" src="public/images/cleveland-clinic-abu-dhabi-2.jpg" alt="Medic Hospital East">
+                        <img class="card-img-top" src="images/cleveland-clinic-abu-dhabi-2.jpg" alt="Medic Hospital East">
                         <div class="card-body">
                             <h3 class="card-title h5">Medic Hospital East</h3>
                             <a href="{{ route('users.locations') }}" class="btn btn-primary mt-3">View Location</a>

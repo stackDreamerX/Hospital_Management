@@ -28,21 +28,21 @@
                     <form action="{{ route('feedback.update', $feedback->id) }}" method="POST">
                         @csrf
                         @method('PUT')
-                        
+
                         <div class="form-group">
                             <label for="subject" class="font-weight-bold">Subject <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control @error('subject') is-invalid @enderror" 
+                            <input type="text" class="form-control @error('subject') is-invalid @enderror"
                                 id="subject" name="subject" value="{{ old('subject', $feedback->subject) }}" required>
                             @error('subject')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
-                        
+
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="category" class="font-weight-bold">Category</label>
-                                    <select class="form-control @error('category') is-invalid @enderror" 
+                                    <select class="form-control @error('category') is-invalid @enderror"
                                         id="category" name="category">
                                         <option value="" {{ $feedback->category == '' ? 'selected' : '' }}>Select a category</option>
                                         <option value="doctor" {{ $feedback->category == 'doctor' ? 'selected' : '' }}>Doctor</option>
@@ -56,11 +56,11 @@
                                     @enderror
                                 </div>
                             </div>
-                            
+
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="rating" class="font-weight-bold">Rating <span class="text-danger">*</span></label>
-                                    <select class="form-control @error('rating') is-invalid @enderror" 
+                                    <select class="form-control @error('rating') is-invalid @enderror"
                                         id="rating" name="rating" required>
                                         @for ($i = 5; $i >= 1; $i--)
                                             <option value="{{ $i }}" {{ $feedback->rating == $i ? 'selected' : '' }}>
@@ -74,23 +74,23 @@
                                 </div>
                             </div>
                         </div>
-                        
+
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="department" class="font-weight-bold">Department</label>
-                                    <input type="text" class="form-control @error('department') is-invalid @enderror" 
+                                    <input type="text" class="form-control @error('department') is-invalid @enderror"
                                         id="department" name="department" value="{{ old('department', $feedback->department) }}">
                                     @error('department')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
                                 </div>
                             </div>
-                            
+
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="doctor_name" class="font-weight-bold">Doctor Name</label>
-                                    <input type="text" class="form-control @error('doctor_name') is-invalid @enderror" 
+                                    <input type="text" class="form-control @error('doctor_name') is-invalid @enderror"
                                         id="doctor_name" name="doctor_name" value="{{ old('doctor_name', $feedback->doctor_name) }}">
                                     @error('doctor_name')
                                         <div class="invalid-feedback">{{ $message }}</div>
@@ -98,19 +98,19 @@
                                 </div>
                             </div>
                         </div>
-                        
+
                         <div class="form-group">
                             <label for="message" class="font-weight-bold">Message <span class="text-danger">*</span></label>
-                            <textarea class="form-control @error('message') is-invalid @enderror" 
+                            <textarea class="form-control @error('message') is-invalid @enderror"
                                 id="message" name="message" rows="5" required>{{ old('message', $feedback->message) }}</textarea>
                             @error('message')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
-                        
+
                         <div class="form-group">
                             <label for="status" class="font-weight-bold">Status <span class="text-danger">*</span></label>
-                            <select class="form-control @error('status') is-invalid @enderror" 
+                            <select class="form-control @error('status') is-invalid @enderror"
                                 id="status" name="status" required>
                                 <option value="pending" {{ $feedback->status == 'pending' ? 'selected' : '' }}>Pending Review</option>
                                 <option value="approved" {{ $feedback->status == 'approved' ? 'selected' : '' }}>Approved</option>
@@ -120,10 +120,10 @@
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
-                        
+
                         <div class="form-group">
                             <label for="admin_notes" class="font-weight-bold">Admin Notes</label>
-                            <textarea class="form-control @error('admin_notes') is-invalid @enderror" 
+                            <textarea class="form-control @error('admin_notes') is-invalid @enderror"
                                 id="admin_notes" name="admin_notes" rows="3">{{ old('admin_notes', $feedback->admin_notes) }}</textarea>
                             @error('admin_notes')
                                 <div class="invalid-feedback">{{ $message }}</div>
@@ -132,10 +132,10 @@
                                 Optional notes for administrative purposes. These are not visible to the patient.
                             </small>
                         </div>
-                        
+
                         <div class="form-group">
                             <div class="custom-control custom-switch">
-                                <input type="checkbox" class="custom-control-input" id="is_highlighted" 
+                                <input type="checkbox" class="custom-control-input" id="is_highlighted"
                                     name="is_highlighted" value="1" {{ old('is_highlighted', $feedback->is_highlighted) ? 'checked' : '' }}>
                                 <label class="custom-control-label" for="is_highlighted">Highlight this feedback on public page</label>
                             </div>
@@ -143,10 +143,10 @@
                                 Highlighted feedback will be displayed prominently in the featured section.
                             </small>
                         </div>
-                        
+
                         <div class="form-group">
                             <div class="custom-control custom-switch">
-                                <input type="checkbox" class="custom-control-input" id="is_anonymous" 
+                                <input type="checkbox" class="custom-control-input" id="is_anonymous"
                                     name="is_anonymous" value="1" {{ old('is_anonymous', $feedback->is_anonymous) ? 'checked' : '' }}>
                                 <label class="custom-control-label" for="is_anonymous">Anonymous feedback</label>
                             </div>
@@ -154,7 +154,7 @@
                                 If checked, the patient's name will not be displayed publicly.
                             </small>
                         </div>
-                        
+
                         <div class="form-group mb-0">
                             <button type="submit" class="btn btn-primary">
                                 <i class="fas fa-save mr-1"></i> Save Changes
@@ -167,7 +167,7 @@
                 </div>
             </div>
         </div>
-        
+
         <div class="col-lg-4">
             <!-- Patient Information Card -->
             <div class="card shadow mb-4">
@@ -185,14 +185,14 @@
                         </div>
                     @else
                         <div class="text-center mb-3">
-                            <img class="img-profile rounded-circle" src="{{ asset('public/avatar.jpg') }}" width="80">
+                            <img class="img-profile rounded-circle" src="{{ asset('avatar.jpg') }}" width="80">
                             <h5 class="mt-3">{{ $feedback->user->FullName }}</h5>
                             <p class="text-muted mb-2">Patient ID: {{ $feedback->user->UserID }}</p>
                         </div>
                     @endif
                 </div>
             </div>
-            
+
             <!-- Submission Info Card -->
             <div class="card shadow mb-4">
                 <div class="card-header py-3">
@@ -231,7 +231,7 @@
                     </ul>
                 </div>
             </div>
-            
+
             <!-- Help Card -->
             <div class="card bg-light mb-4">
                 <div class="card-body">
@@ -247,4 +247,4 @@
         </div>
     </div>
 </div>
-@endsection 
+@endsection

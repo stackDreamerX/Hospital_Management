@@ -33,8 +33,8 @@
                                 <!-- Add more locations -->
                             </select>
                         </div>
-                        
-                  
+
+
                         <div class="col-12 text-center">
                             <button type="submit" class="btn btn-primary px-4 py-2">Search Doctors</button>
                         </div>
@@ -53,7 +53,7 @@
                     </div>
                 </div>
             @endif
-            
+
             <!-- Doctor Cards -->
             <div class="row mt-4">
                 @foreach($doctors as $doctor)
@@ -62,7 +62,7 @@
                     <div class="card doctor-card h-100">
                         <div class="card-body">
                             <div class="d-flex align-items-center mb-3">
-                                <img src="{{ asset('public/images/doctor-placeholder.jpg') }}" alt="{{ $doctor->user->FullName }}" class="doctor-img me-3">
+                                <img src="{{ asset('images/doctor-placeholder.jpg') }}" alt="{{ $doctor->user->FullName }}" class="doctor-img me-3">
                                 <div class="card-content">
                                     <h5 class="card-title mb-0">{{ $doctor->Title }} {{ $doctor->user->FullName }}</h5>
                                     <span class="doctor-specialty">{{ $doctor->Speciality }}</span>

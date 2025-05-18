@@ -11,7 +11,7 @@
         <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="100">
             <div class="card h-100 location-card">
                 <div class="location-badge">Main Center</div>
-                <img src="{{ asset('public/images/ThongNhat-location.png') }}" class="card-img-top" alt="Thong Nhat Location">
+                <img src="{{ asset('images/ThongNhat-location.png') }}" class="card-img-top" alt="Thong Nhat Location">
                 <div class="card-body">
                     <div class="card-content">
                         <h5 class="card-title">Medic Hospital Thong Nhat</h5>
@@ -37,7 +37,7 @@
         <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="200">
             <div class="card h-100 location-card">
                 <div class="location-badge">Specialized Care</div>
-                <img src="{{ asset('public/images/ChoRay-location.png') }}" class="card-img-top" alt="Cho Ray Location">
+                <img src="{{ asset('images/ChoRay-location.png') }}" class="card-img-top" alt="Cho Ray Location">
                 <div class="card-body">
                     <div class="card-content">
                         <h5 class="card-title">Medic Hospital Cho Ray</h5>
@@ -63,7 +63,7 @@
         <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="300">
             <div class="card h-100 location-card">
                 <div class="location-badge">Community Center</div>
-                <img src="{{ asset('public/images/DaKhoa-location.jpg') }}" class="card-img-top" alt="Da Khoa Thu Duc Location">
+                <img src="{{ asset('images/DaKhoa-location.jpg') }}" class="card-img-top" alt="Da Khoa Thu Duc Location">
                 <div class="card-body">
                     <div class="card-content">
                         <h5 class="card-title">Medic Hospital Da Khoa</h5>

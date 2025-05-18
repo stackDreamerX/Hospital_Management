@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <title>Doctor Dashboard</title>
-<link rel="icon" type="image/x-icon" href="{{ asset('public/logo.ico') }}">
+<link rel="icon" type="image/x-icon" href="{{ asset('logo.ico') }}">
 
 
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -14,8 +14,10 @@
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 <!-- Font Awesome 6 -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<!-- Toastr CSS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
 <!-- Custom CSS -->
-<link rel="stylesheet" href="{{ asset('public/css/doctor_layout.css') }}">
+<link rel="stylesheet" href="{{ asset('css/doctor_layout.css') }}">
 
 @stack('styles')
 </head>
@@ -26,7 +28,7 @@
     <!--logo start-->
     <div class="brand">
         <a href="{{ route('users.dashboard') }}" class="logo">
-            <img src="{{ asset('public/logo.ico') }}" alt="Logo" height="40">
+            <img src="{{ asset('logo.ico') }}" alt="Logo" height="40">
             <span>Doctor Portal</span>
         </a>
         <div class="sidebar-toggle-box" id="sidebarToggle">
@@ -44,7 +46,7 @@
             <!-- user login dropdown start-->
             <li class="dropdown">
                 <a data-bs-toggle="dropdown" class="dropdown-toggle" href="#">
-                    <img alt="" src="{{ asset('public/avatar.jpg') }}">
+                    <img alt="" src="{{ asset('avatar.jpg') }}">
                     <span class="username">{{ auth()->user()->FullName ?? 'Doctor' }}</span>
                     <b class="caret"></b>
                 </a>
@@ -102,6 +104,12 @@
                         @endif
                     </a>
                 </li>
+                <li class="{{ Request::is('doctor/schedule*') ? 'active' : '' }}">
+                    <a href="{{ route('doctor.schedule.index') }}">
+                        <i class="fas fa-clock"></i>
+                        <span>My Schedule</span>
+                    </a>
+                </li>
                 <li class="{{ Request::is('doctor/pharmacy*') ? 'active' : '' }}">
                     <a href="{{ route('doctor.pharmacy') }}">
                         <i class="fas fa-pills"></i>
@@ -155,8 +163,10 @@
 </div>
 
 <!-- Scripts -->
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 
 <!-- Sidebar Toggle Script -->
 <script>
@@ -164,7 +174,7 @@
         // Mobile sidebar toggle
         const sidebarToggle = document.getElementById('sidebarToggle');
         const sidebar = document.getElementById('sidebar');
-        
+
         if (sidebarToggle) {
             sidebarToggle.addEventListener('click', function() {
                 sidebar.classList.toggle('show');
@@ -217,11 +227,11 @@
     let countdownTimer = null;
     let timeoutModal = null;
     let secondsRemaining = 60; // Countdown time in seconds
-    
+
     // Session timeout in milliseconds (convert minutes to milliseconds)
-    const sessionTimeout = 15 * 60 * 1000; // 15 minutes 
+    const sessionTimeout = 15 * 60 * 1000; // 15 minutes
     const warningTime = 60 * 1000; // Show warning 1 minute before timeout
-    
+
     // Update last activity time on user interaction
     function updateActivity() {
         // Only update if user wasn't already idle
@@ -229,33 +239,33 @@
             lastActivity = new Date();
         }
     }
-    
+
     // Initialize the modal when DOM is fully loaded
     document.addEventListener('DOMContentLoaded', function() {
         timeoutModal = new bootstrap.Modal(document.getElementById('sessionTimeoutModal'));
     });
-    
+
     // Start countdown timer
     function startCountdown() {
         secondsRemaining = 60;
         updateCountdown();
-        
+
         countdownTimer = setInterval(function() {
             secondsRemaining--;
             updateCountdown();
-            
+
             if (secondsRemaining <= 0) {
                 clearInterval(countdownTimer);
                 performLogout();
             }
         }, 1000);
     }
-    
+
     // Update countdown display
     function updateCountdown() {
         document.getElementById('sessionCountdown').textContent = secondsRemaining;
     }
-    
+
     // Reset the session timeout
     function resetSession() {
         isIdle = false;
@@ -268,24 +278,24 @@
             timeoutModal.hide();
         }
     }
-    
+
     // Perform logout
     function performLogout() {
         window.location.href = "{{ route('doctor.logout') }}";
     }
-    
+
     // Check if session might be expired
     function checkSession() {
         const now = new Date();
         const timeSinceLastActivity = now - lastActivity;
-        
+
         // If we're about to timeout (less than warning time left)
         if (timeSinceLastActivity > (sessionTimeout - warningTime) && !isIdle) {
             isIdle = true;
             timeoutModal.show();
             startCountdown();
         }
-        
+
         // Keep the session alive if user is active and not in countdown mode
         if (timeSinceLastActivity < (sessionTimeout / 2) && !isIdle) {
             // Send heartbeat to keep session alive
@@ -298,23 +308,23 @@
             }).catch(error => console.error('Session heartbeat error:', error));
         }
     }
-    
+
     // Set up event listeners for user activity
     ['mousemove', 'mousedown', 'keypress', 'touchstart', 'scroll'].forEach(event => {
         document.addEventListener(event, updateActivity, true);
     });
-    
+
     // Set up button event listeners when DOM is loaded
     document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('stayLoggedInBtn').addEventListener('click', function() {
             resetSession();
         });
-        
+
         document.getElementById('logoutNowBtn').addEventListener('click', function() {
             performLogout();
         });
     });
-    
+
     // Check session every minute
     setInterval(checkSession, 60000);
 </script>

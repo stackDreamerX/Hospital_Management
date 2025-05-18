@@ -7,11 +7,11 @@
             <div class="card shadow register-card" data-aos="fade-up">
                 <!-- Card Header -->
                 <div class="card-header register-header">
-                    <img src="{{ asset('public/images/logo-ccf.png') }}" alt="Medic Hospital Logo" class="register-logo">
+                    <img src="{{ asset('images/logo-ccf.png') }}" alt="Medic Hospital Logo" class="register-logo">
                     <h2>Create Your Account</h2>
                     <p class="mb-0">Fill in the details to get started</p>
                 </div>
-                
+
                 <!-- Card Body -->
                 <div class="card-body p-4">
                     <!-- Display errors -->
@@ -24,13 +24,13 @@
                             </ul>
                         </div>
                     @endif
-                    
+
                     @if (session('success'))
                         <div class="alert alert-success">
                             <i class="fas fa-check-circle me-2"></i> {{ session('success') }}
                         </div>
                     @endif
-                    
+
                     <!-- Form -->
                     <form action="{{ url('/sign-up') }}" method="POST">
                         @csrf
@@ -41,7 +41,7 @@
                                 <i class="input-icon fas fa-user-tag"></i>
                                 <select name="RoleID" id="RoleID" class="form-select input-with-icon" required>
                                     <option value="" disabled selected>Select Role</option>
-                                    <option value="patient">Patient</option>                                      
+                                    <option value="patient">Patient</option>
                                 </select>
                             </div>
                         </div>
@@ -137,12 +137,12 @@
         transition: all 0.3s ease;
         margin-bottom: 2rem;
     }
-    
+
     .register-card:hover {
         transform: translateY(-5px);
         box-shadow: var(--shadow-lg);
     }
-    
+
     .register-header {
         background: var(--gradient-primary);
         color: white;
@@ -150,28 +150,28 @@
         padding: 2rem;
         border: none;
     }
-    
+
     .register-header h2 {
         font-weight: 600;
         margin-bottom: 0.5rem;
     }
-    
+
     .register-logo {
         max-width: 80px;
         margin-bottom: 1rem;
         animation: pulse 2s infinite;
     }
-    
+
     @keyframes pulse {
         0% { transform: scale(1); }
         50% { transform: scale(1.05); }
         100% { transform: scale(1); }
     }
-    
+
     .input-icon-group {
         position: relative;
     }
-    
+
     .input-icon {
         position: absolute;
         top: 50%;
@@ -181,29 +181,29 @@
         font-size: 18px;
         z-index: 10;
     }
-    
+
     .input-with-icon {
         padding-left: 45px;
     }
-    
+
     .form-label {
         font-weight: 500;
         color: var(--text-color);
         margin-bottom: 0.5rem;
     }
-    
+
     .form-control, .form-select {
         height: 48px;
         border-radius: calc(var(--border-radius) / 2);
         border: 2px solid #e0e6ed;
         transition: all 0.3s ease;
     }
-    
+
     .form-control:focus, .form-select:focus {
         border-color: var(--primary-color);
         box-shadow: 0 0 0 0.25rem rgba(0, 146, 216, 0.25);
     }
-    
+
     .btn-register-submit {
         height: 48px;
         background: var(--gradient-primary);
@@ -214,12 +214,12 @@
         margin-top: 1rem;
         transition: all 0.3s ease;
     }
-    
+
     .btn-register-submit:hover {
         transform: translateY(-3px);
         box-shadow: var(--shadow-md);
     }
-    
+
     .btn-sign-in {
         background-color: white;
         color: var(--primary-color);
@@ -231,19 +231,19 @@
         display: inline-block;
         margin-left: 0.5rem;
     }
-    
+
     .btn-sign-in:hover {
         background-color: var(--primary-color);
         color: white;
         text-decoration: none;
     }
-    
+
     .toggle-password {
         cursor: pointer;
         border-left: none;
         background-color: white;
     }
-    
+
     .input-group .form-control {
         border-right: none;
     }

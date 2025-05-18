@@ -32,7 +32,7 @@
                         @elseif($feedback->status == 'rejected')
                             <span class="badge badge-danger px-3 py-2">Rejected</span>
                         @endif
-                        
+
                         @if($feedback->is_highlighted)
                             <span class="badge badge-info px-3 py-2 ml-1">
                                 <i class="fas fa-star mr-1"></i> Highlighted
@@ -65,14 +65,14 @@
                             </div>
                             @endif
                         </div>
-                        
+
                         <div class="card bg-light">
                             <div class="card-body">
                                 <p class="card-text">{{ $feedback->message }}</p>
                             </div>
                         </div>
                     </div>
-                    
+
                     <!-- Quick Status Actions -->
                     @if($feedback->status == 'pending')
                     <div class="d-flex mb-4">
@@ -87,7 +87,7 @@
                         </button>
                     </div>
                     @endif
-                    
+
                     <!-- Admin Notes -->
                     <div class="card border-left-info mb-4">
                         <div class="card-body">
@@ -101,7 +101,7 @@
                             @endif
                         </div>
                     </div>
-                    
+
                     <!-- Feedback Attributes -->
                     <h6 class="font-weight-bold mb-3">Feedback Details</h6>
                     <div class="table-responsive mb-4">
@@ -138,7 +138,7 @@
                             </tbody>
                         </table>
                     </div>
-                    
+
                     <!-- Danger Zone -->
                     <div class="card bg-light border-danger mb-2">
                         <div class="card-body">
@@ -155,7 +155,7 @@
                 </div>
             </div>
         </div>
-        
+
         <div class="col-lg-4">
             <!-- Patient Information Card -->
             <div class="card shadow mb-4">
@@ -173,11 +173,11 @@
                         </div>
                     @else
                         <div class="text-center mb-3">
-                            <img class="img-profile rounded-circle" src="{{ asset('public/avatar.jpg') }}" width="80">
+                            <img class="img-profile rounded-circle" src="{{ asset('avatar.jpg') }}" width="80">
                             <h5 class="mt-3">{{ $feedback->user->FullName }}</h5>
                             <p class="text-muted mb-2">Patient ID: {{ $feedback->user->UserID }}</p>
                         </div>
-                        
+
                         <div class="list-group list-group-flush">
                             <div class="list-group-item px-0">
                                 <div class="text-muted small">Email</div>
@@ -192,7 +192,7 @@
                                 <div>{{ $feedback->user->created_at ? $feedback->user->created_at->format('M d, Y') : 'N/A' }}</div>
                             </div>
                         </div>
-                        
+
                         <div class="mt-3">
                             <a href="#" class="btn btn-sm btn-outline-primary btn-block">
                                 <i class="fas fa-address-card mr-1"></i> View Patient Profile
@@ -201,7 +201,7 @@
                     @endif
                 </div>
             </div>
-            
+
             <!-- Other Feedback Card -->
             <div class="card shadow mb-4">
                 <div class="card-header py-3">
@@ -217,7 +217,7 @@
                             ->take(5)
                             ->get();
                     @endphp
-                    
+
                     @if(count($otherFeedback) > 0)
                         @foreach($otherFeedback as $other)
                         <a href="{{ route('feedback.show', $other->id) }}" class="list-group-item list-group-item-action">
@@ -328,7 +328,7 @@
                 <input type="hidden" name="rating" value="{{ $feedback->rating }}">
                 <input type="hidden" name="status" value="{{ $feedback->status }}">
                 <input type="hidden" name="is_highlighted" value="{{ $feedback->is_highlighted ? '0' : '1' }}">
-                
+
                 <div class="modal-header">
                     <h5 class="modal-title">{{ $feedback->is_highlighted ? 'Remove Highlight' : 'Highlight Feedback' }}</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -340,7 +340,7 @@
                         <p>Are you sure you want to remove this feedback from highlighted section?</p>
                     @else
                         <p>Are you sure you want to highlight this feedback? It will appear in the featured section of the public feedback page.</p>
-                        
+
                         @if($feedback->status != 'approved')
                         <div class="alert alert-warning">
                             <i class="fas fa-exclamation-triangle mr-1"></i> This feedback is not currently approved. Highlighting it will automatically approve it as well.
@@ -348,7 +348,7 @@
                         </div>
                         @endif
                     @endif
-                    
+
                     <div class="form-group">
                         <label for="admin_notes">Admin Notes (Optional)</label>
                         <textarea class="form-control" name="admin_notes" rows="3">{{ $feedback->admin_notes }}</textarea>
@@ -364,7 +364,7 @@
         </div>
     </div>
 </div>
-@endsection 
+@endsection
 
 @section('scripts')
 <!-- SweetAlert2 for better notifications -->
@@ -374,10 +374,10 @@
     document.addEventListener('DOMContentLoaded', function() {
         const deleteForm = document.getElementById('deleteFeedbackForm');
         const deleteButton = document.getElementById('deleteFeedbackBtn');
-        
+
         deleteButton.addEventListener('click', function(e) {
             e.preventDefault();
-            
+
             Swal.fire({
                 title: 'Are you sure?',
                 text: "You are about to delete this feedback. This action cannot be undone!",
@@ -398,7 +398,7 @@
                             Swal.showLoading();
                         }
                     });
-                    
+
                     // Submit the form
                     deleteForm.submit();
                 }
@@ -406,4 +406,4 @@
         });
     });
 </script>
-@endsection 
+@endsection

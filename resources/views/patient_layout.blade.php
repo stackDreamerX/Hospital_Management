@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <title>Patient Dashboard</title>
-<link rel="icon" type="image/x-icon" href="{{ asset('public/logo.ico') }}">
+<link rel="icon" type="image/x-icon" href="{{ asset('logo.ico') }}">
 
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
@@ -18,7 +18,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
 <!-- Custom CSS -->
-<link rel="stylesheet" href="{{ asset('public/css/patient_layout.css') }}">
+<link rel="stylesheet" href="{{ asset('css/patient_layout.css') }}">
 
 
 
@@ -31,7 +31,7 @@
     <!--logo start-->
     <div class="brand">
         <a href="{{ route('users.dashboard') }}" class="logo">
-            <img src="{{ asset('public/logo.ico') }}" alt="Logo" height="40">
+            <img src="{{ asset('logo.ico') }}" alt="Logo" height="40">
             <span>Patient Portal</span>
         </a>
         <div class="sidebar-toggle-box" id="sidebarToggle">
@@ -49,7 +49,7 @@
             <!-- user login dropdown start-->
             <li class="dropdown">
                 <a data-bs-toggle="dropdown" class="dropdown-toggle" href="#">
-                    <img alt="" src="{{ asset('public/avatar.jpg') }}">
+                    <img alt="" src="{{ asset('avatar.jpg') }}">
                     <span class="username">{{ auth()->user()->FullName ?? 'Patient' }}</span>
                     <b class="caret"></b>
                 </a>
@@ -165,7 +165,7 @@
     document.addEventListener('DOMContentLoaded', function() {
         const sidebarToggle = document.getElementById('sidebarToggle');
         const sidebar = document.getElementById('sidebar');
-        
+
         if (sidebarToggle) {
             sidebarToggle.addEventListener('click', function() {
                 sidebar.classList.toggle('show');
@@ -209,11 +209,11 @@
     let countdownTimer = null;
     let timeoutModal = null;
     let secondsRemaining = 60; // Countdown time in seconds
-    
+
     // Session timeout in milliseconds (convert minutes to milliseconds)
     const sessionTimeout = 15 * 60 * 1000; // 15 minutes
     const warningTime = 60 * 1000; // Show warning 1 minute before timeout
-    
+
     // Update last activity time on user interaction
     function updateActivity() {
         // Only update if user wasn't already idle
@@ -221,33 +221,33 @@
             lastActivity = new Date();
         }
     }
-    
+
     // Initialize the modal when DOM is fully loaded
     document.addEventListener('DOMContentLoaded', function() {
         timeoutModal = new bootstrap.Modal(document.getElementById('sessionTimeoutModal'));
     });
-    
+
     // Start countdown timer
     function startCountdown() {
         secondsRemaining = 60;
         updateCountdown();
-        
+
         countdownTimer = setInterval(function() {
             secondsRemaining--;
             updateCountdown();
-            
+
             if (secondsRemaining <= 0) {
                 clearInterval(countdownTimer);
                 performLogout();
             }
         }, 1000);
     }
-    
+
     // Update countdown display
     function updateCountdown() {
         document.getElementById('sessionCountdown').textContent = secondsRemaining;
     }
-    
+
     // Reset the session timeout
     function resetSession() {
         isIdle = false;
@@ -260,24 +260,24 @@
             timeoutModal.hide();
         }
     }
-    
+
     // Perform logout
     function performLogout() {
         window.location.href = "{{ route('patient.logout') }}";
     }
-    
+
     // Check if session might be expired
     function checkSession() {
         const now = new Date();
         const timeSinceLastActivity = now - lastActivity;
-        
+
         // If we're about to timeout (less than warning time left)
         if (timeSinceLastActivity > (sessionTimeout - warningTime) && !isIdle) {
             isIdle = true;
             timeoutModal.show();
             startCountdown();
         }
-        
+
         // Keep the session alive if user is active and not in countdown mode
         if (timeSinceLastActivity < (sessionTimeout / 2) && !isIdle) {
             // Send heartbeat to keep session alive
@@ -290,23 +290,23 @@
             }).catch(error => console.error('Session heartbeat error:', error));
         }
     }
-    
+
     // Set up event listeners for user activity
     ['mousemove', 'mousedown', 'keypress', 'touchstart', 'scroll'].forEach(event => {
         document.addEventListener(event, updateActivity, true);
     });
-    
+
     // Set up button event listeners when DOM is loaded
     document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('stayLoggedInBtn').addEventListener('click', function() {
             resetSession();
         });
-        
+
         document.getElementById('logoutNowBtn').addEventListener('click', function() {
             performLogout();
         });
     });
-    
+
     // Check session every minute
     setInterval(checkSession, 60000);
 </script>
