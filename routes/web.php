@@ -42,6 +42,10 @@ Route::get('/patients', [HomeController::class, 'patients'])->name('users.patien
 Route::get('/appointments', [HomeController::class, 'appointments'])->name('users.appointments');
 Route::get('/search-doctors', [HomeController::class, 'searchDoctors'])->name('search.doctors');
 Route::get('/doctor-profile/{id}', [HomeController::class, 'doctorProfile'])->name('doctor.public.profile');
+Route::get('/doctor/{id}/schedule', [App\Http\Controllers\BookingController::class, 'showDoctorSchedule'])->name('doctor.schedule');
+Route::get('/doctor/{id}/booking/{slot?}', [App\Http\Controllers\BookingController::class, 'showBookingForm'])->name('doctor.booking');
+Route::post('/booking/store', [App\Http\Controllers\BookingController::class, 'store'])->name('booking.store');
+Route::get('/booking/thank-you/{appointmentId}', [App\Http\Controllers\BookingController::class, 'thankYou'])->name('booking.thank-you');
 
 // Public doctor ratings
 Route::get('/doctors/{id}/ratings', [RatingController::class, 'doctorRatings'])->name('doctor.public.ratings');
@@ -85,11 +89,11 @@ Route::prefix('admin')->middleware('auth')->group(function () {
     Route::get('/treatment', [TreatmentController::class,'index'])->name('admin.treatment');
     Route::get('/treatments/{id}', [TreatmentController::class, 'show'])->name('admin.treatment.show');
     Route::delete('/treatments/{id}', [TreatmentController::class, 'destroy'])->name('admin.treatment.destroy');
-    
+
     //pharmacy
     Route::get('/pharmacy', [PharmacyController::class,'index'])->name('admin.pharmacy');
     Route::get('/pharmacy//{id}', [PharmacyController::class, 'show'])->name('admin.prescription.show');
-    
+
     //patient
     Route::get('/patient', [PatientController::class, 'index'])->name('admin.patient'); // Danh sách user
     Route::post('/patient/{id}', [PatientController::class, 'update'])->name('admin.patient.update'); // Cập nhật user
@@ -114,6 +118,11 @@ Route::prefix('doctor')->middleware('auth')->group(function () {
 
     Route::get('/appointments', [App\Http\Controllers\Doctor\AppointmentController::class, 'index']) ->name('doctor.appointments');
     Route::post('/appointments/{id}/updateStatus', [App\Http\Controllers\Doctor\AppointmentController::class, 'updateStatus'])->name('doctor.appointments.updateStatus');
+
+    // Doctor schedule management
+    Route::get('/schedule', [App\Http\Controllers\Doctor\ScheduleController::class, 'index'])->name('doctor.schedule.index');
+    Route::post('/schedule', [App\Http\Controllers\Doctor\ScheduleController::class, 'store'])->name('doctor.schedule.store');
+    Route::delete('/schedule/{id}', [App\Http\Controllers\Doctor\ScheduleController::class, 'destroy'])->name('doctor.schedule.destroy');
 
 
 
@@ -144,7 +153,7 @@ Route::prefix('doctor')->middleware('auth')->group(function () {
     Route::get('/profile', function() { return 1; })->name('doctor.profile');
     Route::get('/settings', function() { return 1; })->name('doctor.settings');
     Route::get('/logout', [HomeController::class, 'home_logout'])->name('doctor.logout');
-    
+
     // Doctor ratings view
     Route::get('/my-ratings', [App\Http\Controllers\Doctor\RatingViewController::class, 'index'])->name('doctor.my.ratings');
 });

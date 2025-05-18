@@ -35,6 +35,9 @@
 <!-- Custom CSS -->
 <link rel="stylesheet" href="{{ asset('css/layout.css') }}">
 
+<!-- Additional styles from child pages -->
+@yield('styles')
+
 <style>
     .avatar-circle {
         width: 32px;
@@ -64,6 +67,8 @@
 <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
 <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 
+<!-- jQuery (needed for Bootstrap's JavaScript plugins) -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 <!-- header start -->
 
@@ -416,6 +421,9 @@
     });
 </script>
 @endif
+
+<!-- Additional scripts from child pages -->
+@yield('scripts')
 
 
 

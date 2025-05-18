@@ -50,6 +50,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 <?php use Illuminate\Support\Facades\Session; ?>
 
 @stack('styles')
+@yield('styles')
 </head>
 
 

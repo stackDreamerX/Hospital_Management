@@ -129,71 +129,118 @@
                 </div>
                 <div class="card-body">
                     <div class="appointment-booking">
-                        <!-- Date Selection -->
+                        <!-- Date Selection Dropdown -->
                         <div class="date-selection mb-4">
-                            <h5 class="mb-3">Select Date</h5>
-                            <div class="d-flex flex-wrap date-picker">
-                                @foreach($dates as $date)
-                                    <div class="date-option me-2 mb-2 {{ $loop->first ? 'active' : '' }}" data-date="{{ $date['date'] }}">
-                                        <div class="date-info p-2">
-                                            <div class="day-name">{{ $date['day_name_short'] }}</div>
-                                            <div class="day-number">{{ $date['day'] }}</div>
-                                            <div class="month">{{ date('M', strtotime($date['date'])) }}</div>
-                                        </div>
-                                    </div>
-                                @endforeach
+                            <h5 class="mb-3">Chọn ngày khám:</h5>
+                            <div class="btn-group w-100">
+                                <button class="btn btn-primary dropdown-toggle w-100 text-start" type="button" data-bs-toggle="dropdown" aria-expanded="false" id="dateDropdownButton">
+                                    <i class="far fa-calendar-alt me-2"></i>
+                                    <span id="selected-date-text">Chọn ngày</span>
+                                </button>
+                                <ul class="dropdown-menu w-100" id="date-dropdown-menu">
+                                    @foreach($dates as $date)
+                                        @php
+                                            // Format the date as "Thứ X - DD/MM"
+                                            $dayNames = [
+                                                'Monday' => 'Thứ 2',
+                                                'Tuesday' => 'Thứ 3',
+                                                'Wednesday' => 'Thứ 4',
+                                                'Thursday' => 'Thứ 5',
+                                                'Friday' => 'Thứ 6',
+                                                'Saturday' => 'Thứ 7',
+                                                'Sunday' => 'Chủ nhật'
+                                            ];
+                                            $dayName = $dayNames[$date['day_name']] ?? $date['day_name'];
+                                            $formattedDate = $dayName . ' - ' . $date['day'] . '/' . $date['month'];
+                                        @endphp
+                                        <li>
+                                            <a class="dropdown-item date-option" href="#"
+                                               data-date="{{ $date['date'] }}"
+                                               data-formatted="{{ $formattedDate }}">
+                                                <i class="far fa-calendar-day me-2"></i> {{ $formattedDate }}
+                                            </a>
+                                        </li>
+                                    @endforeach
+                                </ul>
                             </div>
                         </div>
 
                         <!-- Time Slots -->
-                        <div class="time-selection">
-                            <h5 class="mb-3">Available Time Slots</h5>
+                        <div class="time-selection mb-4">
+                            <h5 class="mb-3">
+                                <i class="far fa-clock me-2"></i> LỊCH KHÁM
+                            </h5>
 
-                            @foreach($dates as $date)
-                                <div class="time-slots-container" id="slots-{{ $date['date'] }}" {{ !$loop->first ? 'style=display:none' : '' }}>
-                                    @if(isset($timeSlots[$date['date']]) && count($timeSlots[$date['date']]) > 0)
-                                        <div class="row">
-                                            @foreach($timeSlots[$date['date']] as $slot)
-                                                <div class="col-md-3 col-6 mb-3">
-                                                    <a
-                                                        href="{{ $slot->status === 'available' ? route('doctor.booking', ['id' => $doctor->DoctorID, 'slot' => $slot->id]) : '#' }}"
-                                                        class="time-slot {{ $slot->status !== 'available' ? 'disabled' : '' }}"
-                                                        data-slot-id="{{ $slot->id }}"
-                                                        data-slot-time="{{ $slot->time }}"
-                                                        data-slot-status="{{ $slot->status }}"
-                                                    >
-                                                        {{ date('h:i A', strtotime($slot->time)) }}
-                                                    </a>
-                                                </div>
-                                            @endforeach
-                                        </div>
-                                    @else
-                                        <div class="alert alert-info">
-                                            <i class="fas fa-info-circle me-2"></i> No available time slots for this date.
-                                        </div>
-                                    @endif
-                                </div>
-                            @endforeach
-
-                            @if(count($timeSlots) === 0)
+                            @if(!isset($hasSchedule) || $hasSchedule === false)
                                 <div class="alert alert-warning">
-                                    <i class="fas fa-exclamation-triangle me-2"></i> This doctor has not set up their schedule yet. Please try again later or contact the hospital for appointments.
+                                    <i class="fas fa-exclamation-triangle me-2"></i> Bác sĩ chưa thiết lập lịch khám. Vui lòng liên hệ trực tiếp với bệnh viện để đặt lịch.
+                                </div>
+                            @else
+
+
+                                @foreach($dates as $date)
+                                    <div class="time-slots-container" id="slots-{{ $date['date'] }}" style="display: none;">
+                                        <div class="time-slot-date-header mb-2">
+                                            <small class="text-muted">Slots for: {{ $date['date'] }} ({{ $date['day_name'] }})</small>
+                                        </div>
+
+                                        @if(isset($timeSlots[$date['date']]) && count($timeSlots[$date['date']]) > 0)
+                                            <div class="time-slots-wrapper">
+                                                <div class="row g-3 time-slots-grid">
+                                                    @foreach($timeSlots[$date['date']] as $slot)
+                                                        @php
+                                                            $isVirtual = is_string($slot->id) && (strpos($slot->id, 'schedule_') === 0 || strpos($slot->id, 'slot_') === 0);
+                                                            $bookingRoute = $isVirtual
+                                                                ? route('doctor.schedule', $doctor->DoctorID)
+                                                                : route('doctor.booking', ['id' => $doctor->DoctorID, 'slot' => $slot->id]);
+
+                                                            // Calculate end time (30 min after start)
+                                                            $startTime = \Carbon\Carbon::parse($slot->time);
+                                                            $endTime = $startTime->copy()->addMinutes(30);
+                                                        @endphp
+                                                        <div class="col-md-3 col-6">
+                                                            <a href="{{ $slot->status === 'available' ? $bookingRoute : '#' }}"
+                                                               class="time-slot-box {{ $slot->status !== 'available' ? 'disabled' : '' }}"
+                                                               data-slot-id="{{ $slot->id }}"
+                                                               data-slot-time="{{ $slot->time }}">
+                                                                {{ $startTime->format('H:i') }} - {{ $endTime->format('H:i') }}
+                                                            </a>
+                                                        </div>
+                                                    @endforeach
+                                                </div>
+                                            </div>
+
+                                            <div class="text-center mt-4">
+                                                <p class="text-muted">Chọn <i class="fas fa-hand-pointer"></i> và đặt (Phí đặt lịch 0đ)</p>
+                                            </div>
+                                        @else
+                                            <div class="alert alert-info">
+                                                <i class="fas fa-info-circle me-2"></i> Không có lịch khám cho ngày này.
+                                            </div>
+                                        @endif
+                                    </div>
+                                @endforeach
+
+                                <div id="no-slots" class="alert alert-warning d-none">
+                                    <i class="fas fa-exclamation-triangle me-2"></i> Hiện tại không có lịch khám nào. Vui lòng liên hệ trực tiếp với bệnh viện để đặt lịch.
                                 </div>
                             @endif
-
-                            <div id="no-slots" class="alert alert-warning {{ isset($timeSlots[$dates[0]['date']]) && count($timeSlots[$dates[0]['date']]) > 0 ? 'd-none' : '' }}">
-                                <i class="fas fa-exclamation-triangle me-2"></i> No time slots available for the selected date. Please select another date.
-                            </div>
                         </div>
 
-                        <div class="mt-4">
+                        <!-- Clinic information -->
+                        <div class="clinic-info mb-4">
+                            <h6 class="text-muted mb-3">ĐỊA CHỈ KHÁM</h6>
+                            <h5 class="text-info mb-2">Phòng Khám Đa Khoa MSC Clinic</h5>
+                            <p class="mb-3">{{ $doctor->WorkLocation ?? 'TT 20-21-22 Số 204 Nguyễn Tuân, phường Nhân Chính, quận Thanh Xuân, TP Hà Nội' }}</p>
+
                             <div class="d-flex justify-content-between mb-2">
-                                <span>Vietnamese Patients:</span>
-                                <span class="fw-bold">{{ number_format($doctor->pricing_vn ?? 300000) }} VND</span>
+                                <span class="text-muted">GIÁ KHÁM:</span>
+                                <span class="fw-bold">{{ number_format($doctor->pricing_vn ?? 500000) }}đ <a href="#" class="text-info small">Xem chi tiết</a></span>
                             </div>
+
                             <div class="d-flex justify-content-between">
-                                <span>Foreign Patients:</span>
-                                <span class="fw-bold">{{ number_format($doctor->pricing_foreign ?? 600000) }} VND</span>
+                                <span class="text-muted">LOẠI BẢO HIỂM ÁP DỤNG.</span>
+                                <a href="#" class="text-info small">Xem chi tiết</a>
                             </div>
                         </div>
 
@@ -267,82 +314,319 @@
         color: #ffc107;
     }
 
-    .date-option {
-        cursor: pointer;
-        border: 1px solid #ddd;
+    /* Time slots grid styles - Enhanced */
+    .time-slots-grid {
+        margin-top: 15px;
+    }
+
+    /* New container style for better organization */
+    .time-slots-container {
+        padding: 15px;
+        background-color: #f9fbff;
+        border-radius: 10px;
+        border: 1px solid #e6eeff;
+        margin-bottom: 15px;
+        animation: fadeIn 0.3s ease-in-out;
+    }
+
+    /* New time slots wrapper */
+    .time-slots-wrapper {
+        padding: 5px;
+        background-color: #ffffff;
         border-radius: 8px;
-        transition: all 0.2s;
+        box-shadow: 0 0 10px rgba(0,0,0,0.03);
     }
 
-    .date-option.active {
-        background-color: #0d6efd;
-        color: white;
-        border-color: #0d6efd;
-    }
-
-    .time-slot {
-        display: block;
-        text-align: center;
-        padding: 8px;
-        background-color: #e9f0ff;
+    /* Enhanced time slot box */
+    .time-slot-box {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 14px 6px;
+        background-color: #f0f7ff;
         color: #0d6efd;
-        border-radius: 4px;
+        border-radius: 8px;
         text-decoration: none;
-        transition: all 0.2s;
+        transition: all 0.3s;
+        height: 100%;
+        border: 2px solid #d0e3ff;
+        font-weight: 600;
+        font-size: 0.9rem;
+        box-shadow: 0 3px 6px rgba(13,110,253,0.08);
+        position: relative;
+        overflow: hidden;
+        text-align: center;
     }
 
-    .time-slot:hover {
+    .time-slot-box::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 4px;
+        height: 100%;
+        background-color: #0d6efd;
+        opacity: 0.6;
+    }
+
+    .time-slot-box:hover {
         background-color: #0d6efd;
         color: white;
+        transform: translateY(-3px);
+        border-color: #0b5ed7;
+        box-shadow: 0 6px 12px rgba(13,110,253,0.25);
     }
 
-    .time-slot.disabled {
+    .time-slot-box.disabled {
         background-color: #f8f9fa;
         color: #adb5bd;
         cursor: not-allowed;
+        opacity: 0.7;
+        border-color: #e9ecef;
+    }
+
+    .time-slot-box.disabled::before {
+        background-color: #adb5bd;
+        opacity: 0.3;
+    }
+
+    .time-slot-box.disabled:hover {
+        transform: none;
+        box-shadow: 0 3px 6px rgba(0,0,0,0.05);
+        background-color: #f8f9fa;
+        border-color: #e9ecef;
+    }
+
+    /* Selected state */
+    .time-slot-box.selected {
+        background-color: #0d6efd;
+        color: white;
+        border-color: #0b5ed7;
+        box-shadow: 0 5px 10px rgba(13,110,253,0.3);
+    }
+
+    .time-slot-box.selected::before {
+        background-color: #ffffff;
+    }
+
+    /* Date selection styles */
+    .date-selection .btn-group {
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        margin-bottom: 1rem;
+    }
+
+    .dropdown-menu {
+        border-color: #e9ecef;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        max-height: 300px;
+        overflow-y: auto;
+    }
+
+    .dropdown-item {
+        padding: 10px 15px;
+        border-radius: 4px;
+        margin: 2px 5px;
+    }
+
+    .dropdown-item.active,
+    .dropdown-item:active,
+    .dropdown-item:hover {
+        background-color: #e9f0ff;
+        color: #0d6efd;
+    }
+
+    /* Clinic info styles */
+    .clinic-info {
+        border-top: 1px solid #eee;
+        padding-top: 20px;
+    }
+
+    /* Time slot date header */
+    .time-slot-date-header {
+        background-color: #f8f9fa;
+        padding: 10px 15px;
+        border-radius: 8px;
+        margin-bottom: 15px;
+        border-left: 4px solid #0d6efd;
+        font-weight: 500;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.03);
+    }
+
+    /* Loading indicator styles */
+    .spinner-border {
+        width: 2rem;
+        height: 2rem;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
     }
 </style>
 @endsection
 
 @section('scripts')
 <script>
+    // Hiển thị console log ngay khi file được load
+    console.log("Doctor profile script loading...");
+
     document.addEventListener('DOMContentLoaded', function() {
-        // Get all date options
+        console.log("DOM loaded - Initializing doctor profile script");
+
+        // Đảm bảo dropdown hoạt động đúng với Bootstrap 5
+        var dropdownElementList = [].slice.call(document.querySelectorAll('.dropdown-toggle'));
+        dropdownElementList.map(function (dropdownToggleEl) {
+            return new bootstrap.Dropdown(dropdownToggleEl);
+        });
+
+        // Phần chọn ngày
         const dateOptions = document.querySelectorAll('.date-option');
+        const selectedDateText = document.getElementById('selected-date-text');
+        const dateDropdownButton = document.getElementById('dateDropdownButton');
+        console.log("Found date options:", dateOptions.length);
 
-        // Add click event to each date option
-        dateOptions.forEach(option => {
-            option.addEventListener('click', function() {
-                // Remove active class from all options
-                dateOptions.forEach(opt => opt.classList.remove('active'));
+        // Debug - hiển thị các ngày có sẵn
+        dateOptions.forEach((option, index) => {
+            console.log(`Option ${index}: ${option.getAttribute('data-date')} - ${option.getAttribute('data-formatted')}`);
+        });
 
-                // Add active class to clicked option
-                this.classList.add('active');
+        // Handle time slot selection
+        function setupTimeSlotSelection() {
+            const availableTimeSlots = document.querySelectorAll('.time-slot-box:not(.disabled)');
 
-                // Get selected date
-                const selectedDate = this.dataset.date;
+            availableTimeSlots.forEach(slot => {
+                slot.addEventListener('click', function(e) {
+                    // Only for available slots
+                    if (!this.classList.contains('disabled')) {
+                        // Remove selected class from all slots
+                        availableTimeSlots.forEach(s => s.classList.remove('selected'));
 
-                // Hide all time slot containers
+                        // Add selected class to this slot
+                        this.classList.add('selected');
+
+                        // We don't prevent default here to allow navigation to booking page
+                    }
+                });
+            });
+        }
+
+        // Hàm hiển thị time slots cho ngày đã chọn
+        function showTimeSlots(dateString) {
+            console.log("Showing time slots for date:", dateString);
+
+            // Hiển thị loading spinner
+            const timeSelectionContainer = document.querySelector('.time-selection');
+            if (timeSelectionContainer) {
+                const loadingSpinner = document.createElement('div');
+                loadingSpinner.id = 'loading-spinner';
+                loadingSpinner.className = 'text-center my-4';
+                loadingSpinner.innerHTML = '<div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div><div class="mt-2">Đang tải lịch khám...</div>';
+
+                // Xóa spinner cũ nếu có
+                const oldSpinner = document.getElementById('loading-spinner');
+                if (oldSpinner) oldSpinner.remove();
+
+                // Thêm spinner mới
+                timeSelectionContainer.appendChild(loadingSpinner);
+            }
+
+            try {
+                // Ẩn tất cả các container time slots
                 document.querySelectorAll('.time-slots-container').forEach(container => {
                     container.style.display = 'none';
                 });
 
-                // Show time slots for selected date
-                const selectedSlotContainer = document.getElementById('slots-' + selectedDate);
-                if (selectedSlotContainer) {
-                    selectedSlotContainer.style.display = 'block';
+                // Hiển thị container cho ngày đã chọn
+                const selectedContainer = document.getElementById('slots-' + dateString);
+                console.log("Looking for container with ID:", 'slots-' + dateString);
 
-                    // Check if there are available slots
-                    const hasSlots = selectedSlotContainer.querySelectorAll('.time-slot').length > 0;
+                // Xóa loading spinner
+                const spinner = document.getElementById('loading-spinner');
+                if (spinner) spinner.remove();
 
-                    // Show/hide no slots message
+                if (selectedContainer) {
+                    console.log("Found container, showing time slots");
+                    selectedContainer.style.display = 'block';
+
+                    // Hiện thông báo nếu không có time slots
+                    const hasSlots = selectedContainer.querySelectorAll('.time-slot-box').length > 0;
                     const noSlotsMessage = document.getElementById('no-slots');
                     if (noSlotsMessage) {
                         noSlotsMessage.classList.toggle('d-none', hasSlots);
                     }
+
+                    // Setup event listeners for time slot selection
+                    setupTimeSlotSelection();
+                } else {
+                    console.error("Container for date not found:", dateString);
+                    // Hiển thị các container có sẵn để debug
+                    const containers = document.querySelectorAll('.time-slots-container');
+                    console.log("Available containers:", containers.length);
+                    containers.forEach(c => console.log(" - " + c.id));
+
+                    // Hiển thị thông báo lỗi
+                    const errorMessage = document.createElement('div');
+                    errorMessage.className = 'alert alert-danger';
+                    errorMessage.innerHTML = `<i class="fas fa-exclamation-circle"></i> Không tìm thấy lịch khám cho ngày ${dateString}`;
+                    timeSelectionContainer.appendChild(errorMessage);
                 }
+            } catch (error) {
+                console.error("Error showing time slots:", error);
+
+                // Xóa loading spinner
+                const spinner = document.getElementById('loading-spinner');
+                if (spinner) spinner.remove();
+
+                // Hiển thị thông báo lỗi
+                const timeSelectionContainer = document.querySelector('.time-selection');
+                if (timeSelectionContainer) {
+                    const errorMessage = document.createElement('div');
+                    errorMessage.className = 'alert alert-danger';
+                    errorMessage.innerHTML = `<i class="fas fa-exclamation-circle"></i> Có lỗi xảy ra: ${error.message}`;
+                    timeSelectionContainer.appendChild(errorMessage);
+                }
+            }
+        }
+
+        // Xử lý sự kiện click cho các date option
+        dateOptions.forEach(option => {
+            option.addEventListener('click', function(e) {
+                e.preventDefault();
+
+                // Lấy thông tin ngày
+                const formattedDate = this.getAttribute('data-formatted');
+                const dateString = this.getAttribute('data-date');
+                console.log(`Selected: ${dateString} (${formattedDate})`);
+
+                // Cập nhật text trong dropdown button
+                if (selectedDateText) {
+                    selectedDateText.textContent = formattedDate;
+                }
+
+                // Hiển thị time slots
+                showTimeSlots(dateString);
             });
         });
+
+        // Hiển thị ngày đầu tiên khi trang load xong
+        if (dateOptions.length > 0) {
+            console.log("Selecting first date option");
+            const firstOption = dateOptions[0];
+            const firstDate = firstOption.getAttribute('data-date');
+            const firstFormattedDate = firstOption.getAttribute('data-formatted');
+
+            // Cập nhật text trong dropdown
+            if (selectedDateText) {
+                selectedDateText.textContent = firstFormattedDate;
+            }
+
+            // Delay chút để đảm bảo DOM đã sẵn sàng
+            setTimeout(() => {
+                showTimeSlots(firstDate);
+            }, 200);
+        } else {
+            console.warn("No date options found");
+        }
     });
 </script>
 @endsection

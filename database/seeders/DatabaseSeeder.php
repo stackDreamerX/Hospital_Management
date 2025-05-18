@@ -26,6 +26,7 @@ class DatabaseSeeder extends Seeder
             MedicineStockSeeder::class,
             MedicineSeeder::class,
             WardTypeSeeder::class,
+            DoctorScheduleSeeder::class,
         ]);
     }
 }

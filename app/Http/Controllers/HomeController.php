@@ -46,10 +46,10 @@ class HomeController extends Controller
         if (Auth::attempt(['username' => $request->username, 'password' => $request->password])) {
             // Điều hướng đến trang dashboard
             $request->session()->regenerate();
-            
+
             // Set the last activity time for session timeout
             Session::put('lastActivityTime', \Carbon\Carbon::now());
-            
+
             if (Auth::user()->RoleID === 'patient') {
                 return redirect()->route('patient.dashboard');
             } elseif (Auth::user()->RoleID === 'doctor') {
@@ -106,17 +106,17 @@ class HomeController extends Controller
     {
         // Get list of specialties for the dropdown
         $specialties = Doctor::distinct()->pluck('Speciality')->toArray();
-        
+
         // Get all doctors with their user information and ratings
         $doctors = Doctor::with(['user', 'ratings'])->get();
-        
+
         // Calculate average rating for each doctor
         foreach ($doctors as $doctor) {
             $doctor->avgRating = $doctor->getAverageRatingAttribute() ?? 0;
             $doctor->ratingCount = $doctor->ratings->where('status', 'approved')
                             ->whereNotNull('doctor_rating')->count();
         }
-        
+
         return view('pages.staff', [
             'doctors' => $doctors,
             'specialties' => $specialties,
@@ -164,7 +164,7 @@ class HomeController extends Controller
 
         // Fetch filtered results
         $doctors = $query->get();
-        
+
         // Calculate average rating for each doctor
         foreach ($doctors as $doctor) {
             $doctor->avgRating = $doctor->getAverageRatingAttribute() ?? 0;
@@ -202,16 +202,29 @@ class HomeController extends Controller
 
     public function doctorProfile($id)
     {
+        // Debug start
+        \Illuminate\Support\Facades\Log::info('Loading doctor profile', [
+            'doctor_id' => $id,
+            'time' => now()->format('Y-m-d H:i:s')
+        ]);
+
         // Find the doctor by ID with related data
         $doctor = Doctor::with(['user', 'ratings' => function($query) {
             $query->where('status', 'approved')
                   ->whereNotNull('doctor_rating');
-        }])->findOrFail($id);
-        
+        }, 'schedules'])->findOrFail($id);
+
+        // Debug doctor loaded
+        \Illuminate\Support\Facades\Log::info('Doctor loaded', [
+            'doctor_id' => $id,
+            'schedule_count' => $doctor->schedules->count(),
+            'has_schedules' => $doctor->schedules->count() > 0
+        ]);
+
         // Calculate average rating
         $doctor->avgRating = $doctor->getAverageRatingAttribute() ?? 0;
         $doctor->ratingCount = $doctor->ratings->count();
-        
+
         // Get recent reviews (latest 5)
         $recentReviews = $doctor->ratings()
             ->where('status', 'approved')
@@ -220,20 +233,159 @@ class HomeController extends Controller
             ->latest()
             ->limit(5)
             ->get();
-        
+
         // Get the doctor's upcoming appointments to show availability
-        // This is simplified - in a real app you would check against available slots
         $upcomingAppointments = $doctor->appointments()
             ->where('AppointmentDate', '>=', now()->format('Y-m-d'))
             ->orderBy('AppointmentDate')
             ->orderBy('AppointmentTime')
             ->get()
             ->groupBy('AppointmentDate');
-            
+
+        // Get the next 7 days for date selection
+        $dates = [];
+        $today = \Carbon\Carbon::today();
+
+        for ($i = 0; $i < 7; $i++) {
+            $date = $today->copy()->addDays($i);
+            $dateEntry = [
+                'date' => $date->format('Y-m-d'),
+                'day' => $date->format('d'),
+                'month' => $date->format('m'),
+                'year' => $date->format('Y'),
+                'day_name' => $date->format('l'),
+                'day_name_short' => $date->format('D'),
+                'day_of_week' => $date->dayOfWeek == 0 ? 7 : $date->dayOfWeek, // Convert Sunday from 0 to 7
+            ];
+
+            // Debug date entry creation
+            \Illuminate\Support\Facades\Log::info('Creating date entry', [
+                'date' => $dateEntry['date'],
+                'day_name' => $dateEntry['day_name'],
+                'carbon_day_of_week' => $date->dayOfWeek,
+                'converted_day_of_week' => $dateEntry['day_of_week']
+            ]);
+
+            $dates[] = $dateEntry;
+        }
+
+        // Debug all doctor schedules
+        \Illuminate\Support\Facades\Log::info('All schedules for doctor', [
+            'doctor_id' => $id,
+            'schedules' => $doctor->schedules
+        ]);
+
+        // Get available time slots for each day
+        $timeSlots = [];
+        $hasSchedule = false;
+        $totalSlots = 0;
+        $firstDayWithSlots = null;
+
+        foreach ($dates as $date) {
+            $dateString = $date['date'];
+            $dayOfWeek = $date['day_of_week'];
+
+            // Check if doctor has a schedule for this day of week
+            $scheduleForThisDay = $doctor->schedules()
+                ->where('day_of_week', $dayOfWeek)
+                ->where('is_active', true)
+                ->first();
+
+            // Debug schedule check
+            \Illuminate\Support\Facades\Log::info('Schedule for day ' . $dayOfWeek, [
+                'date' => $dateString,
+                'found_schedule' => $scheduleForThisDay ? true : false,
+                'schedule_id' => $scheduleForThisDay ? $scheduleForThisDay->id : null,
+                'start_time' => $scheduleForThisDay ? $scheduleForThisDay->start_time : null,
+                'end_time' => $scheduleForThisDay ? $scheduleForThisDay->end_time : null
+            ]);
+
+            if (!$scheduleForThisDay) {
+                // No schedule for this day
+                \Illuminate\Support\Facades\Log::info('No schedule for ' . $dateString);
+                $timeSlots[$dateString] = [];
+                continue;
+            }
+
+            // Got a schedule - generate time slots
+            $hasSchedule = true;
+
+            // Get already booked appointments
+            $bookedAppointments = $doctor->appointments()
+                ->where('AppointmentDate', $dateString)
+                ->get();
+
+            $bookedTimes = $bookedAppointments->pluck('AppointmentTime')->toArray();
+
+            \Illuminate\Support\Facades\Log::info('Booked appointments for ' . $dateString, [
+                'booked_times' => $bookedTimes
+            ]);
+
+            // Generate time slots based on schedule
+            $startTime = \Carbon\Carbon::parse($scheduleForThisDay->start_time);
+            $endTime = \Carbon\Carbon::parse($scheduleForThisDay->end_time);
+            $slots = [];
+
+            \Illuminate\Support\Facades\Log::info('Generating slots from ' . $startTime->format('H:i') . ' to ' . $endTime->format('H:i'), [
+                'date' => $dateString,
+                'start' => $startTime->format('H:i'),
+                'end' => $endTime->format('H:i')
+            ]);
+
+            $slotTime = clone $startTime;
+            while ($slotTime < $endTime) {
+                $virtualTimeSlot = new \App\Models\DoctorTimeSlot();
+                $virtualTimeSlot->doctor_id = $id;
+                $virtualTimeSlot->date = $dateString;
+                $virtualTimeSlot->time = $slotTime->format('H:i:s');
+
+                // Check if this time is already booked
+                $isBooked = in_array($slotTime->format('H:i:s'), $bookedTimes);
+                $virtualTimeSlot->status = $isBooked ? 'booked' : 'available';
+                $virtualTimeSlot->id = 'slot_' . str_replace(['-', ':'], '', $dateString . $slotTime->format('His'));
+
+                $slots[] = $virtualTimeSlot;
+                $slotTime->addMinutes(30);
+            }
+
+            $timeSlots[$dateString] = $slots;
+            $totalSlots += count($slots);
+
+            if (!$firstDayWithSlots && count($slots) > 0) {
+                $firstDayWithSlots = $dateString;
+            }
+
+            \Illuminate\Support\Facades\Log::info('Generated slots for ' . $dateString, [
+                'count' => count($slots),
+                'first_slot' => count($slots) > 0 ? $slots[0]->time : null,
+                'last_slot' => count($slots) > 0 ? $slots[count($slots) - 1]->time : null
+            ]);
+        }
+
+        // Log the final result
+        \Illuminate\Support\Facades\Log::info('Finished loading time slots', [
+            'doctor_id' => $id,
+            'has_schedule' => $hasSchedule,
+            'total_slots' => $totalSlots,
+            'first_day_with_slots' => $firstDayWithSlots,
+            'total_dates' => count($dates),
+            'slots_by_date' => collect($timeSlots)->map(function($dateSlots) {
+                return count($dateSlots);
+            })
+        ]);
+
         return view('pages.doctor_profile', [
             'doctor' => $doctor,
             'recentReviews' => $recentReviews,
-            'upcomingAppointments' => $upcomingAppointments
+            'upcomingAppointments' => $upcomingAppointments,
+            'dates' => $dates,
+            'timeSlots' => $timeSlots,
+            'hasSchedule' => $hasSchedule,
+            'debug' => [
+                'totalDates' => count($dates),
+                'totalSlots' => $totalSlots,
+                'firstDayWithSlots' => $firstDayWithSlots
+            ]
         ]);
     }
 }

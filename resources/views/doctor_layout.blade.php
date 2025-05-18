@@ -20,6 +20,7 @@
 <link rel="stylesheet" href="{{ asset('css/doctor_layout.css') }}">
 
 @stack('styles')
+@yield('styles')
 </head>
 <body>
 <section id="container">

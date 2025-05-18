@@ -23,6 +23,7 @@
 
 
 @stack('styles')
+@yield('styles')
 </head>
 <body>
 <section id="container">

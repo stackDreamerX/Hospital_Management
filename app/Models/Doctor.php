@@ -17,17 +17,20 @@ class Doctor extends Model
         'Title',
         'WorkLocation',
         'AvailableHours',
+        'pricing_vn',    // Price for Vietnamese patients
+        'pricing_foreign' // Price for foreign patients
     ];
 
     public function appointments()
     {
         return $this->hasMany(Appointment::class, 'DoctorID');
     }
+
     public function user()
     {
         return $this->belongsTo(User::class, 'UserID'); // Adjust 'user_id' as necessary
     }
-    
+
     /**
      * Get ratings for this doctor
      */
@@ -35,7 +38,23 @@ class Doctor extends Model
     {
         return $this->hasMany(Rating::class, 'doctor_id', 'DoctorID');
     }
-    
+
+    /**
+     * Get doctor schedules
+     */
+    public function schedules()
+    {
+        return $this->hasMany(DoctorSchedule::class, 'doctor_id', 'DoctorID');
+    }
+
+    /**
+     * Get doctor time slots
+     */
+    public function timeSlots()
+    {
+        return $this->hasMany(DoctorTimeSlot::class, 'doctor_id', 'DoctorID');
+    }
+
     /**
      * Get average doctor rating
      */
