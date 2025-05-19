@@ -163,6 +163,27 @@
                             @enderror
                         </div>
 
+                        <h5 class="mt-4 mb-3">Phương thức thanh toán</h5>
+                        <div class="mb-3">
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="radio" name="payment_method" id="payment_cash" value="cash" {{ old('payment_method', 'cash') == 'cash' ? 'checked' : '' }}>
+                                <label class="form-check-label" for="payment_cash">
+                                    <i class="fas fa-money-bill-wave me-2 text-success"></i> Thanh toán tại quầy
+                                </label>
+                                <div class="text-muted small ms-4">Thanh toán trực tiếp tại quầy lễ tân của bệnh viện</div>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="payment_method" id="payment_vnpay" value="vnpay" {{ old('payment_method') == 'vnpay' ? 'checked' : '' }}>
+                                <label class="form-check-label" for="payment_vnpay">
+                                    <i class="fas fa-credit-card me-2 text-primary"></i> Thanh toán qua VNPay
+                                </label>
+                                <div class="text-muted small ms-4">Thanh toán trực tuyến qua cổng thanh toán VNPay (thẻ ATM, Visa, MasterCard, JCB...)</div>
+                            </div>
+                            @error('payment_method')
+                                <div class="text-danger small mt-1">{{ $message }}</div>
+                            @enderror
+                        </div>
+
                         <div class="form-check mb-3">
                             <input class="form-check-input" type="checkbox" id="terms" required>
                             <label class="form-check-label" for="terms">

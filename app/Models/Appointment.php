@@ -18,6 +18,15 @@ class Appointment extends Model
         'DoctorNotes',
         'DoctorID',
         'Status',
+        'payment_method',
+        'payment_status',
+        'payment_id',
+        'amount',
+        'payment_details',
+    ];
+
+    protected $casts = [
+        'payment_details' => 'array',
     ];
 
     public function doctor()

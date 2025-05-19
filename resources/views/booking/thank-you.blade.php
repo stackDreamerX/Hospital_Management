@@ -55,7 +55,31 @@
 
                             <div class="col-md-6 mb-3">
                                 <strong><i class="fas fa-money-bill-wave me-2 text-primary"></i> Phí khám:</strong>
-                                <p>{{ number_format($appointment->doctor->pricing_vn ?? 300000) }} VND</p>
+                                <p>{{ number_format($appointment->amount ?? $appointment->doctor->pricing_vn ?? 300000) }} VND</p>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <strong><i class="fas fa-credit-card me-2 text-primary"></i> Phương thức thanh toán:</strong>
+                                <p>
+                                    @if($appointment->payment_method == 'cash')
+                                        <span><i class="fas fa-money-bill-wave me-1 text-success"></i> Thanh toán tại quầy</span>
+                                    @else
+                                        <span><i class="fas fa-credit-card me-1 text-primary"></i> VNPay</span>
+                                    @endif
+                                </p>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <strong><i class="fas fa-check-circle me-2 text-primary"></i> Trạng thái thanh toán:</strong>
+                                <p>
+                                    @if($appointment->payment_status == 'paid')
+                                        <span class="badge bg-success"><i class="fas fa-check me-1"></i> Đã thanh toán</span>
+                                    @else
+                                        <span class="badge bg-warning text-dark"><i class="fas fa-clock me-1"></i> Chưa thanh toán</span>
+                                    @endif
+                                </p>
                             </div>
                         </div>
 
@@ -66,6 +90,32 @@
                             </div>
                         </div>
                     </div>
+
+                    @if($appointment->payment_method == 'cash' && $appointment->payment_status == 'pending')
+                    <div class="alert alert-warning mb-4">
+                        <div class="d-flex">
+                            <div class="me-3">
+                                <i class="fas fa-exclamation-triangle fa-2x text-warning"></i>
+                            </div>
+                            <div class="text-start">
+                                <h5 class="alert-heading">Thanh toán tại quầy</h5>
+                                <p class="mb-0">Vui lòng thanh toán phí khám tại quầy lễ tân của bệnh viện trước khi khám.</p>
+                            </div>
+                        </div>
+                    </div>
+                    @elseif($appointment->payment_method == 'vnpay' && $appointment->payment_status == 'paid')
+                    <div class="alert alert-success mb-4">
+                        <div class="d-flex">
+                            <div class="me-3">
+                                <i class="fas fa-check-circle fa-2x text-success"></i>
+                            </div>
+                            <div class="text-start">
+                                <h5 class="alert-heading">Thanh toán thành công</h5>
+                                <p class="mb-0">Thanh toán của bạn đã được xác nhận. Vui lòng đến đúng giờ hẹn.</p>
+                            </div>
+                        </div>
+                    </div>
+                    @endif
 
                     <div class="alert alert-info">
                         <i class="fas fa-exclamation-circle me-2"></i> Vui lòng đến trước giờ hẹn 15 phút để làm thủ tục. Mang theo giấy tờ tùy thân và thẻ bảo hiểm y tế (nếu có).
