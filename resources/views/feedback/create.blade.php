@@ -2,7 +2,7 @@
 
 @section('content')
 <div class="container py-4">
-    <div class="row justify-content-center">    
+    <div class="row justify-content-center">
         <div class="col-md-8">
             <div class="card shadow-sm">
                 <div class="card-header bg-gradient-primary text-white">
@@ -20,20 +20,20 @@
 
                     <form method="POST" action="{{ route('feedback.store') }}">
                         @csrf
-                        
+
                         <div class="mb-3">
                             <label for="subject" class="form-label fw-bold">Subject <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control @error('subject') is-invalid @enderror" 
+                            <input type="text" class="form-control @error('subject') is-invalid @enderror"
                                 id="subject" name="subject" value="{{ old('subject') }}" required>
                             @error('subject')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
-                        
+
                         <div class="row mb-3">
                             <div class="col-md-6">
                                 <label for="category" class="form-label fw-bold">Category</label>
-                                <select class="form-select @error('category') is-invalid @enderror" 
+                                <select class="form-select @error('category') is-invalid @enderror"
                                     id="category" name="category">
                                     <option value="" selected>Select a category</option>
                                     <option value="doctor" {{ old('category') == 'doctor' ? 'selected' : '' }}>Doctor</option>
@@ -46,26 +46,26 @@
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
-                            
+
                             <div class="col-md-6">
                                 <label for="department" class="form-label fw-bold">Department</label>
-                                <input type="text" class="form-control @error('department') is-invalid @enderror" 
+                                <input type="text" class="form-control @error('department') is-invalid @enderror"
                                     id="department" name="department" value="{{ old('department') }}">
                                 @error('department')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
                         </div>
-                        
+
                         <div class="mb-3" id="doctorNameField" style="display: none;">
                             <label for="doctor_name" class="form-label fw-bold">Doctor's Name</label>
-                            <input type="text" class="form-control @error('doctor_name') is-invalid @enderror" 
+                            <input type="text" class="form-control @error('doctor_name') is-invalid @enderror"
                                 id="doctor_name" name="doctor_name" value="{{ old('doctor_name') }}">
                             @error('doctor_name')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
-                        
+
                         <div class="mb-3">
                             <label class="form-label fw-bold">Rating <span class="text-danger">*</span></label>
                             <div class="star-rating">
@@ -82,10 +82,10 @@
                                 <div class="text-danger small">{{ $message }}</div>
                             @enderror
                         </div>
-                        
+
                         <div class="mb-4">
                             <label for="message" class="form-label fw-bold">Your Message <span class="text-danger">*</span></label>
-                            <textarea class="form-control @error('message') is-invalid @enderror" 
+                            <textarea class="form-control @error('message') is-invalid @enderror"
                                 id="message" name="message" rows="5" required>{{ old('message') }}</textarea>
                             @error('message')
                                 <div class="invalid-feedback">{{ $message }}</div>
@@ -94,7 +94,7 @@
                                 Please share your experience with our hospital services.
                             </div>
                         </div>
-                        
+
                         <div class="mb-4">
                             <div class="form-check">
                                 <input class="form-check-input" type="checkbox" name="is_anonymous" id="is_anonymous" value="1" {{ old('is_anonymous') ? 'checked' : '' }}>
@@ -106,7 +106,7 @@
                                 </div>
                             </div>
                         </div>
-                        
+
                         <div class="d-grid gap-2 d-md-flex justify-content-md-end">
                             <a href="{{ route('users.dashboard') }}" class="btn btn-outline-secondary me-md-2">
                                 <i class="fas fa-times me-1"></i> Cancel
@@ -179,7 +179,7 @@
     document.addEventListener('DOMContentLoaded', function() {
         const categorySelect = document.getElementById('category');
         const doctorNameField = document.getElementById('doctorNameField');
-        
+
         // Show/hide doctor name field based on category selection
         function toggleDoctorNameField() {
             if (categorySelect.value === 'doctor') {
@@ -188,12 +188,12 @@
                 doctorNameField.style.display = 'none';
             }
         }
-        
+
         // Initial check
         toggleDoctorNameField();
-        
+
         // Add event listener
         categorySelect.addEventListener('change', toggleDoctorNameField);
     });
 </script>
-@endsection 
+@endsection

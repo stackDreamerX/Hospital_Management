@@ -43,9 +43,15 @@ Route::get('/appointments', [HomeController::class, 'appointments'])->name('user
 Route::get('/search-doctors', [HomeController::class, 'searchDoctors'])->name('search.doctors');
 Route::get('/doctor-profile/{id}', [HomeController::class, 'doctorProfile'])->name('doctor.public.profile');
 Route::get('/doctor/{id}/schedule', [App\Http\Controllers\BookingController::class, 'showDoctorSchedule'])->name('doctor.schedule');
+
+// Booking routes without auth middleware
 Route::get('/doctor/{id}/booking/{slot?}', [App\Http\Controllers\BookingController::class, 'showBookingForm'])->name('doctor.booking');
+
+// Protected booking routes
+Route::middleware(['auth'])->group(function () {
 Route::post('/booking/store', [App\Http\Controllers\BookingController::class, 'store'])->name('booking.store');
 Route::get('/booking/thank-you/{appointmentId}', [App\Http\Controllers\BookingController::class, 'thankYou'])->name('booking.thank-you');
+});
 
 // Public doctor ratings
 Route::get('/doctors/{id}/ratings', [RatingController::class, 'doctorRatings'])->name('doctor.public.ratings');

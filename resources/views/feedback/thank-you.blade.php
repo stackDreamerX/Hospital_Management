@@ -11,7 +11,7 @@
                     </div>
                     <h2 class="mb-3">Thank You for Your Feedback!</h2>
                     <p class="text-muted mb-4">
-                        We greatly appreciate you taking the time to share your thoughts with us. 
+                        We greatly appreciate you taking the time to share your thoughts with us.
                         Your feedback helps us improve our services and provide better healthcare experiences.
                     </p>
                     <div class="d-flex justify-content-center gap-3">
@@ -24,7 +24,7 @@
                     </div>
                 </div>
             </div>
-            
+
             <div class="mt-4 p-3 bg-light rounded">
                 <div class="small text-muted">
                     <p class="mb-1">Your feedback has been submitted successfully and is currently under review.</p>
@@ -52,4 +52,4 @@
     overflow: hidden;
 }
 </style>
-@endsection 
+@endsection

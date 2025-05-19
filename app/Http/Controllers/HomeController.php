@@ -39,13 +39,24 @@ class HomeController extends Controller
             'password' => 'required|string',
         ]);
 
-
-        //    dd(['username' => $request->username, 'password' => $request->password]);
-
-
         if (Auth::attempt(['username' => $request->username, 'password' => $request->password])) {
             // Điều hướng đến trang dashboard
             $request->session()->regenerate();
+
+            // Check if there was a booking in progress
+            $doctorId = session('booking_doctor_id');
+            $slotId = session('booking_slot_id');
+
+            if ($doctorId && $slotId) {
+                // Clear the session data
+                session()->forget(['booking_doctor_id', 'booking_slot_id']);
+
+                // Redirect to the booking page
+                return redirect()->route('doctor.booking', [
+                    'id' => $doctorId,
+                    'slot' => $slotId
+                ])->with('message', 'Đăng nhập thành công, giờ bạn có thể tiếp tục đặt lịch khám.');
+            }
 
             // Set the last activity time for session timeout
             Session::put('lastActivityTime', \Carbon\Carbon::now());
@@ -342,7 +353,25 @@ class HomeController extends Controller
                 // Check if this time is already booked
                 $isBooked = in_array($slotTime->format('H:i:s'), $bookedTimes);
                 $virtualTimeSlot->status = $isBooked ? 'booked' : 'available';
-                $virtualTimeSlot->id = 'slot_' . str_replace(['-', ':'], '', $dateString . $slotTime->format('His'));
+
+                // Create slot ID with proper format: slot_YYYYMMDDHHMMSS
+                $slotId = sprintf(
+                    'slot_%s%s%s%s%s%s',
+                    $dateString,
+                    $slotTime->format('H'),
+                    $slotTime->format('i'),
+                    $slotTime->format('s'),
+                    '00', // Add milliseconds for uniqueness
+                    rand(100, 999) // Add random number for uniqueness
+                );
+                $virtualTimeSlot->id = $slotId;
+
+                \Illuminate\Support\Facades\Log::info('Created virtual slot', [
+                    'slot_id' => $slotId,
+                    'date' => $dateString,
+                    'time' => $slotTime->format('H:i:s'),
+                    'status' => $virtualTimeSlot->status
+                ]);
 
                 $slots[] = $virtualTimeSlot;
                 $slotTime->addMinutes(30);

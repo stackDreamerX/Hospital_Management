@@ -15,15 +15,15 @@
         <meta property="og:image" content="images/logo-ccf.png">
         <meta property="twitter:image" content="images/logo-ccf.png">
         <meta property="twitter:card" content="summary">
-        <link rel="canonical" href="{{ url('/users.dashboard') }}">
-        <meta property="og:url" content="{{ url('/users.dashboard') }}">
+        <link rel="canonical" href="{{ route('users.dashboard') }}">
+        <meta property="og:url" content="{{ route('users.dashboard') }}">
         <meta property="og:type" content="website">
         <meta property="og:site_name" content="Medic Hospital">
         <meta property="twitter:site" content="@MedicHospital">
         <meta property="twitter:creator" content="@MedicHospital">
 
 
-        <link rel="alternate" href="{{ url('/users.dashboard') }}" hreflang="x-default">
+        <link rel="alternate" href="{{ route('users.dashboard') }}" hreflang="x-default">
 
 <!-- Add Google Fonts -->
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -132,7 +132,7 @@
 
         <!-- Logo -->
         <span class="header__logo">
-            <a href="{{ url('/users.dashboard') }}">
+            <a href="{{ route('users.dashboard') }}">
                 <img src="{{ asset('images/logo-ccf.png') }}" alt="Medic Hospital logo">
             </a>
         </span>
@@ -392,7 +392,7 @@
             // Keep the session alive if user is active and not in countdown mode
             if (timeSinceLastActivity < (sessionTimeout / 2) && !isIdle) {
                 // Send heartbeat to keep session alive
-                fetch('{{ url("/users.dashboard") }}', {
+                fetch('{{ route("users.dashboard") }}', {
                     method: 'HEAD',
                     headers: {
                         'X-CSRF-TOKEN': '{{ csrf_token() }}',

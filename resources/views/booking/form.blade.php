@@ -29,7 +29,17 @@
                         </div>
                     @endif
 
-                    <form method="POST" action="{{ route('booking.store') }}">
+                    @if(!isset($selectedSlot) || $selectedSlot === null)
+                        <div class="alert alert-warning">
+                            <i class="fas fa-exclamation-triangle me-2"></i> Vui lòng chọn thời gian khám từ lịch của bác sĩ trước.
+                        </div>
+                        <div class="text-center my-4">
+                            <a href="{{ route('doctor.schedule', $doctor->DoctorID) }}" class="btn btn-primary">
+                                <i class="far fa-calendar-alt me-2"></i> Xem lịch khám
+                            </a>
+                        </div>
+                    @else
+                    <form method="POST" action="{{ route('booking.store') }}" id="bookingForm">
                         @csrf
                         <input type="hidden" name="doctor_id" value="{{ $doctor->DoctorID }}">
                         <input type="hidden" name="slot_id" value="{{ $selectedSlot->id }}">
@@ -42,6 +52,7 @@
                                 <div>
                                     <strong>Selected Time:</strong><br>
                                     {{ date('l, F d, Y', strtotime($selectedSlot->date)) }} at {{ date('h:i A', strtotime($selectedSlot->time)) }}
+                                    <div class="small text-muted">Slot ID: {{ $selectedSlot->id }}</div>
                                 </div>
                             </div>
                         </div>
@@ -168,6 +179,81 @@
                             </button>
                         </div>
                     </form>
+
+                    <script>
+                        document.addEventListener('DOMContentLoaded', function() {
+                            const form = document.getElementById('bookingForm');
+
+                            if (form) {
+                                console.log('Booking form found');
+
+                                // Log form data that will be submitted
+                                const doctorId = document.querySelector('input[name="doctor_id"]').value;
+                                const slotId = document.querySelector('input[name="slot_id"]').value;
+                                console.log('Form will submit with:', {
+                                    doctorId: doctorId,
+                                    slotId: slotId
+                                });
+
+                                // Add submit event listener
+                                form.addEventListener('submit', function(e) {
+                                    console.log('Form submission attempted');
+
+                                    // Check for issue with slot_id
+                                    const slotIdField = document.querySelector('input[name="slot_id"]');
+                                    const slotId = slotIdField.value;
+
+                                    if (!slotId || slotId === '0' || slotId === 0) {
+                                        console.error('ERROR: slot_id is missing or invalid:', slotId);
+                                        alert('Error: Selected time slot is invalid. Please go back and choose a different time slot.');
+                                        e.preventDefault();
+                                        return false;
+                                    }
+
+                                    // For virtual slots, make sure they follow the correct format (slot_YYYYMMDDHHMMSS)
+                                    if (typeof slotId === 'string' && slotId.startsWith('slot_')) {
+                                        const dateTimeStr = slotId.substring(5); // Remove 'slot_' prefix
+
+                                        if (dateTimeStr.length < 12) {
+                                            console.error('ERROR: Virtual slot ID has invalid format:', slotId);
+                                            alert('Error: Selected time slot has an invalid format. Please go back and choose a different time slot.');
+                                            e.preventDefault();
+                                            return false;
+                                        }
+
+                                        // Extract date components to validate
+                                        const year = parseInt(dateTimeStr.substring(0, 4), 10);
+                                        const month = parseInt(dateTimeStr.substring(4, 6), 10);
+                                        const day = parseInt(dateTimeStr.substring(6, 8), 10);
+                                        const hour = parseInt(dateTimeStr.substring(8, 10), 10);
+                                        const minute = parseInt(dateTimeStr.substring(10, 12), 10);
+
+                                        // Basic validation of date components
+                                        const validDate = new Date(year, month - 1, day);
+                                        if (
+                                            validDate.getFullYear() !== year ||
+                                            validDate.getMonth() !== month - 1 ||
+                                            validDate.getDate() !== day ||
+                                            hour >= 24 ||
+                                            minute >= 60
+                                        ) {
+                                            console.error('ERROR: Virtual slot ID has invalid date/time components:', {
+                                                year, month, day, hour, minute
+                                            });
+                                            alert('Error: Selected time slot has invalid date or time. Please go back and choose a different time slot.');
+                                            e.preventDefault();
+                                            return false;
+                                        }
+                                    }
+
+                                    console.log('Form validation passed, submitting...');
+                                });
+                            } else {
+                                console.error('Booking form not found!');
+                            }
+                        });
+                    </script>
+                    @endif
                 </div>
             </div>
         </div>
@@ -185,6 +271,7 @@
                     <div class="appointment-details">
                         <h6 class="border-bottom pb-2 mb-3">Chi tiết cuộc hẹn</h6>
 
+                        @if(isset($selectedSlot) && $selectedSlot !== null)
                         <div class="mb-3">
                             <strong><i class="far fa-calendar me-2 text-primary"></i> Ngày khám</strong>
                             <span>{{ date('d/m/Y', strtotime($selectedSlot->date)) }}</span>
@@ -194,6 +281,11 @@
                             <strong><i class="far fa-clock me-2 text-primary"></i> Giờ khám</strong>
                             <span>{{ date('h:i A', strtotime($selectedSlot->time)) }}</span>
                         </div>
+                        @else
+                        <div class="mb-3 text-warning">
+                            <i class="fas fa-exclamation-circle me-2"></i> Chưa chọn thời gian khám
+                        </div>
+                        @endif
 
                         <div class="mb-3">
                             <strong><i class="fas fa-money-bill-wave me-2 text-primary"></i> Phí khám</strong>

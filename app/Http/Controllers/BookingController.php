@@ -12,16 +12,88 @@ use Illuminate\Support\Facades\DB;
 
 class BookingController extends Controller
 {
-    public function showBookingForm($doctorId, $slotId = null)
+    public function showBookingForm($id, $slot = null)
     {
-        $doctor = Doctor::with('user')->findOrFail($doctorId);
+        \Illuminate\Support\Facades\Log::info('Booking form accessed', [
+            'doctor_id' => $id,
+            'slot' => $slot,
+            'raw_slot' => request()->slot,
+            'url' => request()->fullUrl(),
+            'request_method' => request()->method(),
+            'all_parameters' => request()->all(),
+            'route_parameters' => request()->route()->parameters(),
+            'is_authenticated' => \Illuminate\Support\Facades\Auth::check()
+        ]);
+
+        // Check if user is authenticated
+        if (!\Illuminate\Support\Facades\Auth::check()) {
+            // Save the desired doctor ID and slot in session
+            session(['booking_doctor_id' => $id, 'booking_slot_id' => $slot]);
+
+            // Redirect to login page with intended URL
+            return redirect()->route('login')
+                ->with('message', 'Vui lòng đăng nhập để tiếp tục đặt lịch khám.')
+                ->withInput(['redirect_url' => route('doctor.booking', ['id' => $id, 'slot' => $slot])]);
+        }
+
+        $doctor = Doctor::with('user')->findOrFail($id);
         $selectedSlot = null;
 
-        if ($slotId) {
-            $selectedSlot = DoctorTimeSlot::where('id', $slotId)
-                ->where('status', 'available')
-                ->where('doctor_id', $doctorId)
-                ->firstOrFail();
+        if ($slot) {
+            try {
+                // Check if it's a virtual slot (starts with 'slot_')
+                if (is_string($slot) && strpos($slot, 'slot_') === 0) {
+                    \Illuminate\Support\Facades\Log::info('Processing virtual slot', [
+                        'doctor_id' => $id,
+                        'slot_id' => $slot
+                    ]);
+
+                    // Extract date and time from the slot ID format: slot_YYYYMMDDHHMMSS
+                    $dateTimeStr = substr($slot, 5); // Remove "slot_" prefix
+
+                    if (strlen($dateTimeStr) >= 12) {
+                        $year = substr($dateTimeStr, 0, 4);
+                        $month = substr($dateTimeStr, 4, 2);
+                        $day = substr($dateTimeStr, 6, 2);
+                        $hour = substr($dateTimeStr, 8, 2);
+                        $minute = substr($dateTimeStr, 10, 2);
+
+                        // Validate the extracted date components
+                        if (!checkdate((int)$month, (int)$day, (int)$year) ||
+                            (int)$hour >= 24 || (int)$minute >= 60) {
+                            throw new \Exception('Invalid date/time in slot ID');
+                        }
+
+                        // Create a virtual slot object
+                        $selectedSlot = new \stdClass();
+                        $selectedSlot->doctor_id = $id;
+                        $selectedSlot->id = $slot; // Keep the original slot ID for virtual slots
+                        $selectedSlot->date = "$year-$month-$day";
+                        $selectedSlot->time = "$hour:$minute:00";
+                        $selectedSlot->status = 'available';
+
+                        \Illuminate\Support\Facades\Log::info('Created virtual slot', [
+                            'slot' => $selectedSlot
+                        ]);
+                    } else {
+                        throw new \Exception('Invalid slot ID format');
+                    }
+                } else {
+                    // Regular database slot
+                    $selectedSlot = DoctorTimeSlot::where('id', $slot)
+                        ->where('status', 'available')
+                        ->where('doctor_id', $id)
+                        ->firstOrFail();
+                }
+            } catch (\Exception $e) {
+                \Illuminate\Support\Facades\Log::error('Invalid slot selected: ', [
+                    'doctor_id' => $id,
+                    'slot_id' => $slot,
+                    'error' => $e->getMessage()
+                ]);
+                return redirect()->route('doctor.schedule', $id)
+                    ->with('error', 'The selected time slot is not available. Please choose another time.');
+            }
         }
 
         // Get all available provinces in Vietnam for the form
@@ -113,9 +185,15 @@ class BookingController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
+        \Illuminate\Support\Facades\Log::info('Booking form submitted', [
+            'doctor_id' => $request->doctor_id,
+            'slot_id' => $request->slot_id,
+            'all_data' => $request->all()
+        ]);
+
+        // Validate basic data first
+        $validated = $request->validate([
             'doctor_id' => 'required|exists:doctors,DoctorID',
-            'slot_id' => 'required|exists:doctor_time_slots,id',
             'fullname' => 'required|string|max:100',
             'gender' => 'required|in:male,female',
             'birthdate' => 'required|date',
@@ -128,15 +206,90 @@ class BookingController extends Controller
             'symptoms' => 'nullable|string',
         ]);
 
-        // Verify slot is still available
-        $slot = DoctorTimeSlot::where('id', $request->slot_id)
-            ->where('status', 'available')
-            ->where('doctor_id', $request->doctor_id)
-            ->firstOrFail();
+        // Handle slot separately to allow for virtual slots with 'slot_' prefix
+        $slotId = $request->slot_id;
+        \Illuminate\Support\Facades\Log::info('Processing slot', ['slot_id' => $slotId]);
 
         DB::beginTransaction();
 
         try {
+            // Find or create the slot
+            if (is_string($slotId) && strpos($slotId, 'slot_') === 0) {
+                \Illuminate\Support\Facades\Log::info('Processing virtual slot for booking', ['slot_id' => $slotId]);
+
+                // Extract date and time from the slot ID
+                $dateTimeStr = substr($slotId, 5); // Remove 'slot_' prefix
+
+                // For virtual slots format: slot_YYYYMMDDHHMMSS
+                if (strlen($dateTimeStr) >= 12) {
+                    $year = substr($dateTimeStr, 0, 4);
+                    $month = substr($dateTimeStr, 4, 2);
+                    $day = substr($dateTimeStr, 6, 2);
+                    $hour = substr($dateTimeStr, 8, 2);
+                    $minute = substr($dateTimeStr, 10, 2);
+
+                    // Validate date components
+                    if (!checkdate((int)$month, (int)$day, (int)$year) ||
+                        (int)$hour >= 24 || (int)$minute >= 60) {
+                        throw new \Exception('Invalid date/time in slot ID');
+                    }
+
+                    // Format date and time properly
+                    $date = "$year-$month-$day";
+                    $time = "$hour:$minute:00";
+
+                    \Illuminate\Support\Facades\Log::info('Extracted date and time from virtual slot', [
+                        'date' => $date,
+                        'time' => $time
+                    ]);
+
+                    // Check if a slot already exists for this time
+                    $existingSlot = DoctorTimeSlot::where('doctor_id', $request->doctor_id)
+                        ->where('date', $date)
+                        ->where('time', $time)
+                        ->first();
+
+                    if ($existingSlot) {
+                        // Use existing slot if available
+                        if ($existingSlot->status !== 'available') {
+                            throw new \Exception('This time slot is no longer available');
+                        }
+                        $slot = $existingSlot;
+                        \Illuminate\Support\Facades\Log::info('Using existing slot', [
+                            'slot_id' => $slot->id
+                        ]);
+                    } else {
+                        // Create a real slot in the database
+                        $slot = new DoctorTimeSlot();
+                        $slot->doctor_id = $request->doctor_id;
+                        $slot->date = $date;
+                        $slot->time = $time;
+                        $slot->status = 'available';
+                        $slot->save();
+
+                        \Illuminate\Support\Facades\Log::info('Created real slot from virtual slot', [
+                            'new_slot_id' => $slot->id,
+                            'original_virtual_id' => $slotId
+                        ]);
+                    }
+                } else {
+                    throw new \Exception('Invalid virtual slot format');
+                }
+            } else {
+                // Now verify the slot (either existing or newly created)
+                $slot = DoctorTimeSlot::where('id', $slotId)
+                    ->where('doctor_id', $request->doctor_id)
+                    ->first();
+
+                if (!$slot) {
+                    throw new \Exception('Selected time slot not found');
+                }
+
+                if ($slot->status !== 'available') {
+                    throw new \Exception('Selected time slot is no longer available');
+                }
+            }
+
             // Create the appointment
             $appointment = new Appointment();
             $appointment->AppointmentDate = $slot->date;
@@ -149,20 +302,6 @@ class BookingController extends Controller
             // If user is logged in, associate with user
             if (Auth::check()) {
                 $appointment->UserID = Auth::id();
-            } else {
-                // For non-authenticated users, use a guest user ID
-                // First check if guest user exists, if not create one
-                $guestUser = \App\Models\User::where('Email', 'guest@medicalhospital.com')->first();
-                if (!$guestUser) {
-                    $guestUser = new \App\Models\User();
-                    $guestUser->Email = 'guest@medicalhospital.com';
-                    $guestUser->FullName = 'Guest User';
-                    $guestUser->Password = bcrypt('guestpassword'); // Set a strong random password
-                    $guestUser->PhoneNumber = '0000000000';
-                    $guestUser->UserType = 'guest';
-                    $guestUser->save();
-                }
-                $appointment->UserID = $guestUser->UserID;
             }
 
             // Add patient details as notes
@@ -179,17 +318,61 @@ class BookingController extends Controller
             $appointment->Notes = $patientInfo;
             $appointment->save();
 
+            \Illuminate\Support\Facades\Log::info('Appointment created', [
+                'appointment_id' => $appointment->AppointmentID,
+                'doctor_id' => $appointment->DoctorID,
+                'date' => $appointment->AppointmentDate,
+                'time' => $appointment->AppointmentTime
+            ]);
+
             // Mark slot as booked and link to appointment
             $slot->status = 'booked';
             $slot->appointment_id = $appointment->AppointmentID;
             $slot->save();
 
+            \Illuminate\Support\Facades\Log::info('Slot marked as booked', [
+                'slot_id' => $slot->id,
+                'appointment_id' => $appointment->AppointmentID
+            ]);
+
+            // Send notification email
+            try {
+                // Load necessary relationships for the email
+                $appointment->load(['doctor.user']);
+
+                // Create a fake user model for non-authenticated users
+                if (!Auth::check()) {
+                    $tempUser = new \App\Models\User();
+                    $tempUser->FullName = $request->fullname;
+                    $tempUser->Email = $request->email;
+                    $appointment->user = $tempUser;
+                }
+
+                // Send email
+                \Illuminate\Support\Facades\Mail::to($request->email)
+                    ->send(new \App\Mail\AppointmentCreated($appointment));
+
+                \Illuminate\Support\Facades\Log::info('Appointment creation email sent to ' . $request->email);
+            } catch (\Exception $e) {
+                \Illuminate\Support\Facades\Log::error('Failed to send appointment email: ' . $e->getMessage());
+                // Don't throw error - we don't want to fail booking just because email failed
+            }
+
             DB::commit();
+
+            \Illuminate\Support\Facades\Log::info('Booking completed successfully, redirecting to thank you page', [
+                'appointment_id' => $appointment->AppointmentID
+            ]);
 
             return redirect()->route('booking.thank-you', ['appointmentId' => $appointment->AppointmentID])
                 ->with('success', 'Appointment booked successfully!');
         } catch (\Exception $e) {
             DB::rollBack();
+            \Illuminate\Support\Facades\Log::error('Error creating booking', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
             return back()->withInput()->with('error', 'There was a problem booking your appointment: ' . $e->getMessage());
         }
     }

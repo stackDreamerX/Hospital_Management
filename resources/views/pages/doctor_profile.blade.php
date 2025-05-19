@@ -186,27 +186,53 @@
 
                                         @if(isset($timeSlots[$date['date']]) && count($timeSlots[$date['date']]) > 0)
                                             <div class="time-slots-wrapper">
-                                                <div class="row g-3 time-slots-grid">
-                                                    @foreach($timeSlots[$date['date']] as $slot)
-                                                        @php
-                                                            $isVirtual = is_string($slot->id) && (strpos($slot->id, 'schedule_') === 0 || strpos($slot->id, 'slot_') === 0);
-                                                            $bookingRoute = $isVirtual
-                                                                ? route('doctor.schedule', $doctor->DoctorID)
-                                                                : route('doctor.booking', ['id' => $doctor->DoctorID, 'slot' => $slot->id]);
+                                            <div class="row g-3 time-slots-grid">
+                                                @foreach($timeSlots[$date['date']] as $slot)
+                                                    @php
+                                                        // Check if slot is virtual (has string ID)
+                                                        $isVirtual = is_string($slot->id) && (strpos($slot->id, 'schedule_') === 0 || strpos($slot->id, 'slot_') === 0);
 
-                                                            // Calculate end time (30 min after start)
+                                                        // Get the slot ID
+                                                        $slotId = $slot->id;
+
+                                                        // Extra validation to ensure slot ID is not 0
+                                                        if (empty($slotId) || $slotId === 0 || $slotId === '0') {
+                                                            \Illuminate\Support\Facades\Log::warning("Invalid slot ID detected", [
+                                                                'slot' => $slot,
+                                                                'date' => $date['date']
+                                                            ]);
+                                                            // Force use of a valid ID format based on date and time
                                                             $startTime = \Carbon\Carbon::parse($slot->time);
-                                                            $endTime = $startTime->copy()->addMinutes(30);
-                                                        @endphp
-                                                        <div class="col-md-3 col-6">
-                                                            <a href="{{ $slot->status === 'available' ? $bookingRoute : '#' }}"
-                                                               class="time-slot-box {{ $slot->status !== 'available' ? 'disabled' : '' }}"
-                                                               data-slot-id="{{ $slot->id }}"
-                                                               data-slot-time="{{ $slot->time }}">
-                                                                {{ $startTime->format('H:i') }} - {{ $endTime->format('H:i') }}
-                                                            </a>
-                                                        </div>
-                                                    @endforeach
+                                                            $slotId = 'slot_' . str_replace('-', '', $date['date']) . $startTime->format('His');
+                                                        }
+
+                                                        // Generate booking route
+                                                        $bookingRoute = route('doctor.booking', [
+                                                            'id' => $doctor->DoctorID,
+                                                            'slot' => $slotId
+                                                        ]);
+
+                                                        // Debug log to check what's being passed
+                                                        \Illuminate\Support\Facades\Log::info("Creating booking route in doctor_profile view", [
+                                                            'doctor_id' => $doctor->DoctorID,
+                                                            'slot_id' => $slotId,
+                                                            'is_virtual' => $isVirtual,
+                                                            'route' => $bookingRoute
+                                                        ]);
+
+                                                        // Calculate end time (30 min after start)
+                                                        $startTime = \Carbon\Carbon::parse($slot->time);
+                                                        $endTime = $startTime->copy()->addMinutes(30);
+                                                    @endphp
+                                                    <div class="col-md-3 col-6">
+                                                        <a href="{{ $slot->status === 'available' ? $bookingRoute : '#' }}"
+                                                           class="time-slot-box {{ $slot->status !== 'available' ? 'disabled' : '' }}"
+                                                           data-slot-id="{{ $slotId }}"
+                                                           onclick="if(!this.classList.contains('disabled')) { showDebug('Clicked on slot with ID: {{ $slotId }}'); window.location.href='{{ $bookingRoute }}'; return false; }">
+                                                            {{ $startTime->format('H:i') }} - {{ $endTime->format('H:i') }}
+                                                        </a>
+                                                    </div>
+                                                @endforeach
                                                 </div>
                                             </div>
 
