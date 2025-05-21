@@ -172,12 +172,19 @@
                                 </label>
                                 <div class="text-muted small ms-4">Thanh toán trực tiếp tại quầy lễ tân của bệnh viện</div>
                             </div>
-                            <div class="form-check">
+                            <div class="form-check mb-2">
                                 <input class="form-check-input" type="radio" name="payment_method" id="payment_vnpay" value="vnpay" {{ old('payment_method') == 'vnpay' ? 'checked' : '' }}>
                                 <label class="form-check-label" for="payment_vnpay">
                                     <i class="fas fa-credit-card me-2 text-primary"></i> Thanh toán qua VNPay
                                 </label>
                                 <div class="text-muted small ms-4">Thanh toán trực tuyến qua cổng thanh toán VNPay (thẻ ATM, Visa, MasterCard, JCB...)</div>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="payment_method" id="payment_zalopay" value="zalopay" {{ old('payment_method') == 'zalopay' ? 'checked' : '' }}>
+                                <label class="form-check-label" for="payment_zalopay">
+                                    <i class="fas fa-wallet me-2 text-info"></i> Thanh toán qua ZaloPay
+                                </label>
+                                <div class="text-muted small ms-4">Thanh toán trực tuyến qua ví điện tử ZaloPay</div>
                             </div>
                             @error('payment_method')
                                 <div class="text-danger small mt-1">{{ $message }}</div>

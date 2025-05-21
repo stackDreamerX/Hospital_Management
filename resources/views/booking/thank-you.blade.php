@@ -65,8 +65,10 @@
                                 <p>
                                     @if($appointment->payment_method == 'cash')
                                         <span><i class="fas fa-money-bill-wave me-1 text-success"></i> Thanh toán tại quầy</span>
-                                    @else
+                                    @elseif($appointment->payment_method == 'vnpay')
                                         <span><i class="fas fa-credit-card me-1 text-primary"></i> VNPay</span>
+                                    @elseif($appointment->payment_method == 'zalopay')
+                                        <span><i class="fas fa-wallet me-1 text-info"></i> ZaloPay</span>
                                     @endif
                                 </p>
                             </div>
@@ -103,7 +105,7 @@
                             </div>
                         </div>
                     </div>
-                    @elseif($appointment->payment_method == 'vnpay' && $appointment->payment_status == 'paid')
+                    @elseif(($appointment->payment_method == 'vnpay' || $appointment->payment_method == 'zalopay') && $appointment->payment_status == 'paid')
                     <div class="alert alert-success mb-4">
                         <div class="d-flex">
                             <div class="me-3">
@@ -111,7 +113,7 @@
                             </div>
                             <div class="text-start">
                                 <h5 class="alert-heading">Thanh toán thành công</h5>
-                                <p class="mb-0">Thanh toán của bạn đã được xác nhận. Vui lòng đến đúng giờ hẹn.</p>
+                                <p class="mb-0">Thanh toán của bạn qua {{ $appointment->payment_method == 'vnpay' ? 'VNPay' : 'ZaloPay' }} đã được xác nhận. Vui lòng đến đúng giờ hẹn.</p>
                             </div>
                         </div>
                     </div>

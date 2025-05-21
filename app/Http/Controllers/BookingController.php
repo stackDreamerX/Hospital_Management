@@ -204,7 +204,7 @@ class BookingController extends Controller
             'district' => 'required|string',
             'reason' => 'required|string',
             'symptoms' => 'nullable|string',
-            'payment_method' => 'required|in:cash,vnpay',
+            'payment_method' => 'required|in:cash,vnpay,zalopay',
         ]);
 
         // Handle slot separately to allow for virtual slots with 'slot_' prefix
@@ -344,10 +344,10 @@ class BookingController extends Controller
             $patientInfo .= "District: " . $request->district;
 
             // Handle different payment methods
-            if ($request->payment_method === 'vnpay') {
+            if ($request->payment_method === 'vnpay' || $request->payment_method === 'zalopay') {
                 DB::beginTransaction();
                 try {
-                    // For VNPay, save booking data in session and redirect to payment gateway
+                    // For online payment, save booking data in session and redirect to payment gateway
                     $bookingData = [
                         'doctor_id' => $request->doctor_id,
                         'slot_id' => $slot->id,
@@ -355,7 +355,7 @@ class BookingController extends Controller
                         'time' => $slot->time,
                         'reason' => $request->reason,
                         'symptoms' => $request->symptoms,
-                        'payment_method' => 'vnpay',
+                        'payment_method' => $request->payment_method,
                         'amount' => $amount,
                         'patient_info' => $patientInfo,
                         'user_id' => Auth::id(),
@@ -370,25 +370,32 @@ class BookingController extends Controller
                     $slot->status = 'booked';
                     $slot->save();
 
-                    \Illuminate\Support\Facades\Log::info('Redirecting to VNPay payment gateway', [
+                    \Illuminate\Support\Facades\Log::info('Redirecting to ' . $request->payment_method . ' payment gateway', [
                         'booking_data' => $bookingData
                     ]);
 
-                    // Create a temporary appointment for VNPay reference
+                    // Create a temporary appointment for payment reference
                     $tempAppointment = new Appointment();
                     $tempAppointment->AppointmentDate = $slot->date;
                     $tempAppointment->AppointmentTime = $slot->time;
                     $tempAppointment->DoctorID = $request->doctor_id;
                     $tempAppointment->UserID = Auth::id(); // Add the user ID
-                    $tempAppointment->payment_method = 'vnpay';
+                    $tempAppointment->payment_method = $request->payment_method;
                     $tempAppointment->payment_status = 'pending';
                     $tempAppointment->amount = $amount;
                     $tempAppointment->save();
 
                     DB::commit();
 
-                    $vnpayService = new \App\Services\VNPayService();
-                    $paymentUrl = $vnpayService->createPaymentUrl($tempAppointment);
+                    // Create payment URL based on payment method
+                    $paymentUrl = '';
+                    if ($request->payment_method === 'vnpay') {
+                        $vnpayService = new \App\Services\VNPayService();
+                        $paymentUrl = $vnpayService->createPaymentUrl($tempAppointment);
+                    } else if ($request->payment_method === 'zalopay') {
+                        $zaloPayService = new \App\Services\ZaloPayService();
+                        $paymentUrl = $zaloPayService->createPaymentUrl($tempAppointment);
+                    }
 
                     return redirect()->away($paymentUrl);
                 } catch (\Exception $e) {

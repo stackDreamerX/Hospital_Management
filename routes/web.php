@@ -53,8 +53,9 @@ Route::post('/booking/store', [App\Http\Controllers\BookingController::class, 's
 Route::get('/booking/thank-you/{appointmentId}', [App\Http\Controllers\BookingController::class, 'thankYou'])->name('booking.thank-you');
 });
 
-// VNPay payment routes
+// Payment routes
 Route::get('/vnpay/callback', [App\Http\Controllers\VNPayController::class, 'callback'])->name('vnpay.callback');
+Route::get('/zalopay/callback', [App\Http\Controllers\ZaloPayController::class, 'callback'])->name('zalopay.callback');
 
 // Public doctor ratings
 Route::get('/doctors/{id}/ratings', [RatingController::class, 'doctorRatings'])->name('doctor.public.ratings');

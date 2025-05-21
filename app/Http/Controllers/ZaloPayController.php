@@ -4,33 +4,33 @@ namespace App\Http\Controllers;
 
 use App\Models\Appointment;
 use App\Models\DoctorTimeSlot;
-use App\Services\VNPayService;
+use App\Services\ZaloPayService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
 
-class VNPayController extends Controller
+class ZaloPayController extends Controller
 {
-    protected $vnpayService;
+    protected $zaloPayService;
 
-    public function __construct(VNPayService $vnpayService)
+    public function __construct(ZaloPayService $zaloPayService)
     {
-        $this->vnpayService = $vnpayService;
+        $this->zaloPayService = $zaloPayService;
     }
 
     /**
-     * Handle the callback from VNPay after payment
+     * Handle the callback from ZaloPay after payment
      */
     public function callback(Request $request)
     {
-        Log::info('VNPay callback received', $request->all());
+        Log::info('ZaloPay callback received', $request->all());
 
         // Cleanup abandoned slots older than 10 minutes
         // Note: This is also handled by a scheduled command (appointments:cleanup) that runs every 5 minutes
         $this->cleanupAbandonedSlots();
 
-        $result = $this->vnpayService->processCallback($request->all());
+        $result = $this->zaloPayService->processCallback($request->all());
 
         // Get the temporary appointment
         $tempAppointment = Appointment::find($result['appointment_id']);
@@ -100,7 +100,7 @@ class VNPayController extends Controller
                 $appointment->Symptoms = $bookingData['symptoms'];
                 $appointment->DoctorID = $bookingData['doctor_id'];
                 $appointment->Status = 'pending';
-                $appointment->payment_method = 'vnpay';
+                $appointment->payment_method = 'zalopay';
                 $appointment->payment_status = 'paid';
                 $appointment->payment_id = $tempAppointment->payment_id;
                 $appointment->amount = $bookingData['amount'];
@@ -150,10 +150,10 @@ class VNPayController extends Controller
                 Session::forget(['pending_booking', 'pending_slot_id']);
 
                 return redirect()->route('booking.thank-you', ['appointmentId' => $appointment->AppointmentID])
-                    ->with('success', 'Thanh toán thành công! Lịch hẹn của bạn đã được xác nhận.');
+                    ->with('success', 'Thanh toán thành công qua ZaloPay! Lịch hẹn của bạn đã được xác nhận.');
             } catch (\Exception $e) {
                 DB::rollBack();
-                Log::error('Error processing successful VNPay payment', [
+                Log::error('Error processing successful ZaloPay payment', [
                     'error' => $e->getMessage(),
                     'trace' => $e->getTraceAsString()
                 ]);
@@ -163,7 +163,7 @@ class VNPayController extends Controller
             }
         } else {
             // Payment failed
-            Log::warning('VNPay payment failed', [
+            Log::warning('ZaloPay payment failed', [
                 'response_code' => $result['response_code'],
                 'transaction_status' => $result['transaction_status']
             ]);
@@ -187,7 +187,7 @@ class VNPayController extends Controller
             $tempAppointment->save();
 
             return redirect()->route('users')
-                ->with('error', 'Thanh toán không thành công. Vui lòng thử lại hoặc chọn phương thức thanh toán khác.');
+                ->with('error', 'Thanh toán không thành công qua ZaloPay. Vui lòng thử lại hoặc chọn phương thức thanh toán khác.');
         }
     }
 

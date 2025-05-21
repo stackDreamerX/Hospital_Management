@@ -66,7 +66,7 @@ return [
     */
 
     // 'timezone' => env('APP_TIMEZONE', 'UTC'),
-    'timezone' => 'Asia/Ho_Chi_Minh', //  múi giờ của khu vực 
+    'timezone' => 'Asia/Ho_Chi_Minh', //  múi giờ của khu vực
     /*
     |--------------------------------------------------------------------------
     | Application Locale Configuration
