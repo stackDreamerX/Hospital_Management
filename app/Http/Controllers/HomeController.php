@@ -13,6 +13,7 @@ use App\Models\User;
 use App\Models\Doctor;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 
 class HomeController extends Controller
 {
@@ -21,8 +22,13 @@ class HomeController extends Controller
         return view('pages.home');
     }
 
-    public function sign_in()
+    public function sign_in(Request $request)
     {
+        // If redirect URL is provided in query parameter, store it in session
+        if ($request->has('redirect_to')) {
+            session()->put('url.intended', $request->input('redirect_to'));
+        }
+
         return view('pages.sign_in');
     }
 
@@ -61,8 +67,18 @@ class HomeController extends Controller
             // Set the last activity time for session timeout
             Session::put('lastActivityTime', \Carbon\Carbon::now());
 
+            // Check if there's a previous URL stored in session that we should redirect to
+            $intendedUrl = session('url.intended');
+
+            if ($intendedUrl) {
+                // Clear the intended URL from session
+                session()->forget('url.intended');
+                return redirect($intendedUrl)->with('success', 'Đăng nhập thành công.');
+            }
+
+            // Default redirection based on role if no intended URL
             if (Auth::user()->RoleID === 'patient') {
-                return redirect()->route('patient.dashboard');
+                return redirect()->route('users.dashboard');
             } elseif (Auth::user()->RoleID === 'doctor') {
                 return redirect()->route('doctor.dashboard');
             } else {
@@ -205,10 +221,193 @@ class HomeController extends Controller
     public function appointments()
     {
         if (!Auth::check()) {
+            // Store current URL in session before redirecting
+            session()->put('url.intended', url()->current());
             return redirect('/sign-in')->with('message', 'Please login to access appointments');
         }
 
-        return redirect('/patient/dashboard');
+        // Get same data as the patient appointments controller
+        $patientId = Auth::user()->UserID;
+        $appointments = \App\Models\Appointment::with('doctor')
+            ->where('UserID', $patientId)
+            ->orderByDesc('AppointmentDate')
+            ->get();
+        $doctors = \App\Models\Doctor::with('user')->get();
+        $pendingCount = $appointments->where('Status', 'pending')->count();
+        $approvedCount = $appointments->where('Status', 'approved')->count();
+
+        // Render the appointments view directly
+        return view('pages.appointments', compact('doctors', 'appointments', 'pendingCount', 'approvedCount'));
+    }
+
+    public function appointmentStore(Request $request)
+    {
+        try {
+            if (!Auth::check()) {
+                return response()->json(['error' => 'User is not logged in'], 403);
+            }
+            $validated = $request->validate([
+                'appointment_date' => 'required|date|after:today',
+                'appointment_time' => 'required',
+                'reason' => 'required|string|max:255',
+                'symptoms' => 'required|string',
+                'notes' => 'nullable|string',
+                'doctor_id' => 'required|exists:doctors,DoctorID',
+            ]);
+
+            $appointment = \App\Models\Appointment::create([
+                'AppointmentDate' => $validated['appointment_date'],
+                'AppointmentTime' => $validated['appointment_time'],
+                'Reason' => $validated['reason'],
+                'Symptoms' => $validated['symptoms'],
+                'Notes' => $validated['notes'],
+                'UserID' => Auth::check() ? Auth::user()->UserID : null,
+                'DoctorID' => $validated['doctor_id'],
+                'Status' => 'pending',
+            ]);
+
+            // Load the relationships for email
+            $appointment->load(['user', 'doctor.user']);
+
+            // Send email notification
+            try {
+                Mail::to($appointment->user->Email)->send(new \App\Mail\AppointmentCreated($appointment));
+                Log::info('Appointment creation email sent successfully to ' . $appointment->user->Email);
+            } catch (\Exception $e) {
+                Log::error('Error sending appointment creation email: ' . $e->getMessage());
+            }
+
+            return response()->json(['message' => 'Appointment created successfully']);
+        } catch (\Exception $e) {
+            Log::error('Error creating appointment: ' . $e->getMessage());
+            return response()->json(['error' => 'Failed to create appointment.'], 500);
+        }
+    }
+
+    public function appointmentUpdate(Request $request, $id)
+    {
+        $appointment = \App\Models\Appointment::findOrFail($id);
+        if ($appointment->Status != 'pending') {
+            return response()->json(['error' => 'Không thể sửa cuộc hẹn này!'], 403);
+        }
+
+        // Xác thực dữ liệu
+        $validated = $request->validate([
+            'appointment_date' => 'required|date|after:today',
+            'appointment_time' => 'required',
+            'reason' => 'required|string|max:255',
+            'symptoms' => 'required|string',
+            'notes' => 'nullable|string',
+            'doctor_id' => 'required|exists:doctors,DoctorID',
+        ]);
+
+        try {
+            // Cập nhật dữ liệu
+            $appointment->update([
+                'AppointmentDate' => $validated['appointment_date'],
+                'AppointmentTime' => $validated['appointment_time'],
+                'Reason' => $validated['reason'],
+                'Symptoms' => $validated['symptoms'],
+                'Notes' => $validated['notes'],
+                'DoctorID' => $validated['doctor_id'],
+            ]);
+
+            // Load the relationships for email
+            $appointment->load(['user', 'doctor.user']);
+
+            // Send email notification
+            try {
+                Mail::to($appointment->user->Email)->send(new \App\Mail\AppointmentUpdated($appointment));
+                Log::info('Appointment update email sent successfully to ' . $appointment->user->Email);
+            } catch (\Exception $e) {
+                Log::error('Error sending appointment update email: ' . $e->getMessage());
+            }
+
+            return response()->json(['message' => 'Cập nhật cuộc hẹn thành công!']);
+        } catch (\Exception $e) {
+            Log::error('Error updating appointment: ' . $e->getMessage());
+            return response()->json(['error' => 'Không thể cập nhật cuộc hẹn.'], 500);
+        }
+    }
+
+    public function appointmentDestroy($id)
+    {
+        $appointment = \App\Models\Appointment::findOrFail($id);
+        if ($appointment->Status != 'pending') {
+            return response()->json(['error' => 'Không thể hủy cuộc hẹn này!'], 403);
+        }
+
+        try {
+            // Load the relationships before deleting
+            $appointment->load(['user', 'doctor.user']);
+
+            // Store appointment data for email
+            $appointmentData = $appointment->toArray();
+            $appointmentData['user'] = $appointment->user->toArray();
+            $appointmentData['doctor'] = $appointment->doctor ? $appointment->doctor->toArray() : null;
+            $appointmentData['doctor']['user'] = $appointment->doctor && $appointment->doctor->user
+                ? $appointment->doctor->user->toArray()
+                : null;
+
+            // Get user email before deletion
+            $userEmail = $appointment->user->Email;
+
+            // Create a new appointment instance with the stored data
+            // This is needed because the original will be deleted
+            $appointmentForEmail = new \App\Models\Appointment($appointmentData);
+            $appointmentForEmail->user = new \App\Models\User($appointmentData['user']);
+            if ($appointmentData['doctor']) {
+                $doctorModel = new \App\Models\Doctor($appointmentData['doctor']);
+                if ($appointmentData['doctor']['user']) {
+                    $doctorModel->user = new \App\Models\User($appointmentData['doctor']['user']);
+                }
+                $appointmentForEmail->doctor = $doctorModel;
+            }
+
+            // Delete the appointment
+            $appointment->delete();
+
+            // Send email notification
+            try {
+                Mail::to($userEmail)->send(new \App\Mail\AppointmentCancelled($appointmentForEmail));
+                Log::info('Appointment cancellation email sent successfully to ' . $userEmail);
+            } catch (\Exception $e) {
+                Log::error('Error sending appointment cancellation email: ' . $e->getMessage());
+            }
+
+            return response()->json(['message' => 'Hủy cuộc hẹn thành công!']);
+        } catch (\Exception $e) {
+            Log::error('Error cancelling appointment: ' . $e->getMessage());
+            return response()->json(['error' => 'Không thể hủy cuộc hẹn.'], 500);
+        }
+    }
+
+    public function appointmentShow($id)
+    {
+        $appointment = \App\Models\Appointment::where('AppointmentID', $id)
+            ->where('UserID', Auth::user()->UserID)
+            ->firstOrFail();
+
+        return response()->json($appointment);
+    }
+
+    public function appointmentShowDetail($id)
+    {
+        try {
+            $appointment = \App\Models\Appointment::with('doctor.user')->findOrFail($id);
+
+            return response()->json([
+                'AppointmentDate' => $appointment->AppointmentDate,
+                'AppointmentTime' => $appointment->AppointmentTime,
+                'DoctorName' => $appointment->doctor->user->FullName ?? 'Chưa được chỉ định',
+                'Status' => $appointment->Status,
+                'Reason' => $appointment->Reason,
+                'Symptoms' => $appointment->Symptoms,
+                'Notes' => $appointment->Notes,
+            ]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Không tìm thấy thông tin cuộc hẹn.'], 404);
+        }
     }
 
     public function doctorProfile($id)

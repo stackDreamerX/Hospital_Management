@@ -262,3 +262,13 @@ Route::get('/feedback', [App\Http\Controllers\FeedbackController::class, 'public
     Route::get('/beds/{bed}/history', [WardBedHistoryController::class, 'forBed'])->name('bed-history.for-bed');
     Route::get('/bed-utilization-report', [WardBedHistoryController::class, 'report'])->name('bed-history.report');
 // });
+
+// Add direct routes for appointments using HomeController instead of PatientController
+Route::middleware(['auth'])->group(function () {
+    // Appointment routes
+    Route::post('/appointments/create', [HomeController::class, 'appointmentStore'])->name('users.appointments.store');
+    Route::get('/appointments/detail/{id}', [HomeController::class, 'appointmentShowDetail'])->name('users.appointments.showDetail');
+    Route::get('/appointments/{id}', [HomeController::class, 'appointmentShow'])->name('users.appointments.show');
+    Route::put('/appointments/{id}/update', [HomeController::class, 'appointmentUpdate'])->name('users.appointments.update');
+    Route::delete('/appointments/{id}/delete', [HomeController::class, 'appointmentDestroy'])->name('users.appointments.destroy');
+});

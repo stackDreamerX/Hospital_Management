@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Medic Hospital</title>
+    <title>@yield('title', 'Medic Hospital')</title>
     <link rel="icon" type="image/x-icon" href="{{ asset('logo.ico') }}">
     @php
         use Illuminate\Support\Facades\Auth;
@@ -153,10 +153,22 @@
                     <a class="nav-link {{ request()->is('patients') ? 'active' : '' }}" href="{{ route('users.patients') }}">Patients & Visitors</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link {{ request()->is('appointments') ? 'active' : '' }}" href="{{ route('users.appointments') }}">Appointments</a>
+                    <a class="nav-link {{ request()->is('appointments*') ? 'active' : '' }}" href="{{ route('users.appointments') }}">Appointments</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link {{ request()->is('feedback*') ? 'active' : '' }}" href="{{ route('feedback.public') }}">FeedBack</a>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle {{ request()->is('feedback*') || request()->is('my-feedback*') ? 'active' : '' }}" href="#" id="feedbackDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Feedback
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="feedbackDropdown">
+                        <li><a class="dropdown-item" href="{{ route('feedback.public') }}"><i class="fas fa-list me-2"></i>Public Feedback</a></li>
+                        @auth
+                        <li><a class="dropdown-item" href="{{ route('feedback.create') }}"><i class="fas fa-comment-dots me-2"></i>Provide Feedback</a></li>
+                        <li><a class="dropdown-item" href="{{ route('feedback.user') }}"><i class="fas fa-comments me-2"></i>My Feedback</a></li>
+                        @else
+                        <li><a class="dropdown-item" href="{{ route('login') }}?redirect_to={{ route('feedback.create') }}"><i class="fas fa-comment-dots me-2"></i>Provide Feedback</a></li>
+                        <li><a class="dropdown-item" href="{{ route('login') }}?redirect_to={{ route('feedback.user') }}"><i class="fas fa-comments me-2"></i>My Feedback</a></li>
+                        @endauth
+                    </ul>
                 </li>
             </ul>
         </nav>
@@ -178,7 +190,7 @@
 
                         <li class="contact-box__phone">Appointments <a href="tel:8663204573">0378.649.957</a></li>
                         <li class="contact-box__phone">Questions   <a href="tel:2164442200">0924.184.107</a></li>
-                        <li><a href="/appointments" class="button--strong button--full button--arrow">Request an Appointment</a></li>
+                        <li><a href="{{ route('users.appointments') }}" class="button--strong button--full button--arrow">Request an Appointment</a></li>
 
         </ul>
     </div>

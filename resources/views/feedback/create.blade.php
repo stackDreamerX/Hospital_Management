@@ -1,17 +1,78 @@
-@extends('patient_layout')
+@extends('layout')
+
+@section('title', 'Provide Feedback')
+
+@section('styles')
+<style>
+.btn-gradient-primary {
+    background: linear-gradient(135deg, #0d6efd, #0a58ca);
+    border: none;
+    color: white;
+    transition: all 0.3s ease;
+}
+.btn-gradient-primary:hover {
+    background: linear-gradient(135deg, #0a58ca, #084298);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+.bg-gradient-primary {
+    background: linear-gradient(135deg, #0d6efd, #0a58ca);
+}
+.rating-group {
+    display: inline-flex;
+    flex-direction: row-reverse;
+}
+.rating__input {
+    position: absolute !important;
+    left: -9999px !important;
+}
+.rating__label {
+    cursor: pointer;
+    padding: 0 0.1em;
+    font-size: 2rem;
+}
+.rating__icon--star {
+    color: #ddd;
+}
+/* When no star is checked, all remain gray */
+.rating__input:not(:checked) ~ .rating__label .rating__icon--star {
+    color: #ddd;
+}
+/* When a star is checked, it and its preceding stars become gold */
+.rating__input:checked ~ .rating__label .rating__icon--star {
+    color: #f8ce0b;
+}
+/* On hover, all stars reset to gray */
+.rating-group:hover .rating__label .rating__icon--star {
+    color: #ddd;
+}
+/* On hover, the hovered star and its preceding stars become gold */
+.rating-group:hover .rating__label:hover .rating__icon--star,
+.rating-group:hover .rating__label:hover ~ .rating__label .rating__icon--star {
+    color: #f8ce0b;
+}
+.feedback-container {
+    padding: 3rem 0;
+    min-height: 75vh;
+}
+</style>
+@endsection
 
 @section('content')
-<div class="container py-4">
+<div class="container feedback-container">
     <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card shadow-sm">
-                <div class="card-header bg-gradient-primary text-white">
+        <div class="col-md-10 col-lg-8">
+            <h2 class="text-center mb-4">Share Your Feedback</h2>
+            <p class="text-center mb-5">We value your opinions! Let us know about your experience at Medic Hospital.</p>
+
+            <div class="card shadow">
+                <div class="card-header bg-gradient-primary text-white py-3">
                     <h5 class="mb-0">
                         <i class="fas fa-comment-alt me-2"></i>
-                        Share Your Feedback
+                        Feedback Form
                     </h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body p-4">
                     @if (session('success'))
                         <div class="alert alert-success">
                             {{ session('success') }}
@@ -108,7 +169,7 @@
                         </div>
 
                         <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                            <a href="{{ route('users.dashboard') }}" class="btn btn-outline-secondary me-md-2">
+                            <a href="{{ route('feedback.public') }}" class="btn btn-outline-secondary me-md-2">
                                 <i class="fas fa-times me-1"></i> Cancel
                             </a>
                             <button type="submit" class="btn btn-gradient-primary">
@@ -121,58 +182,7 @@
         </div>
     </div>
 </div>
-
 @endsection
-
-<style>
-.btn-gradient-primary {
-    background: linear-gradient(135deg, #0d6efd, #0a58ca);
-    border: none;
-    color: white;
-    transition: all 0.3s ease;
-}
-.btn-gradient-primary:hover {
-    background: linear-gradient(135deg, #0a58ca, #084298);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-.bg-gradient-primary {
-    background: linear-gradient(135deg, #0d6efd, #0a58ca);
-}
-.rating-group {
-    display: inline-flex;
-    flex-direction: row-reverse;
-}
-.rating__input {
-    position: absolute !important;
-    left: -9999px !important;
-}
-.rating__label {
-    cursor: pointer;
-    padding: 0 0.1em;
-    font-size: 2rem;
-}
-.rating__icon--star {
-    color: #ddd;
-}
-/* When no star is checked, all remain gray */
-.rating__input:not(:checked) ~ .rating__label .rating__icon--star {
-    color: #ddd;
-}
-/* When a star is checked, it and its preceding stars become gold */
-.rating__input:checked ~ .rating__label .rating__icon--star {
-    color: #f8ce0b;
-}
-/* On hover, all stars reset to gray */
-.rating-group:hover .rating__label .rating__icon--star {
-    color: #ddd;
-}
-/* On hover, the hovered star and its preceding stars become gold */
-.rating-group:hover .rating__label:hover .rating__icon--star,
-.rating-group:hover .rating__label:hover ~ .rating__label .rating__icon--star {
-    color: #f8ce0b;
-}
-</style>
 
 @section('scripts')
 <script>

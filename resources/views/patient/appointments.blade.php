@@ -1,7 +1,9 @@
-@extends('patient_layout')
+@extends('layout')
 
-@push('styles')
+@section('title', 'My Appointments')
 
+@section('styles')
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <style>
     /* Improved badge styling */
     .badge {
@@ -10,7 +12,7 @@
         display: inline-block;
         margin-left: 0.5rem;
     }
-    
+
     /* Detail item styling for appointments */
     .appointment-details .mb-3 {
         display: flex;
@@ -21,24 +23,24 @@
         border-radius: 8px;
         border-left: 4px solid #3f8cff;
     }
-    
+
     .appointment-details .mb-3 strong {
         font-weight: 600;
         color: #212529;
         margin-bottom: 0.3rem;
         display: block;
     }
-    
+
     .appointment-details .mb-3 span {
         color: #212529;
         font-size: 1rem;
     }
-    
+
     .appointment-details .fas {
         color: #3f8cff;
     }
 </style>
-@endpush
+@endsection
 
 @section('content')
 
@@ -91,22 +93,22 @@
                         <input type="time" class="form-control" id="appointment_time" required>
                     </div>
                 </div>
-            
+
                 <div class="mb-3">
                     <label class="form-label">Reason for Visit</label>
                     <input type="text" class="form-control" id="reason" placeholder="e.g., Regular checkup, Follow-up, etc." required>
                 </div>
-            
+
                 <div class="mb-3">
                     <label class="form-label">Symptoms</label>
                     <textarea class="form-control" id="symptoms" rows="2" placeholder="Describe your symptoms" required></textarea>
                 </div>
-            
+
                 <div class="mb-3">
                     <label class="form-label">Additional Notes</label>
                     <textarea class="form-control" id="notes" rows="2" placeholder="Any additional information"></textarea>
                 </div>
-            
+
                 <div class="mb-3">
                     <label class="form-label">Assign Doctor</label>
                     <select class="form-select" id="doctor_id" required>
@@ -116,14 +118,14 @@
                         @endforeach
                     </select>
                 </div>
-            
+
                 <input type="hidden" id="user_id" value="{{ Auth::user()->UserID }}"> <!-- Thêm UserID từ user hiện tại -->
-            
+
                 <button type="submit" class="btn btn-primary">
                     <i class="fas fa-plus"></i> Request Appointment
                 </button>
             </form>
-            
+
         </div>
     </div>
 
@@ -139,9 +141,9 @@
                                 </span>
                                 <input type="text" id="searchInput" class="form-control" placeholder="Search appointments...">
                             </div>
-                            
-                       
-                            
+
+
+
                             <!-- Reload Button -->
                             <button class="btn btn-outline-secondary ms-3" id="reloadButton">
                                 <i class="fas fa-sync"></i> Reload
@@ -287,25 +289,25 @@
 <script>
     // Global modal instances
     let detailsModal, editModal;
-    
+
     document.addEventListener('DOMContentLoaded', function() {
         console.log('DOM fully loaded');
-        
+
         // Initialize Bootstrap modals
         detailsModal = new bootstrap.Modal(document.getElementById('detailsModal'));
         editModal = new bootstrap.Modal(document.getElementById('editModal'));
-        
+
         // Set up event listeners
         setupEventListeners();
     });
-    
+
     function setupEventListeners() {
         // Handle new appointment form submission
         document.getElementById('appointmentForm').addEventListener('submit', function(e) {
             e.preventDefault();
             createAppointment();
         });
-      
+
         // Add event listeners for view, edit, and cancel buttons
         document.querySelectorAll('.view-appointment').forEach(button => {
             button.addEventListener('click', function() {
@@ -313,37 +315,37 @@
                 viewDetails(id);
             });
         });
-        
+
         document.querySelectorAll('.edit-appointment').forEach(button => {
             button.addEventListener('click', function() {
                 const id = this.getAttribute('data-id');
                 editAppointment(id);
             });
         });
-        
+
         document.querySelectorAll('.cancel-appointment').forEach(button => {
             button.addEventListener('click', function() {
                 const id = this.getAttribute('data-id');
                 cancelAppointment(id);
             });
         });
-      
+
         // Search functionality
         const searchInput = document.getElementById('searchInput');
         if (searchInput) {
             const tableBody = document.querySelector('tbody');
             const rows = tableBody.querySelectorAll('tr');
-            
+
             searchInput.addEventListener('keyup', function(e) {
                 const searchTerm = e.target.value.toLowerCase();
-                
+
                 rows.forEach(row => {
                     const text = row.textContent.toLowerCase();
                     row.style.display = text.includes(searchTerm) ? '' : 'none';
                 });
             });
         }
-        
+
         // Reload button
         const reloadButton = document.getElementById('reloadButton');
         if (reloadButton) {
@@ -362,7 +364,7 @@
             notes: document.getElementById('notes').value,
             doctor_id: document.getElementById('doctor_id').value
         };
-        
+
         // Show loading state
         const loadingSwal = Swal.fire({
             title: 'Processing...',
@@ -372,9 +374,9 @@
                 Swal.showLoading();
             }
         });
-        
-        const url = `{{ route('patient.appointments.store') }}`;
-        
+
+        const url = `{{ route('users.appointments.store') }}`;
+
         fetch(url, {
             method: 'POST',
             headers: {
@@ -387,7 +389,7 @@
             .then(result => {
                 // Close loading dialog
                 loadingSwal.close();
-                
+
                 if (result.message) {
                     Swal.fire('Success', result.message, 'success').then(() => {
                         document.getElementById('appointmentForm').reset();
@@ -400,7 +402,7 @@
             .catch(error => {
                 // Close loading dialog
                 loadingSwal.close();
-                
+
                 console.error('Error:', error);
                 Swal.fire('Error', 'An error occurred while creating the appointment. <br> Please ensure the appointment date is in the future.', 'error');
             });
@@ -416,8 +418,8 @@
                 Swal.showLoading();
             }
         });
-        
-        const url = `{{ route('patient.appointments.showDetail', ['id' => '__id__']) }}`.replace('__id__', appointmentId);
+
+        const url = `{{ route('users.appointments.showDetail', ['id' => '__id__']) }}`.replace('__id__', appointmentId);
 
         fetch(url)
             .then(response => {
@@ -429,27 +431,27 @@
             .then(appointment => {
                 // Close loading dialog
                 loadingSwal.close();
-                
+
                 try {
                     const content = document.getElementById('detailsContent');
-                    
+
                     // Ensure we have complete data or provide fallbacks
                     const doctorName = appointment.DoctorName || 'Not assigned';
                     const status = appointment.Status || 'Unknown';
                     const reason = appointment.Reason || 'Not specified';
                     const symptoms = appointment.Symptoms || 'Not specified';
                     const notes = appointment.Notes || 'No notes provided';
-                    
+
                     // Format the status with badge
                     const statusBadge = `
                         <span class="badge bg-${
-                            status === 'approved' ? 'success' : 
+                            status === 'approved' ? 'success' :
                             (status === 'pending' ? 'warning' : 'danger')
                         }">
                             ${status}
                         </span>
                     `;
-                    
+
                     // Create a nicely formatted content
                     content.innerHTML = `
                         <div class="appointment-details">
@@ -457,39 +459,39 @@
                                 <strong><i class="fas fa-calendar me-2"></i>Date</strong>
                                 <span>${appointment.AppointmentDate || 'Not specified'}</span>
                             </div>
-                            
+
                             <div class="mb-3">
                                 <strong><i class="fas fa-clock me-2"></i>Time</strong>
                                 <span>${appointment.AppointmentTime || 'Not specified'}</span>
                             </div>
-                            
+
                             <div class="mb-3">
                                 <strong><i class="fas fa-user-md me-2"></i>Doctor</strong>
                                 <span>${doctorName}</span>
                             </div>
-                            
+
                             <div class="mb-3">
                                 <strong><i class="fas fa-info-circle me-2"></i>Status</strong>
                                 <span>${statusBadge}</span>
                             </div>
-                            
+
                             <div class="mb-3">
                                 <strong><i class="fas fa-comment-medical me-2"></i>Reason for Visit</strong>
                                 <span>${reason}</span>
                             </div>
-                            
+
                             <div class="mb-3">
                                 <strong><i class="fas fa-heartbeat me-2"></i>Symptoms</strong>
                                 <span>${symptoms}</span>
                             </div>
-                            
+
                             <div class="mb-3">
                                 <strong><i class="fas fa-sticky-note me-2"></i>Notes</strong>
                                 <span>${notes}</span>
                             </div>
                         </div>
                     `;
-                    
+
                     // Show the modal
                     detailsModal.show();
                 } catch (error) {
@@ -500,7 +502,7 @@
             .catch(error => {
                 // Close loading dialog
                 loadingSwal.close();
-                
+
                 console.error('Error fetching appointment details:', error);
                 Swal.fire('Error', 'Could not load appointment details. Please try again.', 'error');
             });
@@ -516,8 +518,8 @@
                 Swal.showLoading();
             }
         });
-        
-        const url = `{{ route('patient.appointments.show', ['id' => '__id__']) }}`.replace('__id__', id);
+
+        const url = `{{ route('users.appointments.show', ['id' => '__id__']) }}`.replace('__id__', id);
 
         fetch(url)
             .then(response => {
@@ -529,7 +531,7 @@
             .then(appointment => {
                 // Close loading dialog
                 loadingSwal.close();
-                
+
                 try {
                     document.getElementById('edit_id').value = appointment.AppointmentID;
                     document.getElementById('edit_date').value = appointment.AppointmentDate;
@@ -537,11 +539,11 @@
                     document.getElementById('edit_reason').value = appointment.Reason || '';
                     document.getElementById('edit_symptoms').value = appointment.Symptoms || '';
                     document.getElementById('edit_notes').value = appointment.Notes || '';
-                    
+
                     if (appointment.DoctorID) {
                         document.getElementById('edit_doctor').value = appointment.DoctorID;
                     }
-                    
+
                     // Show edit modal
                     editModal.show();
                 } catch (error) {
@@ -552,7 +554,7 @@
             .catch(error => {
                 // Close loading dialog
                 loadingSwal.close();
-                
+
                 console.error('Error:', error);
                 Swal.fire('Error', 'Could not load appointment details. Please try again.', 'error');
             });
@@ -568,7 +570,7 @@
             notes: document.getElementById('edit_notes').value,
             doctor_id: document.getElementById('edit_doctor').value,
         };
-        
+
         // Show loading state
         const loadingSwal = Swal.fire({
             title: 'Processing...',
@@ -578,9 +580,9 @@
                 Swal.showLoading();
             }
         });
-        
-        const url = `{{ route('patient.appointments.update', ['id' => '__id__']) }}`.replace('__id__', id);
-        
+
+        const url = `{{ route('users.appointments.update', ['id' => '__id__']) }}`.replace('__id__', id);
+
         fetch(url, {
             method: 'PUT',
             headers: {
@@ -598,7 +600,7 @@
             .then(result => {
                 // Close loading dialog
                 loadingSwal.close();
-                
+
                 if (result.message) {
                     Swal.fire('Success', result.message, 'success').then(() => {
                         editModal.hide();
@@ -611,14 +613,14 @@
             .catch(error => {
                 // Close loading dialog
                 loadingSwal.close();
-                
+
                 console.error('Error:', error);
                 Swal.fire('Error', 'An error occurred while updating the appointment.', 'error');
             });
     }
 
     function cancelAppointment(id) {
-        const url = `{{ route('patient.appointments.destroy', ['id' => '__id__']) }}`.replace('__id__', id);
+        const url = `{{ route('users.appointments.destroy', ['id' => '__id__']) }}`.replace('__id__', id);
 
         Swal.fire({
             title: 'Cancel Appointment',
@@ -638,7 +640,7 @@
                         Swal.showLoading();
                     }
                 });
-                
+
                 fetch(url, {
                     method: 'DELETE',
                     headers: {
@@ -654,7 +656,7 @@
                     .then(result => {
                         // Close loading dialog
                         loadingSwal.close();
-                        
+
                         if (result.message) {
                             Swal.fire('Success', result.message, 'success').then(() => {
                                 window.location.reload();
@@ -666,7 +668,7 @@
                     .catch(error => {
                         // Close loading dialog
                         loadingSwal.close();
-                        
+
                         console.error('Error:', error);
                         Swal.fire('Error', 'An error occurred while cancelling the appointment.', 'error');
                     });
