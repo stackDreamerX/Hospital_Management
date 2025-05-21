@@ -236,8 +236,19 @@ class HomeController extends Controller
         $pendingCount = $appointments->where('Status', 'pending')->count();
         $approvedCount = $appointments->where('Status', 'approved')->count();
 
+        // Get the appointments that have already been rated by this user
+        $ratedAppointmentIds = \App\Models\Rating::where('user_id', $patientId)
+            ->whereNotNull('appointment_id')
+            ->pluck('appointment_id')
+            ->toArray();
+
+        // Add a flag to each appointment indicating if it has been rated
+        foreach ($appointments as $appointment) {
+            $appointment->has_rating = in_array($appointment->AppointmentID, $ratedAppointmentIds);
+        }
+
         // Render the appointments view directly
-        return view('pages.appointments', compact('doctors', 'appointments', 'pendingCount', 'approvedCount'));
+        return view('pages.appointments', compact('doctors', 'appointments', 'pendingCount', 'approvedCount', 'ratedAppointmentIds'));
     }
 
     public function appointmentStore(Request $request)
@@ -431,7 +442,7 @@ class HomeController extends Controller
             'has_schedules' => $doctor->schedules->count() > 0
         ]);
 
-        // Calculate average rating
+        // Calculate average rating - using the accessor from the Doctor model
         $doctor->avgRating = $doctor->getAverageRatingAttribute() ?? 0;
         $doctor->ratingCount = $doctor->ratings->count();
 
@@ -439,10 +450,31 @@ class HomeController extends Controller
         $recentReviews = $doctor->ratings()
             ->where('status', 'approved')
             ->whereNotNull('doctor_rating')
-            ->with('user')
+            ->with(['user' => function($query) {
+                $query->withDefault([
+                    'FullName' => 'Anonymous User',
+                    'Email' => 'anonymous@example.com'
+                ]);
+            }])
             ->latest()
             ->limit(5)
             ->get();
+
+        // Calculate detailed rating stats
+        $ratingAvgByCategory = [
+            'service' => $doctor->ratings()->where('status', 'approved')->whereNotNull('service_rating')->avg('service_rating') ?? 0,
+            'cleanliness' => $doctor->ratings()->where('status', 'approved')->whereNotNull('cleanliness_rating')->avg('cleanliness_rating') ?? 0,
+            'staff' => $doctor->ratings()->where('status', 'approved')->whereNotNull('staff_rating')->avg('staff_rating') ?? 0,
+            'wait_time' => $doctor->ratings()->where('status', 'approved')->whereNotNull('wait_time_rating')->avg('wait_time_rating') ?? 0,
+        ];
+
+        $ratingDistribution = [
+            5 => $doctor->ratings()->where('status', 'approved')->where('doctor_rating', 5)->count(),
+            4 => $doctor->ratings()->where('status', 'approved')->where('doctor_rating', 4)->count(),
+            3 => $doctor->ratings()->where('status', 'approved')->where('doctor_rating', 3)->count(),
+            2 => $doctor->ratings()->where('status', 'approved')->where('doctor_rating', 2)->count(),
+            1 => $doctor->ratings()->where('status', 'approved')->where('doctor_rating', 1)->count(),
+        ];
 
         // Get the doctor's upcoming appointments to show availability
         $upcomingAppointments = $doctor->appointments()
@@ -609,6 +641,8 @@ class HomeController extends Controller
             'dates' => $dates,
             'timeSlots' => $timeSlots,
             'hasSchedule' => $hasSchedule,
+            'ratingAvgByCategory' => $ratingAvgByCategory,
+            'ratingDistribution' => $ratingDistribution,
             'debug' => [
                 'totalDates' => count($dates),
                 'totalSlots' => $totalSlots,

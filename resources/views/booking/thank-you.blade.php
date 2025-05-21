@@ -125,7 +125,7 @@
 
                     <div class="d-grid gap-2 d-md-flex justify-content-center mt-4">
                         @if(Auth::check())
-                            <a href="{{ route('patient.appointments.index') }}" class="btn btn-primary">
+                            <a href="{{ route('users.appointments') }}" class="btn btn-primary">
                                 <i class="fas fa-list-alt me-1"></i> Xem lịch hẹn của tôi
                             </a>
                         @endif

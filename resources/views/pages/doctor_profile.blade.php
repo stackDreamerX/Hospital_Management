@@ -8,9 +8,9 @@
             <div class="card shadow-sm mb-4">
                 <div class="card-body">
                     <div class="d-flex align-items-center mb-4">
-                        <img src="{{ asset('images/doctor-placeholder.jpg') }}" alt="{{ $doctor->user->FullName }}" class="rounded-circle me-4" style="width: 150px; height: 150px; object-fit: cover;">
+                        <img src="{{ asset('images/doctor-placeholder.jpg') }}" alt="{{ $doctor->user->FullName ?? 'Doctor' }}" class="rounded-circle me-4" style="width: 150px; height: 150px; object-fit: cover;">
                         <div>
-                            <h1 class="mb-1">{{ $doctor->Title }} {{ $doctor->user->FullName }}</h1>
+                            <h1 class="mb-1">{{ $doctor->Title }} {{ $doctor->user->FullName ?? 'Doctor' }}</h1>
                             <h4 class="text-muted mb-2">{{ $doctor->Speciality }}</h4>
 
                             <div class="doctor-rating mb-3">
@@ -36,8 +36,8 @@
                         <div class="col-md-6">
                             <h5 class="mb-3"><i class="fas fa-phone-alt me-2 text-primary"></i> Contact Information</h5>
                             <ul class="list-unstyled">
-                                <li class="mb-2"><strong>Email:</strong> {{ $doctor->user->Email }}</li>
-                                <li class="mb-2"><strong>Phone:</strong> {{ $doctor->user->PhoneNumber }}</li>
+                                <li class="mb-2"><strong>Email:</strong> {{ $doctor->user->Email ?? 'Not available' }}</li>
+                                <li class="mb-2"><strong>Phone:</strong> {{ $doctor->user->PhoneNumber ?? 'Not available' }}</li>
                             </ul>
                         </div>
                         <div class="col-md-6">
@@ -85,37 +85,60 @@
                             <p class="text-muted">No reviews available for this doctor yet.</p>
                         </div>
                     @else
-                        @foreach($recentReviews as $review)
-                            <div class="border-bottom pb-3 mb-3">
-                                <div class="d-flex justify-content-between align-items-center mb-2">
-                                    <div>
-                                        <h5 class="mb-0">
-                                            @if($review->is_anonymous)
-                                                Anonymous Patient
-                                            @else
-                                                {{ $review->user->FullName }}
-                                            @endif
-                                        </h5>
-                                        <small class="text-muted">{{ $review->created_at->format('F d, Y') }}</small>
+                        <div id="reviews-container">
+                            @foreach($recentReviews as $review)
+                                <div class="border-bottom pb-3 mb-3">
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <div>
+                                            <h5 class="mb-0">
+                                                @if($review->is_anonymous)
+                                                    Anonymous Patient
+                                                @elseif($review->user)
+                                                    {{ $review->user->FullName ?? 'Anonymous User' }}
+                                                @else
+                                                    Anonymous User
+                                                @endif
+                                            </h5>
+                                            <small class="text-muted">{{ $review->created_at->format('F d, Y') }}</small>
+                                        </div>
+                                        <div class="doctor-rating">
+                                            @for($i = 1; $i <= 5; $i++)
+                                                @if($i <= $review->doctor_rating)
+                                                    <i class="fas fa-star text-warning"></i>
+                                                @else
+                                                    <i class="far fa-star text-warning"></i>
+                                                @endif
+                                            @endfor
+                                        </div>
                                     </div>
-                                    <div class="doctor-rating">
-                                        @for($i = 1; $i <= 5; $i++)
-                                            @if($i <= $review->doctor_rating)
-                                                <i class="fas fa-star text-warning"></i>
-                                            @else
-                                                <i class="far fa-star text-warning"></i>
-                                            @endif
-                                        @endfor
-                                    </div>
+                                    <p>{{ $review->feedback }}</p>
                                 </div>
-                                <p>{{ $review->feedback }}</p>
-                            </div>
-                        @endforeach
-
-                        <div class="text-center mt-3">
-                            <a href="{{ route('doctor.public.ratings', $doctor->DoctorID) }}" class="btn btn-outline-primary">View All Reviews</a>
+                            @endforeach
                         </div>
+
+                        @if($doctor->ratingCount > count($recentReviews))
+                            <div class="text-center mt-3" id="load-more-container">
+                                <button id="load-more-reviews" class="btn btn-outline-primary" data-page="1" data-doctor="{{ $doctor->DoctorID }}">
+                                    <i class="fas fa-sync me-1"></i> Load More Reviews
+                                </button>
+                                <div id="loading-spinner" class="spinner-border text-primary d-none" role="status">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                            </div>
+                        @endif
                     @endif
+
+                    <div class="text-center mt-3">
+                        @auth
+                            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#writeReviewModal">
+                                <i class="fas fa-pen me-1"></i> Write a Review
+                            </button>
+                        @else
+                            <a href="{{ route('login') }}" class="btn btn-outline-primary">
+                                <i class="fas fa-sign-in-alt me-1"></i> Login to Write a Review
+                            </a>
+                        @endauth
+                    </div>
                 </div>
             </div>
         </div>
@@ -488,6 +511,30 @@
         from { opacity: 0; transform: translateY(10px); }
         to { opacity: 1; transform: translateY(0); }
     }
+
+    /* Rating form styles */
+    .star-rating {
+        display: inline-flex;
+        flex-direction: row-reverse;
+        font-size: 1.5em;
+    }
+
+    .star-rating input {
+        display: none;
+    }
+
+    .star-rating label {
+        color: #ddd;
+        cursor: pointer;
+        padding: 0 0.1em;
+        transition: color 0.2s;
+    }
+
+    .star-rating label:hover,
+    .star-rating label:hover ~ label,
+    .star-rating input:checked ~ label {
+        color: #ffc107;
+    }
 </style>
 @endsection
 
@@ -653,6 +700,437 @@
         } else {
             console.warn("No date options found");
         }
+
+        // Rating stars functionality
+        if (document.querySelector('.star-rating')) {
+            const stars = document.querySelectorAll('.star-rating input');
+            stars.forEach(star => {
+                star.addEventListener('change', function() {
+                    const rating = this.value;
+                    console.log(`Selected rating: ${rating}`);
+                });
+            });
+        }
+
+        // AJAX form submission for reviews
+        const reviewForm = document.getElementById('reviewForm');
+        if (reviewForm) {
+            reviewForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+
+                const formData = new FormData(this);
+                const submitBtn = reviewForm.querySelector('button[type="submit"]');
+                const originalBtnText = submitBtn.innerHTML;
+
+                // Change button to loading state
+                submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Submitting...';
+                submitBtn.disabled = true;
+
+                // Submit form via AJAX
+                fetch(reviewForm.getAttribute('action'), {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Show success message
+                        Swal.fire({
+                            title: 'Thank you!',
+                            text: 'Your review has been submitted successfully.',
+                            icon: 'success',
+                            confirmButtonText: 'Close'
+                        }).then(() => {
+                            // Reload the page to show the updated reviews
+                            window.location.reload();
+                        });
+
+                        // Update the average rating display
+                        updateRatingDisplay(data.avgRating, data.ratingCount);
+
+                        // Add the new review to the reviews section
+                        if (data.review) {
+                            addNewReviewToPage(data.review);
+                        }
+
+                        // Reset form and close modal
+                        reviewForm.reset();
+                        bootstrap.Modal.getInstance(document.getElementById('writeReviewModal')).hide();
+                    } else {
+                        Swal.fire({
+                            title: 'Error',
+                            text: data.message || 'An error occurred while submitting your review.',
+                            icon: 'error',
+                            confirmButtonText: 'Close'
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    Swal.fire({
+                        title: 'Error',
+                        text: 'An error occurred while submitting your review.',
+                        icon: 'error',
+                        confirmButtonText: 'Close'
+                    });
+                })
+                .finally(() => {
+                    // Restore button state
+                    submitBtn.innerHTML = originalBtnText;
+                    submitBtn.disabled = false;
+                });
+            });
+        }
+
+        // Function to update the doctor rating display
+        function updateRatingDisplay(avgRating, ratingCount) {
+            const ratingContainer = document.querySelector('.doctor-rating');
+            if (!ratingContainer) return;
+
+            // Clear existing stars
+            ratingContainer.innerHTML = '';
+
+            // Add new stars based on updated average
+            for (let i = 1; i <= 5; i++) {
+                const starIcon = document.createElement('i');
+
+                if (i <= Math.floor(avgRating)) {
+                    starIcon.className = 'fas fa-star text-warning';
+                } else if (i - 0.5 <= avgRating) {
+                    starIcon.className = 'fas fa-star-half-alt text-warning';
+                } else {
+                    starIcon.className = 'far fa-star text-warning';
+                }
+
+                ratingContainer.appendChild(starIcon);
+            }
+
+            // Add rating text
+            const ratingText = document.createElement('span');
+            ratingText.className = 'ms-1';
+            ratingText.textContent = `${Number(avgRating).toFixed(1)} (${ratingCount} reviews)`;
+            ratingContainer.appendChild(ratingText);
+        }
+
+        // Function to add a new review to the page
+        function addNewReviewToPage(review) {
+            const reviewsContainer = document.querySelector('.card-body .border-bottom:last-child')?.parentNode;
+            if (!reviewsContainer) {
+                console.error('Could not find reviews container');
+                return;
+            }
+
+            // Check if "No reviews available" message exists and remove it
+            const noReviewsMsg = reviewsContainer.querySelector('.text-center.py-4');
+            if (noReviewsMsg) {
+                noReviewsMsg.remove();
+            }
+
+            // Create new review element
+            const reviewDiv = document.createElement('div');
+            reviewDiv.className = 'border-bottom pb-3 mb-3';
+            reviewDiv.id = 'new-review-added';
+
+            // Format review date
+            const reviewDate = new Date(review.created_at);
+            const formattedDate = reviewDate.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+
+            // Get user name (anonymous or real)
+            let userName = 'Anonymous User';
+            if (review.is_anonymous) {
+                userName = 'Anonymous Patient';
+            } else if (review.user && review.user.FullName) {
+                userName = review.user.FullName;
+            } else if (review.user_name) {
+                userName = review.user_name;
+            }
+
+            // Create review HTML
+            reviewDiv.innerHTML = `
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <div>
+                        <h5 class="mb-0">${userName}</h5>
+                        <small class="text-muted">${formattedDate}</small>
+                    </div>
+                    <div class="doctor-rating">
+                        ${getStarRatingHTML(review.doctor_rating)}
+                    </div>
+                </div>
+                <p>${review.feedback}</p>
+            `;
+
+            // Insert at the beginning of the container
+            if (reviewsContainer.firstChild) {
+                reviewsContainer.insertBefore(reviewDiv, reviewsContainer.firstChild);
+            } else {
+                reviewsContainer.appendChild(reviewDiv);
+            }
+
+            // Update "View All Reviews" link if it doesn't exist
+            if (!reviewsContainer.querySelector('a.btn.btn-outline-primary')) {
+                const linkDiv = document.createElement('div');
+                linkDiv.className = 'text-center mt-3';
+                linkDiv.innerHTML = `<a href="/doctor/public/ratings/${review.doctor_id}" class="btn btn-outline-primary">View All Reviews</a>`;
+                reviewsContainer.appendChild(linkDiv);
+            }
+        }
+
+        // Helper function to generate star rating HTML
+        function getStarRatingHTML(rating) {
+            let stars = '';
+            for (let i = 1; i <= 5; i++) {
+                if (i <= rating) {
+                    stars += '<i class="fas fa-star text-warning"></i>';
+                } else {
+                    stars += '<i class="far fa-star text-warning"></i>';
+                }
+            }
+            return stars;
+        }
+
+        // Immediately initialize Load More button
+        console.log("DEBUG: Checking for Load More button");
+        const loadMoreBtn = document.getElementById('load-more-reviews');
+        if (loadMoreBtn) {
+            console.log("DEBUG: Found Load More button, doctor ID:", loadMoreBtn.getAttribute('data-doctor'));
+            console.log("DEBUG: Current page:", loadMoreBtn.getAttribute('data-page'));
+
+            // Add click handler for the Load More button
+            loadMoreBtn.addEventListener('click', function() {
+                const doctorId = this.getAttribute('data-doctor');
+                const page = parseInt(this.getAttribute('data-page'));
+                const nextPage = page + 1;
+                const loadingSpinner = document.getElementById('loading-spinner');
+
+                console.log(`CLICK DETECTED: Loading more reviews for doctor ${doctorId}, page ${nextPage}`);
+
+                // Show loading spinner
+                loadMoreBtn.classList.add('d-none');
+
+                // Create loading spinner if it doesn't exist
+                let spinner = loadingSpinner;
+                if (!spinner) {
+                    console.log('DEBUG: Creating loading spinner as it does not exist');
+                    spinner = document.createElement('div');
+                    spinner.id = 'loading-spinner';
+                    spinner.className = 'spinner-border text-primary';
+                    spinner.setAttribute('role', 'status');
+                    spinner.innerHTML = '<span class="visually-hidden">Loading...</span>';
+
+                    // Insert spinner after load more button
+                    const loadMoreContainer = document.getElementById('load-more-container');
+                    if (loadMoreContainer) {
+                        loadMoreContainer.appendChild(spinner);
+                    }
+                }
+
+                // Show spinner
+                spinner.classList.remove('d-none');
+
+                // Make AJAX request to get more reviews
+                const apiUrl = `/api/doctor/${doctorId}/reviews?page=${nextPage}`;
+                console.log(`DEBUG: Fetching from URL: ${apiUrl}`);
+                console.log(`DEBUG: Full URL: ${window.location.origin}${apiUrl}`);
+
+                // Use the full URL with domain name
+                fetch(`${window.location.origin}${apiUrl}`)
+                    .then(response => {
+                        console.log('DEBUG: Response status:', response.status);
+                        console.log('DEBUG: Response headers:', Object.fromEntries([...response.headers]));
+                        return response.json();
+                    })
+                    .then(data => {
+                        console.log('DEBUG: Data received:', data);
+
+                        if (data.success) {
+                            console.log(`DEBUG: Success! Received ${data.reviews.length} reviews`);
+
+                            // Check if we actually got any reviews
+                            if (data.reviews.length === 0) {
+                                console.log('DEBUG: No reviews received despite success response');
+
+                                // Show message to user if appropriate
+                                Swal.fire({
+                                    icon: 'info',
+                                    title: 'No More Reviews',
+                                    text: 'There are no more reviews to load.'
+                                });
+
+                                // Remove the Load More button
+                                document.getElementById('load-more-container').remove();
+                                return;
+                            }
+
+                            // Append new reviews
+                            const reviewsContainer = document.getElementById('reviews-container');
+
+                            data.reviews.forEach(review => {
+                                // Create review element
+                                const reviewDiv = document.createElement('div');
+                                reviewDiv.className = 'border-bottom pb-3 mb-3';
+
+                                // Format date
+                                const reviewDate = new Date(review.created_at);
+                                const formattedDate = reviewDate.toLocaleDateString('en-US', {
+                                    year: 'numeric', month: 'long', day: 'numeric'
+                                });
+
+                                // Determine user name
+                                let userName = 'Anonymous User';
+                                if (review.is_anonymous) {
+                                    userName = 'Anonymous Patient';
+                                } else if (review.user && review.user.FullName) {
+                                    userName = review.user.FullName;
+                                } else if (review.user_name) {
+                                    userName = review.user_name;
+                                }
+
+                                console.log(`DEBUG: Processing review by ${userName}`);
+
+                                // Create star rating HTML
+                                let starsHtml = '';
+                                for (let i = 1; i <= 5; i++) {
+                                    if (i <= review.doctor_rating) {
+                                        starsHtml += '<i class="fas fa-star text-warning"></i>';
+                                    } else {
+                                        starsHtml += '<i class="far fa-star text-warning"></i>';
+                                    }
+                                }
+
+                                // Set inner HTML
+                                reviewDiv.innerHTML = `
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <div>
+                                            <h5 class="mb-0">${userName}</h5>
+                                            <small class="text-muted">${formattedDate}</small>
+                                        </div>
+                                        <div class="doctor-rating">
+                                            ${starsHtml}
+                                        </div>
+                                    </div>
+                                    <p>${review.feedback}</p>
+                                `;
+
+                                reviewsContainer.appendChild(reviewDiv);
+                            });
+
+                            // Update page number in button
+                            loadMoreBtn.setAttribute('data-page', nextPage);
+
+                            // Show/hide Load More button based on if there are more reviews
+                            if (data.has_more) {
+                                loadMoreBtn.classList.remove('d-none');
+                                console.log('DEBUG: More reviews available, showing Load More button');
+                            } else {
+                                // No more reviews to load
+                                console.log('DEBUG: No more reviews available, removing Load More button');
+                                document.getElementById('load-more-container').remove();
+                            }
+                        } else {
+                            // Show error
+                            console.error('Error loading more reviews:', data.message);
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: data.message || 'Failed to load more reviews'
+                            });
+                            loadMoreBtn.classList.remove('d-none');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('DEBUG: Error loading reviews:', error);
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'An error occurred while loading more reviews'
+                        });
+                        loadMoreBtn.classList.remove('d-none');
+                    })
+                                            .finally(() => {
+                            // Hide spinner
+                            const spinnerElement = document.getElementById('loading-spinner');
+                            if (spinnerElement) {
+                                spinnerElement.classList.add('d-none');
+                            }
+                        });
+            });
+        } else {
+            console.warn("DEBUG: Load More button not found!");
+            console.log("DEBUG: All buttons on page:", document.querySelectorAll('button').length);
+        }
+    });
+
+    // Additional initialization outside the DOMContentLoaded event
+    window.addEventListener('load', function() {
+        console.log('DEBUG: Window fully loaded, adding extra handlers');
+
+        // Add click handler for Write a Review button
+        const writeReviewBtn = document.querySelector('button[data-bs-toggle="modal"][data-bs-target="#writeReviewModal"]');
+        if (writeReviewBtn) {
+            console.log('DEBUG: Found Write Review button, adding click handler');
+            writeReviewBtn.addEventListener('click', function() {
+                console.log('DEBUG: Opening review modal');
+            });
+        }
     });
 </script>
+
+<!-- Write Review Modal -->
+<div class="modal fade" id="writeReviewModal" tabindex="-1" aria-labelledby="writeReviewModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="writeReviewModalLabel">
+                    <i class="fas fa-star me-2"></i> Rate Dr. {{ $doctor->user->FullName ?? 'this doctor' }}
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="reviewForm" action="{{ route('doctor.review.store') }}" method="POST">
+                @csrf
+                <input type="hidden" name="doctor_id" value="{{ $doctor->DoctorID }}">
+
+                <div class="modal-body">
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">How would you rate your doctor?</label>
+                        <div class="star-rating text-center">
+                            <input type="radio" id="doctor5" name="doctor_rating" value="5" required />
+                            <label for="doctor5" class="fas fa-star"></label>
+                            <input type="radio" id="doctor4" name="doctor_rating" value="4" />
+                            <label for="doctor4" class="fas fa-star"></label>
+                            <input type="radio" id="doctor3" name="doctor_rating" value="3" />
+                            <label for="doctor3" class="fas fa-star"></label>
+                            <input type="radio" id="doctor2" name="doctor_rating" value="2" />
+                            <label for="doctor2" class="fas fa-star"></label>
+                            <input type="radio" id="doctor1" name="doctor_rating" value="1" />
+                            <label for="doctor1" class="fas fa-star"></label>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="feedback" class="form-label fw-bold">Your Review</label>
+                        <textarea class="form-control" id="feedback" name="feedback" rows="4"
+                            placeholder="Share your experience with this doctor..." required></textarea>
+                    </div>
+
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="is_anonymous" name="is_anonymous">
+                        <label class="form-check-label" for="is_anonymous">
+                            Post anonymously
+                        </label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-paper-plane me-1"></i> Submit Review
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 @endsection

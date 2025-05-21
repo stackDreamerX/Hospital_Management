@@ -39,6 +39,30 @@
     .appointment-details .fas {
         color: #3f8cff;
     }
+
+    /* Rating stars styling */
+    .star-rating {
+        display: inline-flex;
+        flex-direction: row-reverse;
+        font-size: 1.5em;
+    }
+
+    .star-rating input {
+        display: none;
+    }
+
+    .star-rating label {
+        color: #ddd;
+        cursor: pointer;
+        padding: 0 0.1em;
+        transition: color 0.2s;
+    }
+
+    .star-rating label:hover,
+    .star-rating label:hover ~ label,
+    .star-rating input:checked ~ label {
+        color: #ffc107;
+    }
 </style>
 @endsection
 
@@ -175,7 +199,8 @@
                             <td>
                                 <span class="badge bg-{{
                                     $appointment['Status'] == 'approved' ? 'success' :
-                                    ($appointment['Status'] == 'pending' ? 'warning' : 'danger')
+                                    ($appointment['Status'] == 'pending' ? 'warning' :
+                                    ($appointment['Status'] == 'completed' ? 'success' : 'danger'))
                                 }}">
                                     {{ $appointment['Status'] }}
                                 </span>
@@ -195,6 +220,22 @@
                                             <i class="fas fa-times"></i>
                                             Cancel
                                         </button>
+                                    @endif
+                                    @if($appointment['Status'] == 'completed')
+                                        @if($appointment->has_rating)
+                                            <button class="btn btn-secondary" disabled>
+                                                <i class="fas fa-check"></i>
+                                                Already Rated
+                                            </button>
+                                        @else
+                                            <button class="btn btn-success rate-doctor"
+                                                    data-id="{{ $appointment->AppointmentID }}"
+                                                    data-doctor-id="{{ $appointment->DoctorID }}"
+                                                    data-doctor-name="{{ $appointment->doctor->user->FullName ?? 'Doctor' }}">
+                                                <i class="fas fa-star"></i>
+                                                Rate Doctor
+                                            </button>
+                                        @endif
                                     @endif
                                 </div>
                             </td>
@@ -282,13 +323,103 @@
     </div>
 </div>
 
+<!-- Rating Modal -->
+<div class="modal fade" id="ratingModal" tabindex="-1" aria-labelledby="ratingModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="ratingModalLabel"><i class="fas fa-star me-2"></i> Rate Your Experience</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="ratingForm" action="{{ route('doctor.review.store') }}" method="POST">
+                @csrf
+                <input type="hidden" name="doctor_id" id="rating_doctor_id">
+                <input type="hidden" name="appointment_id" id="rating_appointment_id">
+
+                <div class="modal-body">
+                    <div class="mb-3 text-center">
+                        <p>How was your experience with <strong id="doctor_name_display"></strong>?</p>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">Doctor Rating</label>
+                        <div class="star-rating text-center">
+                            <input type="radio" id="rating5" name="doctor_rating" value="5" required />
+                            <label for="rating5" class="fas fa-star"></label>
+                            <input type="radio" id="rating4" name="doctor_rating" value="4" />
+                            <label for="rating4" class="fas fa-star"></label>
+                            <input type="radio" id="rating3" name="doctor_rating" value="3" />
+                            <label for="rating3" class="fas fa-star"></label>
+                            <input type="radio" id="rating2" name="doctor_rating" value="2" />
+                            <label for="rating2" class="fas fa-star"></label>
+                            <input type="radio" id="rating1" name="doctor_rating" value="1" />
+                            <label for="rating1" class="fas fa-star"></label>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">Service Rating</label>
+                        <div class="star-rating text-center">
+                            <input type="radio" id="service5" name="service_rating" value="5" />
+                            <label for="service5" class="fas fa-star"></label>
+                            <input type="radio" id="service4" name="service_rating" value="4" />
+                            <label for="service4" class="fas fa-star"></label>
+                            <input type="radio" id="service3" name="service_rating" value="3" />
+                            <label for="service3" class="fas fa-star"></label>
+                            <input type="radio" id="service2" name="service_rating" value="2" />
+                            <label for="service2" class="fas fa-star"></label>
+                            <input type="radio" id="service1" name="service_rating" value="1" />
+                            <label for="service1" class="fas fa-star"></label>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">Cleanliness Rating</label>
+                        <div class="star-rating text-center">
+                            <input type="radio" id="clean5" name="cleanliness_rating" value="5" />
+                            <label for="clean5" class="fas fa-star"></label>
+                            <input type="radio" id="clean4" name="cleanliness_rating" value="4" />
+                            <label for="clean4" class="fas fa-star"></label>
+                            <input type="radio" id="clean3" name="cleanliness_rating" value="3" />
+                            <label for="clean3" class="fas fa-star"></label>
+                            <input type="radio" id="clean2" name="cleanliness_rating" value="2" />
+                            <label for="clean2" class="fas fa-star"></label>
+                            <input type="radio" id="clean1" name="cleanliness_rating" value="1" />
+                            <label for="clean1" class="fas fa-star"></label>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="feedback" class="form-label fw-bold">Your Feedback</label>
+                        <textarea class="form-control" id="feedback" name="feedback" rows="4"
+                            placeholder="Share your experience..." required></textarea>
+                    </div>
+
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="is_anonymous" name="is_anonymous">
+                        <label class="form-check-label" for="is_anonymous">
+                            Post anonymously
+                        </label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-paper-plane me-1"></i> Submit Rating
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 @endsection
 
 @section('scripts')
 
 <script>
     // Global modal instances
-    let detailsModal, editModal;
+    let detailsModal, editModal, ratingModal;
 
     document.addEventListener('DOMContentLoaded', function() {
         console.log('DOM fully loaded');
@@ -296,6 +427,7 @@
         // Initialize Bootstrap modals
         detailsModal = new bootstrap.Modal(document.getElementById('detailsModal'));
         editModal = new bootstrap.Modal(document.getElementById('editModal'));
+        ratingModal = new bootstrap.Modal(document.getElementById('ratingModal'));
 
         // Set up event listeners
         setupEventListeners();
@@ -330,6 +462,24 @@
             });
         });
 
+        // Add event listeners for rating buttons
+        document.querySelectorAll('.rate-doctor').forEach(button => {
+            button.addEventListener('click', function() {
+                const appointmentId = this.getAttribute('data-id');
+                const doctorId = this.getAttribute('data-doctor-id');
+                const doctorName = this.getAttribute('data-doctor-name');
+                openRatingModal(appointmentId, doctorId, doctorName);
+            });
+        });
+
+        // Rating form submission
+        if (document.getElementById('ratingForm')) {
+            document.getElementById('ratingForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                submitRating(this);
+            });
+        }
+
         // Search functionality
         const searchInput = document.getElementById('searchInput');
         if (searchInput) {
@@ -353,6 +503,116 @@
                 window.location.reload();
             });
         }
+    }
+
+    function openRatingModal(appointmentId, doctorId, doctorName) {
+        // First check if this appointment has already been rated
+        const ratedAppointmentIds = @json($ratedAppointmentIds ?? []);
+
+        if (ratedAppointmentIds.includes(parseInt(appointmentId))) {
+            Swal.fire({
+                title: 'Already Rated',
+                text: 'You have already submitted a review for this appointment.',
+                icon: 'info'
+            });
+            return;
+        }
+
+        document.getElementById('rating_doctor_id').value = doctorId;
+        document.getElementById('rating_appointment_id').value = appointmentId;
+        document.getElementById('doctor_name_display').textContent = doctorName;
+        ratingModal.show();
+    }
+
+    function submitRating(form) {
+        const formData = new FormData(form);
+        const data = {};
+
+        // Properly handle form data, especially checkboxes
+        formData.forEach((value, key) => {
+            // For checkbox fields, convert to boolean
+            if (key === 'is_anonymous') {
+                data[key] = true; // Always set to true if present in formData
+            } else {
+                data[key] = value;
+            }
+        });
+
+        // Ensure is_anonymous is defined (defaults to false if not checked)
+        if (!('is_anonymous' in data)) {
+            data.is_anonymous = false;
+        }
+
+        console.log('Submitting rating data:', data);
+
+        // Show loading state
+        const loadingSwal = Swal.fire({
+            title: 'Submitting...',
+            text: 'Sending your rating',
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
+
+        fetch(form.action, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+            },
+            body: JSON.stringify(data)
+        })
+        .then(response => {
+            console.log('Response status:', response.status);
+            console.log('Response headers:', Object.fromEntries([...response.headers]));
+
+            // First, check if the response is ok (status in the range 200-299)
+            if (!response.ok) {
+                return response.json().catch(() => {
+                    throw new Error(`Server returned ${response.status} ${response.statusText}`);
+                }).then(errorData => {
+                    throw new Error(errorData.message || `Server error: ${response.status}`);
+                });
+            }
+
+            // Check if response is valid JSON
+            const contentType = response.headers.get('content-type');
+            if (contentType && contentType.includes('application/json')) {
+                return response.json();
+            } else {
+                console.error('Received non-JSON response:', contentType);
+                // Try to get the response text for debugging
+                return response.text().then(text => {
+                    console.error('Response text:', text.substring(0, 500) + '...');
+                    throw new Error('Server returned a non-JSON response');
+                });
+            }
+        })
+        .then(result => {
+            loadingSwal.close();
+            console.log('Rating submission result:', result);
+
+            if (result.success) {
+                ratingModal.hide();
+                Swal.fire('Success', 'Your rating has been submitted. Thank you for your feedback!', 'success')
+                .then(() => {
+                    window.location.reload();
+                });
+            } else {
+                Swal.fire('Error', result.message || 'Something went wrong. Please try again.', 'error');
+            }
+        })
+        .catch(error => {
+            loadingSwal.close();
+            console.error('Error submitting rating:', error.message);
+            Swal.fire({
+                title: 'Error',
+                text: 'An error occurred while submitting your rating: ' + error.message,
+                icon: 'error'
+            });
+        });
     }
 
     function createAppointment() {

@@ -5,6 +5,7 @@
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 @endpush
 
+
 <style>
        modal {
   display: none; /* Ẩn modal ban đầu */
@@ -32,11 +33,11 @@
   position: relative;
   margin: 1.75rem auto;
   pointer-events: auto;
-  max-width: 500px; 
+  max-width: 500px;
 }
 
 .modal-dialog.modal-lg {
-  max-width: 800px; 
+  max-width: 800px;
 }
 
 .modal-content {
@@ -45,8 +46,8 @@
   flex-direction: column;
   background-color: #fff;
   border: none;
-  border-radius: 0.5rem; 
-  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15); 
+  border-radius: 0.5rem;
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
 }
 
 .modal-header {
@@ -54,7 +55,7 @@
   align-items: center;
   justify-content: space-between;
   padding: 1rem 1rem;
-  border-bottom: 1px solid #dee2e6; 
+  border-bottom: 1px solid #dee2e6;
   border-top-left-radius: 0.5rem;
   border-top-right-radius: 0.5rem;
 }
@@ -207,7 +208,7 @@
     </div>
 
     <!-- Appointments Table -->
-    <div class="card shadow-sm">       
+    <div class="card shadow-sm">
             <div class="card-header bg-white py-3">
                 <h5 class="mb-0">My Appointments</h5>
                 <div class="d-flex justify-content-between align-items-center mt-3">
@@ -218,7 +219,7 @@
                         </span>
                         <input type="text" id="searchInput" class="form-control" placeholder="Search appointments...">
                     </div>
-                    
+
                     <!-- Reload Button -->
                     <button class="btn btn-outline-secondary ms-3" id="reloadButton">
                         <i class="fas fa-sync"></i> Reload
@@ -253,9 +254,10 @@
                             <td>{{ $appointment['Reason'] }}</td>
                             <td>{{ $appointment['DoctorNotes'] ?? 'No notes provided' }}</td> <!-- DoctorNotes -->
                             <td>
-                                <span class="badge bg-{{    
-                                    $appointment['Status'] == 'approved' ? 'success' :
-                                    ($appointment['Status'] == 'pending' ? 'warning' : 'danger')
+                                <span class="badge bg-{{
+                                    strtolower($appointment['Status']) == 'approved' ? 'success' :
+                                    (strtolower($appointment['Status']) == 'pending' ? 'warning' :
+                                     (strtolower($appointment['Status']) == 'completed' ? 'info' : 'danger'))
                                 }}">
                                     {{ $appointment['Status'] }}
                                 </span>
@@ -263,13 +265,24 @@
                             <td>
                                 @if($appointment['Status'] == 'pending')
                                     <div class="btn-group btn-group-sm">
-                                        <button class="btn btn-success approve-btn" 
+                                        <button class="btn btn-success approve-btn"
                                                 data-id="{{ $appointment['AppointmentID'] }}">
                                             <i class="fas fa-check"></i> Approve
                                         </button>
                                         <button class="btn btn-danger reject-btn"
                                                 data-id="{{ $appointment['AppointmentID'] }}">
                                             <i class="fas fa-times"></i> Reject
+                                        </button>
+                                    </div>
+                                @elseif(strtolower($appointment['Status']) == 'approved')
+                                    <div class="btn-group btn-group-sm">
+                                        <button class="btn btn-info btn-sm view-details-btn"
+                                                data-appointment='{{ json_encode(value: $appointment) }}'>
+                                            <i class="fas fa-eye"></i> View
+                                        </button>
+                                        <button class="btn btn-success btn-sm complete-btn"
+                                                data-id="{{ $appointment['AppointmentID'] }}">
+                                            <i class="fas fa-check-double"></i> Complete
                                         </button>
                                     </div>
                                 @else
@@ -318,7 +331,7 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
 
-document.addEventListener('DOMContentLoaded', function() {   
+document.addEventListener('DOMContentLoaded', function() {
     const searchInput = document.getElementById('searchInput');
     const reloadButton = document.getElementById('reloadButton');
     const tableBody = document.querySelector('tbody');
@@ -327,13 +340,20 @@ document.addEventListener('DOMContentLoaded', function() {
     // Add event listeners for buttons
     document.querySelectorAll('.approve-btn').forEach(btn => {
         btn.addEventListener('click', function() {
-            updateStatus(this.getAttribute('data-id'), 'Approved');
+            updateStatus(this.getAttribute('data-id'), 'approved');
         });
     });
 
     document.querySelectorAll('.reject-btn').forEach(btn => {
         btn.addEventListener('click', function() {
-            updateStatus(this.getAttribute('data-id'), 'Rejected');
+            updateStatus(this.getAttribute('data-id'), 'rejected');
+        });
+    });
+
+    // Add event listener for complete button
+    document.querySelectorAll('.complete-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            updateStatus(this.getAttribute('data-id'), 'completed');
         });
     });
 
@@ -352,32 +372,44 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
- 
+
     reloadButton.addEventListener('click', function() {
         window.location.reload();
     });
 });
 
 function updateStatus(appointmentId, status) {
+    let title, confirmText, confirmColor;
+
+    if (status === 'completed') {
+        title = 'Complete Appointment';
+        confirmText = 'Complete';
+        confirmColor = '#28a745';
+    } else {
+        title = 'Add Notes';
+        confirmText = status === 'approved' ? 'Approve' : 'Reject';
+        confirmColor = status === 'approved' ? '#28a745' : '#dc3545';
+    }
+
     Swal.fire({
-        title: 'Add Notes',
+        title: title,
         input: 'textarea',
         inputPlaceholder: 'Enter any notes (optional)',
         showCancelButton: true,
-        confirmButtonText: status === 'Approved' ? 'Approve' : 'Reject',
-        confirmButtonColor: status === 'Approved' ? '#28a745' : '#dc3545'
+        confirmButtonText: confirmText,
+        confirmButtonColor: confirmColor
     }).then((result) => {
         if (result.isConfirmed) {
             // Show processing modal
             Swal.fire({
-                title: status === 'Approved' ? 'Approving...' : 'Rejecting...',
+                title: status === 'approved' ? 'Approving...' : (status === 'rejected' ? 'Rejecting...' : 'Completing...'),
                 html: 'Please wait while we process your request and send email notification...',
                 allowOutsideClick: false,
                 didOpen: () => {
                     Swal.showLoading();
                 }
             });
-            
+
             const notes = result.value || '';
             const url = `{{ route('doctor.appointments.updateStatus', ['id' => '__id__']) }}`.replace('__id__', appointmentId);
 

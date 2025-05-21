@@ -28,7 +28,7 @@ class Rating extends Model
      */
     public function user()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'user_id', 'UserID');
     }
 
     /**
@@ -36,7 +36,7 @@ class Rating extends Model
      */
     public function doctor()
     {
-        return $this->belongsTo(Doctor::class);
+        return $this->belongsTo(Doctor::class, 'doctor_id', 'DoctorID');
     }
 
     /**
@@ -59,16 +59,16 @@ class Rating extends Model
             $this->staff_rating,
             $this->wait_time_rating
         ];
-        
+
         // Filter out null values
         $validRatings = array_filter($ratings, function ($value) {
             return !is_null($value);
         });
-        
+
         if (count($validRatings) === 0) {
             return null;
         }
-        
+
         return round(array_sum($validRatings) / count($validRatings), 1);
     }
-} 
+}

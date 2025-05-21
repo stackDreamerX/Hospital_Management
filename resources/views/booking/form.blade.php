@@ -163,6 +163,14 @@
                             @enderror
                         </div>
 
+                        <div class="mb-3">
+                            <label for="notes" class="form-label">Ghi chú thêm</label>
+                            <textarea class="form-control @error('notes') is-invalid @enderror" id="notes" name="notes" rows="3" placeholder="Các thông tin bổ sung mà bạn muốn bác sĩ biết">{{ old('notes') }}</textarea>
+                            @error('notes')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+
                         <h5 class="mt-4 mb-3">Phương thức thanh toán</h5>
                         <div class="mb-3">
                             <div class="form-check mb-2">

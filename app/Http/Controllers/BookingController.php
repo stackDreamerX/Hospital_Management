@@ -204,6 +204,7 @@ class BookingController extends Controller
             'district' => 'required|string',
             'reason' => 'required|string',
             'symptoms' => 'nullable|string',
+            'notes' => 'nullable|string',
             'payment_method' => 'required|in:cash,vnpay,zalopay',
         ]);
 
@@ -355,6 +356,7 @@ class BookingController extends Controller
                         'time' => $slot->time,
                         'reason' => $request->reason,
                         'symptoms' => $request->symptoms,
+                        'notes' => $request->notes,
                         'payment_method' => $request->payment_method,
                         'amount' => $amount,
                         'patient_info' => $patientInfo,
@@ -412,12 +414,12 @@ class BookingController extends Controller
                 $appointment->AppointmentTime = $slot->time;
                 $appointment->Reason = $request->reason;
                 $appointment->Symptoms = $request->symptoms;
+                $appointment->Notes = $request->notes;
                 $appointment->DoctorID = $request->doctor_id;
                 $appointment->Status = 'pending';
                 $appointment->payment_method = 'cash';
                 $appointment->payment_status = 'pending';
                 $appointment->amount = $amount;
-                $appointment->Notes = $patientInfo;
 
                 // If user is logged in, associate with user
                 if (Auth::check()) {

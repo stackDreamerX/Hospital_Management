@@ -18,6 +18,7 @@ use App\Http\Controllers\PatientWardAllocationController;
 use App\Http\Controllers\WardBedHistoryController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\FeedbackController;
+use App\Http\Controllers\ReviewController;
 
 
 
@@ -59,6 +60,14 @@ Route::get('/zalopay/callback', [App\Http\Controllers\ZaloPayController::class, 
 
 // Public doctor ratings
 Route::get('/doctors/{id}/ratings', [RatingController::class, 'doctorRatings'])->name('doctor.public.ratings');
+
+// API routes for reviews
+Route::get('/api/doctor/{doctorId}/reviews', [App\Http\Controllers\ReviewController::class, 'apiGetDoctorReviews']);
+
+// Doctor review routes
+Route::middleware(['auth'])->group(function() {
+    Route::post('/doctor/review', [App\Http\Controllers\ReviewController::class, 'store'])->name('doctor.review.store');
+});
 
 Route::prefix('admin')->middleware('auth')->group(function () {
     Route::get('/', [AdminController::class, 'show_dashboard'])->name('admin');

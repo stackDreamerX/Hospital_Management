@@ -52,6 +52,14 @@ class AppointmentController extends Controller
         $status = strtolower($request->input('status'));
         $notes = $request->input('notes', null);
 
+        // Debug log
+        Log::info('Updating appointment status', [
+            'appointment_id' => $id,
+            'old_status' => $appointment->Status,
+            'new_status' => $status,
+            'notes' => $notes
+        ]);
+
         $appointment->update([
             'Status' => $status,
             'DoctorNotes' => $notes,
