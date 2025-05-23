@@ -117,12 +117,13 @@
                         <span>{{ Auth::user()->FullName }}</span>
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                        <li><a class="dropdown-item" href="#"><i class="fas fa-user me-2"></i>Profile</a></li>
-                        <li><a class="dropdown-item" href="#"><i class="fas fa-cog me-2"></i>Settings</a></li>
+                        <li><a class="dropdown-item" href="{{ route('users.profile') }}"><i class="fas fa-user me-2"></i>Thông tin cá nhân</a></li>
+                        <li><a class="dropdown-item" href="{{ route('users.prescriptions') }}"><i class="fas fa-prescription-bottle-alt me-2"></i>Đơn thuốc của tôi</a></li>
+                        <li><a class="dropdown-item" href="#"><i class="fas fa-cog me-2"></i>Cài đặt</a></li>
                         <li><hr class="dropdown-divider"></li>
                         <li>
                             <a class="dropdown-item" href="{{ route('home.logout') }}">
-                                <i class="fas fa-sign-out-alt me-2"></i>Logout
+                                <i class="fas fa-sign-out-alt me-2"></i>Đăng xuất
                             </a>
                         </li>
                     </ul>

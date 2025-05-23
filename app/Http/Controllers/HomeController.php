@@ -14,6 +14,8 @@ use App\Models\Doctor;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
+use Dompdf\Dompdf;
+use Dompdf\Options;
 
 class HomeController extends Controller
 {
@@ -649,6 +651,155 @@ class HomeController extends Controller
                 'firstDayWithSlots' => $firstDayWithSlots
             ]
         ]);
+    }
+
+    /**
+     * Display a listing of the user's prescriptions
+     */
+    public function userPrescriptions()
+    {
+        $userId = Auth::id();
+
+        // Get all prescriptions for the authenticated user
+        $prescriptions = \App\Models\Prescription::with(['prescriptionDetail', 'prescriptionDetail.medicine', 'doctor.user'])
+            ->where('UserID', $userId)
+            ->orderByDesc('PrescriptionDate')
+            ->get();
+
+        return view('pages.user.prescriptions', [
+            'prescriptions' => $prescriptions
+        ]);
+    }
+
+    /**
+     * Display a specific prescription
+     */
+    public function prescriptionShow($id)
+    {
+        $userId = Auth::id();
+
+        // Get the specific prescription
+        $prescription = \App\Models\Prescription::with(['prescriptionDetail', 'prescriptionDetail.medicine', 'user', 'doctor.user'])
+            ->where('PrescriptionID', $id)
+            ->where('UserID', $userId) // Ensure the prescription belongs to the authenticated user
+            ->firstOrFail();
+
+        // Get the doctor who created the prescription
+        $doctor = $prescription->doctor->user;
+
+        return view('pages.user.prescription_detail', [
+            'prescription' => $prescription,
+            'doctor' => $doctor
+        ]);
+    }
+
+    /**
+     * Generate and download a PDF for a prescription
+     */
+    public function downloadPrescriptionPdf($id)
+    {
+        $userId = Auth::id();
+
+        // Get the specific prescription
+        $prescription = \App\Models\Prescription::with(['prescriptionDetail', 'prescriptionDetail.medicine', 'user', 'doctor.user'])
+            ->where('PrescriptionID', $id)
+            ->where('UserID', $userId) // Ensure the prescription belongs to the authenticated user
+            ->firstOrFail();
+
+        // Get the doctor who created the prescription
+        $doctor = $prescription->doctor;
+
+        // Cấu hình dompdf
+        $options = new \Dompdf\Options();
+        $options->set('defaultFont', 'DejaVu Sans');
+        $options->set('isRemoteEnabled', true);
+        $options->set('isHtml5ParserEnabled', true);
+
+        // Khởi tạo Dompdf
+        $dompdf = new \Dompdf\Dompdf($options);
+
+        // Render view thành HTML
+        $html = view('doctor.prescription_pdf_full', [
+            'prescription' => $prescription,
+            'doctor' => $doctor,
+        ])->render();
+
+        // Load HTML vào Dompdf
+        $dompdf->loadHtml($html);
+        $dompdf->setPaper('A4', 'portrait');
+        $dompdf->render();
+
+        // Tạo file PDF và tải xuống
+        return response($dompdf->output(), 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'attachment; filename="don_thuoc_'.$id.'.pdf"',
+        ]);
+    }
+
+    /**
+     * Display the user profile page
+     */
+    public function userProfile()
+    {
+        $user = Auth::user();
+
+        // Check if user has a doctor profile
+        $doctorProfile = null;
+        if ($user->RoleID === 'doctor') {
+            $doctorProfile = Doctor::where('UserID', $user->UserID)->first();
+        }
+
+        return view('pages.user.profile', [
+            'user' => $user,
+            'doctorProfile' => $doctorProfile
+        ]);
+    }
+
+    /**
+     * Update user profile information
+     */
+    public function updateProfile(Request $request)
+    {
+        $user = Auth::user();
+
+        // Validate the request data
+        $validated = $request->validate([
+            'FullName' => 'required|string|max:100',
+            'Email' => 'required|email|unique:users,Email,' . $user->UserID . ',UserID',
+            'PhoneNumber' => 'required|string|max:15',
+            'DateOfBirth' => 'nullable|date',
+            'Gender' => 'nullable|string|in:Male,Female,Other',
+            'Address' => 'nullable|string',
+            'current_password' => 'nullable|string',
+            'password' => 'nullable|string|min:6|confirmed',
+        ]);
+
+        // If password is being updated, verify the current password
+        if ($request->filled('current_password') && $request->filled('password')) {
+            if (!Hash::check($request->current_password, $user->password)) {
+                return redirect()->back()->withErrors(['current_password' => 'Mật khẩu hiện tại không đúng'])->withInput();
+            }
+        }
+
+        // Update the user info with the fillable fields
+        $updateData = [
+            'FullName' => $validated['FullName'],
+            'Email' => $validated['Email'],
+            'PhoneNumber' => $validated['PhoneNumber'],
+            'DateOfBirth' => $validated['DateOfBirth'] ?? null,
+            'Gender' => $validated['Gender'] ?? null,
+            'Address' => $validated['Address'] ?? null,
+        ];
+
+        // Update password if provided
+        if ($request->filled('password')) {
+            $updateData['password'] = Hash::make($validated['password']);
+        }
+
+        // Use the update method with the fillable fields
+        User::where('UserID', $user->UserID)->update($updateData);
+
+        return redirect()->route('users.profile')->with('success', 'Thông tin cá nhân đã được cập nhật thành công');
     }
 }
 // php artisan make:controller HomeController

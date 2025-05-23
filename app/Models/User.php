@@ -26,6 +26,9 @@ class User extends Authenticatable
         'Email',
         'password',
         'PhoneNumber',
+        'DateOfBirth',
+        'Gender',
+        'Address',
     ];
 
     /**
@@ -59,7 +62,7 @@ class User extends Authenticatable
     public function getAuthPassword()
     {
         return $this->password; // Laravel sẽ dùng cột "password" cho xác thực
-    }  
+    }
 
     public function appointments()
     {
@@ -88,7 +91,7 @@ class User extends Authenticatable
     {
         return $this->hasMany(Rating::class, 'user_id', 'UserID');
     }
-    
+
     /**
      * Get doctor profile if user is a doctor
      */
@@ -104,7 +107,7 @@ class User extends Authenticatable
     {
         return $this->hasOne(Patient::class, 'UserID', 'UserID');
     }
-    
+
     /**
      * Get all bed allocations for this user (when user is a patient)
      */
@@ -112,7 +115,7 @@ class User extends Authenticatable
     {
         return $this->hasMany(PatientWardAllocation::class, 'PatientID', 'UserID');
     }
-    
+
     /**
      * Get the current active bed allocation for this user (when user is a patient)
      */

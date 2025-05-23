@@ -281,4 +281,13 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/appointments/{id}', [HomeController::class, 'appointmentShow'])->name('users.appointments.show');
     Route::put('/appointments/{id}/update', [HomeController::class, 'appointmentUpdate'])->name('users.appointments.update');
     Route::delete('/appointments/{id}/delete', [HomeController::class, 'appointmentDestroy'])->name('users.appointments.destroy');
+
+    // User prescriptions route
+    Route::get('/prescriptions', [HomeController::class, 'userPrescriptions'])->name('users.prescriptions');
+    Route::get('/prescriptions/{id}', [HomeController::class, 'prescriptionShow'])->name('users.prescriptions.show');
+    Route::get('/prescriptions/{id}/download-pdf', [HomeController::class, 'downloadPrescriptionPdf'])->name('users.prescriptions.download-pdf');
+
+    // User profile route
+    Route::get('/profile', [HomeController::class, 'userProfile'])->name('users.profile');
+    Route::put('/profile/update', [HomeController::class, 'updateProfile'])->name('users.profile.update');
 });
