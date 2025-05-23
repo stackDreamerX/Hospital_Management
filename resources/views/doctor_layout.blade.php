@@ -2,8 +2,12 @@
 <html lang="en">
 <head>
 <title>Doctor Dashboard</title>
-<link rel="icon" type="image/x-icon" href="{{ asset('logo.ico') }}">
-
+<!-- Favicon setup -->
+<link rel="icon" href="{{ asset('logo.ico') }}?v={{ time() }}">
+<link rel="icon" type="image/png" sizes="32x32" href="{{ asset('images/logo.png') }}?v={{ time() }}">
+<link rel="icon" type="image/png" sizes="16x16" href="{{ asset('images/logo.png') }}?v={{ time() }}">
+<link rel="apple-touch-icon" href="{{ asset('images/logo.png') }}?v={{ time() }}">
+<link rel="shortcut icon" href="{{ asset('logo.ico') }}?v={{ time() }}">
 
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
@@ -33,7 +37,7 @@
             <span>Doctor Portal</span>
         </a>
         <div class="sidebar-toggle-box" id="sidebarToggle">
-            <i class="fa fa-bars"></i>
+            <i class="fas fa-bars"></i>
         </div>
     </div>
     <!--logo end-->
@@ -52,9 +56,9 @@
                     <b class="caret"></b>
                 </a>
                 <ul class="dropdown-menu extended logout">
-                    <li><a href="{{ route('doctor.profile') }}"><i class="fa fa-user"></i> Profile</a></li>
-                    <li><a href="{{ route('doctor.settings') }}"><i class="fa fa-cog"></i> Settings</a></li>
-                    <li><a href="{{ route('doctor.logout') }}"><i class="fa fa-sign-out-alt"></i> Logout</a></li>
+                    <li><a href="{{ route('doctor.profile') }}"><i class="fas fa-user"></i> Profile</a></li>
+                    <li><a href="{{ route('doctor.settings') }}"><i class="fas fa-cog"></i> Settings</a></li>
+                    <li><a href="{{ route('doctor.logout') }}"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
                 </ul>
             </li>
         </ul>
