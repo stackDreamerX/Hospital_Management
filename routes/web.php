@@ -292,6 +292,10 @@ Route::middleware(['auth'])->group(function () {
     // User profile route
     Route::get('/profile', [HomeController::class, 'userProfile'])->name('users.profile');
     Route::put('/profile/update', [HomeController::class, 'updateProfile'])->name('users.profile.update');
+
+    // User hospitalizations history
+    Route::get('/hospitalizations', [HomeController::class, 'userHospitalizations'])->name('users.hospitalizations');
+    Route::get('/hospitalizations/{allocation}', [HomeController::class, 'hospitalizationShow'])->name('users.hospitalizations.show');
 });
 
 // Patient Ward Allocations

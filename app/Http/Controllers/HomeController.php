@@ -801,5 +801,52 @@ class HomeController extends Controller
 
         return redirect()->route('users.profile')->with('success', 'Thông tin cá nhân đã được cập nhật thành công');
     }
+
+    /**
+     * Display patient hospitalization history
+     */
+    public function userHospitalizations()
+    {
+        $patientId = Auth::user()->UserID;
+
+        // Get all hospitalizations (bed allocations) for the current user
+        $hospitalizations = \App\Models\PatientWardAllocation::with(['wardBed.ward', 'allocatedBy'])
+            ->where('PatientID', $patientId)
+            ->orderByDesc('AllocationDate')
+            ->get();
+
+        return view('pages.user.hospitalizations', compact('hospitalizations'));
+    }
+
+    /**
+     * Display details of a specific hospitalization
+     */
+    public function hospitalizationShow($allocationId)
+    {
+        $patientId = Auth::user()->UserID;
+
+        // Find the allocation and make sure it belongs to the current user
+        $allocation = \App\Models\PatientWardAllocation::with(['wardBed.ward', 'allocatedBy'])
+            ->where('AllocationID', $allocationId)
+            ->where('PatientID', $patientId)
+            ->firstOrFail();
+
+        // Load patient monitoring data
+        $patientMonitorings = $allocation->patientMonitorings()
+            ->orderBy('recorded_at', 'desc')
+            ->get();
+
+        // Load medications
+        $medications = $allocation->medications()
+            ->orderBy('start_date', 'desc')
+            ->get();
+
+        // Get doctors for the view
+        $doctors = \App\Models\User::where('RoleID', 'doctor')
+            ->orderBy('FullName')
+            ->get();
+
+        return view('pages.user.hospitalization_detail', compact('allocation', 'patientMonitorings', 'medications', 'doctors'));
+    }
 }
 // php artisan make:controller HomeController
