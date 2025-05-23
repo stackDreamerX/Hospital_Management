@@ -22,6 +22,8 @@ class PrescriptionDetail extends Model
         'Quantity',
         'Price',
         'Dosage',
+        'Frequency',
+        'Duration',
     ];
 
     // Quan hệ với bảng Prescription

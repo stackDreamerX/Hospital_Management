@@ -157,9 +157,10 @@ Route::prefix('doctor')->middleware('auth')->group(function () {
     Route::get('/pharmacy',[App\Http\Controllers\Doctor\PharmacyController::class,'index']) -> name('doctor.pharmacy');
     Route::post('/pharmacy/create', [App\Http\Controllers\Doctor\PharmacyController::class, 'store'])->name('doctor.pharmacy.create');
     Route::get('/pharmacy/details/{id}', [App\Http\Controllers\Doctor\PharmacyController::class, 'show'])->name('doctor.pharmacy.show');
+    Route::get('/pharmacy/download-pdf/{id}', [App\Http\Controllers\Doctor\PharmacyController::class, 'downloadPdf'])->name('doctor.pharmacy.download-pdf');
     Route::delete('/pharmacy/{id}/delete', [App\Http\Controllers\Doctor\PharmacyController::class, 'destroy'])->name('doctor.pharmacy.destroy');
     Route::put('/pharmacy/{id}/updatePharmacy', [App\Http\Controllers\Doctor\PharmacyController::class, 'update'])->name('doctor.treatments.update');
-    Route::put('/pharmacy//{id}/cancel', [App\Http\Controllers\Doctor\PharmacyController::class, 'cancel'])->name('doctor.pharmacy.cancel');
+    Route::delete('/pharmacy/{id}/cancel', [App\Http\Controllers\Doctor\PharmacyController::class, 'cancel'])->name('doctor.pharmacy.cancel');
 
 
 

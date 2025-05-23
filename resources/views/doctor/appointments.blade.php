@@ -286,10 +286,17 @@
                                         </button>
                                     </div>
                                 @else
-                                    <button class="btn btn-info btn-sm view-details-btn"
-                                            data-appointment='{{ json_encode(value: $appointment) }}'>
-                                        <i class="fas fa-eye"></i> View
-                                    </button>
+                                    <div class="btn-group btn-group-sm">
+                                        <button class="btn btn-info btn-sm view-details-btn"
+                                                data-appointment='{{ json_encode(value: $appointment) }}'>
+                                            <i class="fas fa-eye"></i> View
+                                        </button>
+                                        @if(strtolower($appointment['Status']) == 'completed')
+                                            <a href="{{ route('doctor.pharmacy') }}?patient_id={{ $appointment['UserID'] }}" class="btn btn-primary btn-sm">
+                                                <i class="fas fa-pills"></i> Kê đơn thuốc
+                                            </a>
+                                        @endif
+                                    </div>
                                 @endif
                             </td>
                         </tr>

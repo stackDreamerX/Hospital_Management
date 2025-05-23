@@ -24,6 +24,18 @@ class Prescription extends Model
         'UserID', // Liên kết đến bảng users
         'DoctorID', // Liên kết đến bảng doctors
         'TotalPrice',
+        'Diagnosis',
+        'TestResults',
+        'BloodPressure',
+        'HeartRate',
+        'Temperature',
+        'SpO2',
+        'Instructions',
+    ];
+
+    // Cast các trường dữ liệu
+    protected $casts = [
+        'PrescriptionDate' => 'datetime',
     ];
 
     // Liên kết tới bảng users (bệnh nhân)
