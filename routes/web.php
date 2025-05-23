@@ -19,6 +19,8 @@ use App\Http\Controllers\WardBedHistoryController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\FeedbackController;
 use App\Http\Controllers\ReviewController;
+use App\Http\Controllers\PatientMonitoringController;
+use App\Http\Controllers\MedicationController;
 
 
 
@@ -291,3 +293,28 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/profile', [HomeController::class, 'userProfile'])->name('users.profile');
     Route::put('/profile/update', [HomeController::class, 'updateProfile'])->name('users.profile.update');
 });
+
+// Patient Ward Allocations
+Route::prefix('allocations')->name('allocations.')->group(function () {
+    Route::get('/', [PatientWardAllocationController::class, 'index'])->name('index');
+    Route::get('/create', [PatientWardAllocationController::class, 'create'])->name('create');
+    Route::post('/', [PatientWardAllocationController::class, 'store'])->name('store');
+    Route::get('/{allocation}', [PatientWardAllocationController::class, 'show'])->name('show');
+    Route::get('/{allocation}/edit', [PatientWardAllocationController::class, 'edit'])->name('edit');
+    Route::put('/{allocation}', [PatientWardAllocationController::class, 'update'])->name('update');
+    Route::put('/{allocation}/discharge', [PatientWardAllocationController::class, 'discharge'])->name('discharge');
+    Route::post('/{allocation}/generate-pdf', [PatientWardAllocationController::class, 'generatePdf'])->name('generate-pdf');
+});
+
+// Patient Monitoring
+Route::post('/patient-monitoring/{allocation}', [PatientMonitoringController::class, 'store'])->name('patient-monitoring.store');
+Route::put('/patient-monitoring/{monitoring}', [PatientMonitoringController::class, 'update'])->name('patient-monitoring.update');
+Route::delete('/patient-monitoring/{monitoring}', [PatientMonitoringController::class, 'destroy'])->name('patient-monitoring.destroy');
+
+// Medication Management
+Route::post('/medications/{allocation}', [MedicationController::class, 'store'])->name('medications.store');
+Route::put('/medications/{medication}', [MedicationController::class, 'update'])->name('medications.update');
+Route::delete('/medications/{medication}', [MedicationController::class, 'destroy'])->name('medications.destroy');
+
+// Patient Monitoring Details
+Route::get('/patient-monitoring/{monitoring}/details', [PatientMonitoringController::class, 'getDetails'])->name('patient-monitoring.details');

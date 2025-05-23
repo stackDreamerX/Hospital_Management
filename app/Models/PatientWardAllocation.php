@@ -49,6 +49,22 @@ class PatientWardAllocation extends Model
     }
 
     /**
+     * Get patient monitoring records for this allocation
+     */
+    public function patientMonitorings()
+    {
+        return $this->hasMany(PatientMonitoring::class, 'AllocationID', 'AllocationID');
+    }
+
+    /**
+     * Get medication records for this allocation
+     */
+    public function medications()
+    {
+        return $this->hasMany(Medication::class, 'AllocationID', 'AllocationID');
+    }
+
+    /**
      * Scope a query to only include active allocations
      */
     public function scopeActive($query)
@@ -63,4 +79,4 @@ class PatientWardAllocation extends Model
     {
         return $query->whereNotNull('DischargeDate');
     }
-} 
+}
