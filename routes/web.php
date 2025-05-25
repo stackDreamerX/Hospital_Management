@@ -21,6 +21,11 @@ use App\Http\Controllers\FeedbackController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\PatientMonitoringController;
 use App\Http\Controllers\MedicationController;
+use App\Http\Controllers\ChatbotController;
+use Illuminate\Support\Facades\Http;
+use App\Http\Controllers\OpenAIChatController;
+use App\Http\Controllers\OpenAITestController;
+use App\Http\Controllers\GeminiChatController;
 
 
 
@@ -322,3 +327,20 @@ Route::delete('/medications/{medication}', [MedicationController::class, 'destro
 
 // Patient Monitoring Details
 Route::get('/patient-monitoring/{monitoring}/details', [PatientMonitoringController::class, 'getDetails'])->name('patient-monitoring.details');
+
+// Chatbot Routes
+Route::post('/chatbot/message', [App\Http\Controllers\ChatbotController::class, 'processMessage'])->name('chatbot.message');
+Route::post('/chatbot/clear-conversation', [App\Http\Controllers\ChatbotController::class, 'clearConversation'])->name('chatbot.clear');
+
+// Route kiểm tra trạng thái Gemini
+Route::get('/chatbot/status', [App\Http\Controllers\ChatbotController::class, 'checkStatus'])->name('chatbot.status');
+
+// Gemini Chatbot Routes - Đây là route chính
+Route::get('/chat', [App\Http\Controllers\GeminiChatController::class, 'index'])->name('chat.ai');
+Route::post('/chat/send', [App\Http\Controllers\GeminiChatController::class, 'sendMessage'])->name('chat.send-message');
+Route::post('/chat/clear', [App\Http\Controllers\GeminiChatController::class, 'clearChat'])->name('chat.clear');
+
+// Giữ lại route Gemini cũ cho khả năng tương thích ngược
+Route::get('/gemini-chat', [App\Http\Controllers\GeminiChatController::class, 'index'])->name('gemini.chat');
+Route::post('/gemini-chat/send', [App\Http\Controllers\GeminiChatController::class, 'sendMessage'])->name('gemini.send-message');
+Route::post('/gemini-chat/clear', [App\Http\Controllers\GeminiChatController::class, 'clearChat'])->name('gemini.clear-chat');

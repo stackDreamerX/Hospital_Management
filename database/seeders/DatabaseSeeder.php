@@ -28,5 +28,10 @@ class DatabaseSeeder extends Seeder
             WardTypeSeeder::class,
             DoctorScheduleSeeder::class,
         ]);
+
+        // Seed chatbot FAQs
+        $this->call(ChatbotFaqSeeder::class);
+        $this->call(MedicalEmergencyFaqSeeder::class);
+        $this->call(TechFaqSeeder::class);
     }
 }

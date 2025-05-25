@@ -13,6 +13,7 @@
         "laravel/reverb": "^1.0",
         "laravel/sanctum": "^4.0",
         "laravel/tinker": "^2.9",
+        "openai-php/laravel": "^0.13.0",
         "phpmailer/phpmailer": "^6.10"
     },
     "require-dev": {
