@@ -1,0 +1,57 @@
+services:
+  - type: web
+    name: hospital-management
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    envVars:
+      - key: APP_NAME
+        value: "Hospital Management"
+      - key: APP_ENV
+        value: production
+      - key: APP_KEY
+        generateValue: true
+      - key: APP_DEBUG
+        value: "false"
+      - key: APP_URL
+        value: "https://hospital-management.onrender.com"
+      - key: DB_CONNECTION
+        value: mysql
+      - key: DB_HOST
+        fromService:
+          name: mysql
+          type: pserv
+          property: host
+      - key: DB_PORT
+        value: 3306
+      - key: DB_DATABASE
+        value: hospital_management
+      - key: DB_USERNAME
+        value: username
+      - key: DB_PASSWORD
+        generateValue: true
+      - key: SESSION_DRIVER
+        value: file
+      - key: QUEUE_CONNECTION
+        value: sync
+      - key: CACHE_DRIVER
+        value: file
+      - key: FILESYSTEM_DISK
+        value: local
+    healthCheckPath: /
+    buildCommand: composer install --no-interaction --no-dev --optimize-autoloader
+    startCommand: php artisan migrate --force && php artisan config:cache && php artisan route:cache && php artisan view:cache && php-fpm
+
+  - type: pserv
+    name: mysql
+    runtime: docker
+    repo: https://github.com/render-examples/mysql
+    envVars:
+      - key: MYSQL_DATABASE
+        value: hospital_management
+      - key: MYSQL_USER
+        value: username
+      - key: MYSQL_PASSWORD
+        value: "${hospital-management.DB_PASSWORD}"
+      - key: MYSQL_ROOT_PASSWORD
+        generateValue: true
