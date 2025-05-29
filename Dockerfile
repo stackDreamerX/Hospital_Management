@@ -10,7 +10,8 @@ RUN apt-get update && apt-get install -y \
     git \
     curl \
     libzip-dev \
-    libonig-dev
+    libonig-dev \
+    default-mysql-client
 
 # Cài đặt các PHP extensions
 RUN docker-php-ext-install pdo_mysql mbstring zip exif pcntl bcmath gd
@@ -31,8 +32,13 @@ RUN composer install --optimize-autoloader --no-dev
 RUN chmod -R 775 /var/www/storage
 RUN chmod -R 775 /var/www/bootstrap/cache
 
+# Tạo entry point script
+COPY docker-entrypoint.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+
 # Expose port 9000
 EXPOSE 9000
 
-# Chạy PHP-FPM
+# Chạy entry point script và PHP-FPM
+ENTRYPOINT ["docker-entrypoint.sh"]
 CMD ["php-fpm"]
