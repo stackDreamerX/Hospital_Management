@@ -13,7 +13,7 @@ class PatientFactory extends Factory
         return [
             'UserID' => User::factory(), // Tạo user mẫu
             'DateOfBirth' => $this->faker->date(),
-            'Gender' => $this->faker->randomElement(['male', 'female', 'other']),
+            'Gender' => $this->faker->randomElement(['Male', 'Female', 'Other']),
             'Address' => $this->faker->address(),
             'created_at' => now(),
             'updated_at' => now(),

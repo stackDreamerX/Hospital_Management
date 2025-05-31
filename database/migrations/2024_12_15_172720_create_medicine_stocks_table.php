@@ -14,7 +14,8 @@ return new class extends Migration
         Schema::create('medicine_stock', function (Blueprint $table) {
             $table->id(); // Primary Key
             $table->foreignId('MedicineID')->constrained('medicines', 'MedicineID')->onDelete('cascade');
-            $table->integer('Quantity');
+            $table->integer('QuantityInStock');
+            $table->string('Provider', 100);
             $table->timestamps();
         });
     }
@@ -24,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('medicine_stocks');
+        Schema::dropIfExists('medicine_stock');
     }
 };

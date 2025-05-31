@@ -13,25 +13,56 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
+        // Seed admin account
+        $this->call(AdminSeeder::class);
 
-        // User::factory()->create([
-        //     'name' => 'Test User',
-        //     'email' => 'test@example.com',
-        // ]);
+        // Seed users first (needed for foreign keys)
+        $this->call(UserSeeder::class);
 
-        // $this->call(MedicineSeeder::class);
-        $this->call([
-            LaboratoryTypeSeeder::class,
-            MedicineStockSeeder::class,
-            MedicineSeeder::class,
-            WardTypeSeeder::class,
-            DoctorScheduleSeeder::class,
-        ]);
+        // Seed doctors and patients (linked to users)
+        $this->call(DoctorSeeder::class);
+
+        // Seed medicine related tables
+        $this->call(MedicineSeeder::class);
+        $this->call(ProviderSeeder::class);
+        $this->call(MedicineStockSeeder::class);
+
+        // Seed laboratory types
+        $this->call(LaboratoryTypeSeeder::class);
+
+        // Seed treatment types
+        $this->call(TreatmentTypeSeeder::class);
+
+        // Seed ward related tables
+        $this->call(WardTypeSeeder::class);
+        $this->call(WardSeeder::class);
+        $this->call(WardBedSeeder::class);
+
+        // Seed doctor schedules and time slots
+        $this->call(DoctorScheduleSeeder::class);
+        $this->call(DoctorTimeSlotSeeder::class);
+
+        // Seed appointments and ratings
+        $this->call(AppointmentSeeder::class);
+        $this->call(RatingSeeder::class);
+
+        // Seed treatments
+        $this->call(TreatmentSeeder::class);
+
+        // Seed prescriptions
+        $this->call(PrescriptionSeeder::class);
+        $this->call(PrescriptionDetailSeeder::class);
+
+        // Seed laboratories
+        $this->call(LaboratorySeeder::class);
+        $this->call(LaboratoryResultSeeder::class);
 
         // Seed chatbot FAQs
         $this->call(ChatbotFaqSeeder::class);
         $this->call(MedicalEmergencyFaqSeeder::class);
         $this->call(TechFaqSeeder::class);
+
+        // Seed demo users with complete data
+        $this->call(DemoUserSeeder::class);
     }
 }

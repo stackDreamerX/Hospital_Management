@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id('TreatmentID');
             $table->foreignId('TreatmentTypeID')->constrained('treatment_types','TreatmentTypeID')->onDelete('cascade');
             $table->date('TreatmentDate');
-            $table->foreignId('PatientID')->constrained('patients','PatientID')->onDelete('cascade');
+            $table->foreignId('PatientID')->constrained('users','UserID')->onDelete('cascade');
             $table->foreignId('DoctorID')->constrained('doctors','DoctorID')->onDelete('cascade');
             $table->integer('TotalPrice');
             $table->timestamps();

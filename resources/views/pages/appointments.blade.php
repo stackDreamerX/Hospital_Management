@@ -63,6 +63,64 @@
     .star-rating input:checked ~ label {
         color: #ffc107;
     }
+
+    /* Fix for action buttons */
+    .btn-group-sm .btn {
+        min-width: 80px;
+        white-space: nowrap;
+        padding: 0.25rem 0.5rem;
+        font-size: 0.875rem;
+    }
+
+    /* Ensure action column has enough width */
+    .table th:last-child,
+    .table td:last-child {
+        min-width: 260px;
+    }
+
+    /* Make the button group display properly */
+    .btn-group-sm {
+        display: flex;
+        flex-wrap: nowrap;
+    }
+
+    /* Override the mobile button styles for table buttons */
+    @media (max-width: 576px) {
+        .table .btn-group-sm .btn {
+            width: auto;
+            margin-bottom: 0;
+            font-size: 0.75rem;
+            padding: 0.2rem 0.4rem;
+        }
+
+        .table .btn-group-sm {
+            flex-wrap: nowrap;
+            width: 100%;
+            justify-content: space-between;
+        }
+
+        .table .btn-group-sm .btn i {
+            margin-right: 3px;
+        }
+    }
+
+    /* Extra small screens */
+    @media (max-width: 400px) {
+        .table .btn-group-sm .btn {
+            min-width: auto;
+            padding: 0.2rem 0.3rem;
+            font-size: 0.7rem;
+        }
+
+        .table th:last-child,
+        .table td:last-child {
+            padding: 0.5rem 0.3rem;
+        }
+
+        .table .btn-group-sm .btn i {
+            margin-right: 2px;
+        }
+    }
 </style>
 @endsection
 
@@ -208,32 +266,27 @@
                             <td>
                                 <div class="btn-group btn-group-sm">
                                     <button class="btn btn-info view-appointment" data-id="{{ $appointment->AppointmentID }}">
-                                        <i class="fas fa-eye"></i>
-                                        View
+                                        <i class="fas fa-eye"></i> View
                                     </button>
                                     @if($appointment['Status'] == 'pending')
                                         <button class="btn btn-primary edit-appointment" data-id="{{ $appointment->AppointmentID }}">
-                                            <i class="fas fa-edit"></i>
-                                            Edit
+                                            <i class="fas fa-edit"></i> Edit
                                         </button>
                                         <button class="btn btn-danger cancel-appointment" data-id="{{ $appointment->AppointmentID }}">
-                                            <i class="fas fa-times"></i>
-                                            Cancel
+                                            <i class="fas fa-times"></i> Cancel
                                         </button>
                                     @endif
                                     @if($appointment['Status'] == 'completed')
                                         @if($appointment->has_rating)
                                             <button class="btn btn-secondary" disabled>
-                                                <i class="fas fa-check"></i>
-                                                Already Rated
+                                                <i class="fas fa-check"></i> Rated
                                             </button>
                                         @else
                                             <button class="btn btn-success rate-doctor"
                                                     data-id="{{ $appointment->AppointmentID }}"
                                                     data-doctor-id="{{ $appointment->DoctorID }}"
                                                     data-doctor-name="{{ $appointment->doctor->user->FullName ?? 'Doctor' }}">
-                                                <i class="fas fa-star"></i>
-                                                Rate Doctor
+                                                <i class="fas fa-star"></i> Rate Doctor
                                             </button>
                                         @endif
                                     @endif

@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id('UserID'); // Khóa chính
-            $table->enum('RoleID', ['patient', 'doctor', 'administrator'])->nullable(false);
+            $table->enum('RoleID', ['patient', 'doctor', 'admin'])->nullable(false);
             $table->string('username', 50)->unique();
             $table->string('password', 255)->nullable(false);
             $table->string('FullName', 100)->nullable(false);

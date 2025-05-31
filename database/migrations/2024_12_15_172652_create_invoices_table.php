@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('invoices', function (Blueprint $table) {
             $table->id('InvoiceID');
             $table->date('InvoiceDate');
-            $table->foreignId('PatientID')->constrained('patients','PatientID')->onDelete('cascade');
+            $table->foreignId('PatientID')->constrained('users','UserID')->onDelete('cascade');
             $table->integer('TotalPrice');
             $table->enum('Status', ['pending', 'paid']);
             $table->timestamps();

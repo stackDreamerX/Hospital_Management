@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('prescriptions', function (Blueprint $table) {
             $table->id('PrescriptionID'); // Primary Key
             $table->date('PrescriptionDate');
-            $table->foreignId('PatientID')->constrained('patients', 'PatientID')->onDelete('cascade');
+            $table->foreignId('PatientID')->constrained('users', 'UserID')->onDelete('cascade');
             $table->foreignId('DoctorID')->constrained('doctors', 'DoctorID')->onDelete('cascade');
             $table->integer('TotalPrice');
             $table->timestamps();

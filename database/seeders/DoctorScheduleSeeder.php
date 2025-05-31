@@ -4,9 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use App\Models\Doctor;
-use App\Models\DoctorSchedule;
-use App\Http\Controllers\Doctor\ScheduleController;
+use Illuminate\Support\Facades\DB;
 
 class DoctorScheduleSeeder extends Seeder
 {
@@ -15,38 +13,63 @@ class DoctorScheduleSeeder extends Seeder
      */
     public function run(): void
     {
-        // Get all doctors
-        $doctors = Doctor::all();
+        // Lấy danh sách các bác sĩ
+        $doctors = DB::table('doctors')->pluck('DoctorID')->toArray();
 
-        // For each doctor, create some default schedules
-        foreach ($doctors as $doctor) {
-            // Monday to Friday, 9 AM to 5 PM
-            for ($day = 1; $day <= 5; $day++) {
-                $schedule = DoctorSchedule::create([
-                    'doctor_id' => $doctor->DoctorID,
-                    'day_of_week' => $day,
-                    'start_time' => '09:00:00',
-                    'end_time' => '17:00:00',
-                    'is_active' => true
-                ]);
+        $schedules = [];
 
-                // Generate time slots
-                $controller = new ScheduleController();
-                $controller->generateTimeSlots($doctor->DoctorID, $day, '09:00', '17:00');
+        // Tạo lịch làm việc cho mỗi bác sĩ
+        foreach ($doctors as $doctorId) {
+            // Mỗi bác sĩ làm việc từ 3-6 ngày trong tuần
+            $workDays = rand(3, 6);
+
+            // Chọn ngẫu nhiên các ngày trong tuần (1 = Thứ 2, 7 = Chủ nhật)
+            $daysOfWeek = array_rand(array_flip([1, 2, 3, 4, 5, 6, 7]), $workDays);
+            if (!is_array($daysOfWeek)) {
+                $daysOfWeek = [$daysOfWeek];
             }
 
-            // Saturday, shorter hours
-            $schedule = DoctorSchedule::create([
-                'doctor_id' => $doctor->DoctorID,
-                'day_of_week' => 6,
-                'start_time' => '09:00:00',
-                'end_time' => '12:00:00',
-                'is_active' => true
-            ]);
+            foreach ($daysOfWeek as $day) {
+                // Tạo các ca làm việc khác nhau
+                if ($day == 6 || $day == 7) {
+                    // Thứ 7, Chủ nhật: ca sáng
+                    $schedules[] = [
+                        'doctor_id' => $doctorId,
+                        'day_of_week' => $day,
+                        'start_time' => '08:00:00',
+                        'end_time' => '12:00:00',
+                        'is_active' => true,
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ];
+                } else {
+                    // Ngày thường: ca sáng và chiều
+                    $schedules[] = [
+                        'doctor_id' => $doctorId,
+                        'day_of_week' => $day,
+                        'start_time' => '08:00:00',
+                        'end_time' => '12:00:00',
+                        'is_active' => true,
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ];
 
-            // Generate time slots for Saturday
-            $controller = new ScheduleController();
-            $controller->generateTimeSlots($doctor->DoctorID, 6, '09:00', '12:00');
+                    // 70% bác sĩ làm cả ca chiều
+                    if (rand(1, 10) <= 7) {
+                        $schedules[] = [
+                            'doctor_id' => $doctorId,
+                            'day_of_week' => $day,
+                            'start_time' => '13:30:00',
+                            'end_time' => '17:00:00',
+                            'is_active' => true,
+                            'created_at' => now(),
+                            'updated_at' => now(),
+                        ];
+                    }
+                }
+            }
         }
+
+        DB::table('doctor_schedules')->insert($schedules);
     }
 }

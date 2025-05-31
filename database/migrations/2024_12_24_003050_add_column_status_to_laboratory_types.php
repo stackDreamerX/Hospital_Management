@@ -12,8 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('laboratory_types', function (Blueprint $table) {
-            $table->decimal('price', 10, 2)->nullable(false); // Thêm trường price
-            $table->text('description')->nullable();  
+            $table->decimal('Price', 10, 2)->nullable(false); // Thêm trường Price
+            $table->text('Description')->nullable();
+            $table->string('Status', 20)->default('active'); // Thêm trường Status
         });
     }
 
@@ -23,8 +24,9 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('laboratory_types', function (Blueprint $table) {
-            $table->dropColumn('price');
-            $table->dropColumn('description');
+            $table->dropColumn('Price');
+            $table->dropColumn('Description');
+            $table->dropColumn('Status');
         });
     }
 };

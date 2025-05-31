@@ -1,4 +1,4 @@
-    <?php
+<?php
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('laboratory_types', function (Blueprint $table) {
             $table->id('LaboratoryTypeID');
-            $table->string('LaboratoryTypeName', 100)->nullable(false);      
+            $table->string('TypeName', 100)->nullable(false);
             $table->timestamps();
         });
     }
