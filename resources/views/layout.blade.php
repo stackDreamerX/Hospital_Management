@@ -395,15 +395,9 @@
             mirror: false
         });
 
-        // Khởi tạo chatbot sau khi trang đã tải xong
-        initChatbot();
-    });
-
-    // Chatbot Functionality
-    function initChatbot() {
-        // Đảm bảo code chỉ chạy sau khi trang đã tải xong
+        // Đợi thêm một chút sau khi DOM đã tải xong
         setTimeout(function() {
-            const toggleBtn = document.getElementById('ai-chatbot-toggle-btn');
+            const toggleBtn = document.getElementById('ai-chatbot-toggle');
             const chatbot = document.getElementById('ai-chatbot');
             const closeBtn = document.getElementById('ai-chatbot-close');
             const minimizeBtn = document.getElementById('ai-chatbot-minimize');
@@ -412,22 +406,27 @@
             const input = document.getElementById('ai-chatbot-input');
             const messagesContainer = document.getElementById('ai-chatbot-messages');
 
-            // Banner chat button
-            const bannerChatBtn = document.querySelector('.alert a.btn-primary');
-            if (bannerChatBtn) {
-                bannerChatBtn.addEventListener('click', function(e) {
-                    // If chatbot is available on the page, show it instead of navigating
-                    if (toggleBtn && chatbot) {
-                        e.preventDefault();
-                        chatbot.classList.add('active');
-                        toggleBtn.classList.add('hidden');
-                    }
-                    // Otherwise, let the default navigation happen
-                });
-            }
+            // Kiểm tra từng phần tử và log ra để debug
+            console.log('toggleBtn:', toggleBtn);
+            console.log('chatbot:', chatbot);
+            console.log('closeBtn:', closeBtn);
+            console.log('minimizeBtn:', minimizeBtn);
+            console.log('clearBtn:', clearBtn);
+            console.log('sendBtn:', sendBtn);
+            console.log('input:', input);
+            console.log('messagesContainer:', messagesContainer);
 
             if (!toggleBtn || !chatbot || !closeBtn || !minimizeBtn || !clearBtn || !sendBtn || !input || !messagesContainer) {
                 console.error('Một hoặc nhiều thành phần chatbot không tìm thấy.');
+                // Log cụ thể phần tử nào bị thiếu
+                if (!toggleBtn) console.error('toggleBtn không tìm thấy');
+                if (!chatbot) console.error('chatbot không tìm thấy');
+                if (!closeBtn) console.error('closeBtn không tìm thấy');
+                if (!minimizeBtn) console.error('minimizeBtn không tìm thấy');
+                if (!clearBtn) console.error('clearBtn không tìm thấy');
+                if (!sendBtn) console.error('sendBtn không tìm thấy');
+                if (!input) console.error('input không tìm thấy');
+                if (!messagesContainer) console.error('messagesContainer không tìm thấy');
                 return;
             }
 
@@ -623,8 +622,8 @@
                     console.error('Error clearing chat history:', error);
                 });
             }
-        }, 500); // Đợi 500ms để đảm bảo trang đã tải xong
-    }
+        }, 1500); // Tăng thời gian chờ lên 1500ms
+    });
 </script>
 
 <!-- Chatbot CSS -->
