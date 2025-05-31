@@ -1,0 +1,66 @@
+/* Admin Pagination Fix - Completely new approach */
+.adm-pagination-container {
+    margin-top: 20px;
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: center;
+}
+
+.adm-pagination {
+    display: flex;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    border-radius: 4px;
+}
+
+.adm-pagination li {
+    margin: 0 3px;
+    display: inline-block;
+}
+
+.adm-pagination li a,
+.adm-pagination li span {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 36px;
+    height: 36px;
+    padding: 0 10px;
+    font-size: 14px;
+    line-height: 1;
+    color: #0F766E;
+    background-color: #fff;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    text-decoration: none;
+    transition: all 0.2s;
+}
+
+.adm-pagination li.active span {
+    color: #fff;
+    background-color: #0F766E;
+    border-color: #0F766E;
+}
+
+.adm-pagination li.disabled span {
+    color: #6c757d;
+    pointer-events: none;
+    background-color: #fff;
+    border-color: #dee2e6;
+}
+
+.adm-pagination li a:hover {
+    color: #0a4740;
+    background-color: #e9ecef;
+    border-color: #dee2e6;
+    z-index: 2;
+}
+
+/* Navigation arrows */
+.adm-pagination li:first-child a,
+.adm-pagination li:first-child span,
+.adm-pagination li:last-child a,
+.adm-pagination li:last-child span {
+    font-size: 16px;
+}

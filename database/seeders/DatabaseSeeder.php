@@ -38,6 +38,11 @@ class DatabaseSeeder extends Seeder
         $this->call(WardSeeder::class);
         $this->call(WardBedSeeder::class);
 
+        // Seed patient ward allocations and related data
+        $this->call(PatientWardAllocationSeeder::class);
+        $this->call(PatientMonitoringSeeder::class);
+        $this->call(MedicationSeeder::class);
+
         // Seed doctor schedules and time slots
         $this->call(DoctorScheduleSeeder::class);
         $this->call(DoctorTimeSlotSeeder::class);
@@ -45,6 +50,9 @@ class DatabaseSeeder extends Seeder
         // Seed appointments and ratings
         $this->call(AppointmentSeeder::class);
         $this->call(RatingSeeder::class);
+
+        // Seed feedback
+        $this->call(FeedbackSeeder::class);
 
         // Seed treatments
         $this->call(TreatmentSeeder::class);

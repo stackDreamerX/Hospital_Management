@@ -157,7 +157,7 @@
                                 <button type="button" class="btn btn-sm btn-info view-feedback" data-toggle="modal" data-target="#viewFeedbackModal" data-feedback="{{ $rating->feedback }}" data-id="{{ $rating->id }}">
                                     <i class="far fa-eye"></i>
                                 </button>
-                                
+
                                 @if($rating->status == 'pending')
                                 <form action="{{ route('admin.ratings.updateStatus', $rating->id) }}" method="POST" class="d-inline">
                                     @csrf
@@ -167,7 +167,7 @@
                                         <i class="fas fa-check"></i>
                                     </button>
                                 </form>
-                                
+
                                 <form action="{{ route('admin.ratings.updateStatus', $rating->id) }}" method="POST" class="d-inline">
                                     @csrf
                                     @method('PUT')
@@ -177,7 +177,7 @@
                                     </button>
                                 </form>
                                 @endif
-                                
+
                                 <form action="{{ route('admin.ratings.destroy', $rating->id) }}" method="POST" class="d-inline delete-form">
                                     @csrf
                                     @method('DELETE')
@@ -191,8 +191,8 @@
                     </tbody>
                 </table>
             </div>
-            <div class="mt-4">
-                {{ $ratings->links() }}
+            <div class="admin-custom-pagination">
+                {{ $ratings->links('vendor.pagination.admin.bootstrap-4') }}
             </div>
             @else
             <div class="text-center py-4">
@@ -233,16 +233,16 @@
         $('.view-feedback').on('click', function() {
             const feedback = $(this).data('feedback');
             const ratingId = $(this).data('id');
-            
+
             if (feedback) {
                 $('#feedbackContent').html('<p>' + feedback + '</p>');
             } else {
                 $('#feedbackContent').html('<p class="text-muted">No feedback provided for this rating.</p>');
             }
-            
+
             $('#viewFeedbackModalLabel').text('Rating #' + ratingId + ' Feedback');
         });
-        
+
         // Confirm delete
         $('.delete-form').on('submit', function(e) {
             if (!confirm('Are you sure you want to delete this rating? This action cannot be undone.')) {
@@ -251,4 +251,4 @@
         });
     });
 </script>
-@endsection 
+@endsection

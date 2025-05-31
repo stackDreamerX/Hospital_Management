@@ -136,8 +136,8 @@ class HomeController extends Controller
         // Get list of specialties for the dropdown
         $specialties = Doctor::distinct()->pluck('Speciality')->toArray();
 
-        // Get all doctors with their user information and ratings
-        $doctors = Doctor::with(['user', 'ratings'])->get();
+        // Get all doctors with their user information and ratings with pagination
+        $doctors = Doctor::with(['user', 'ratings'])->paginate(6);
 
         // Calculate average rating for each doctor
         foreach ($doctors as $doctor) {
@@ -191,8 +191,8 @@ class HomeController extends Controller
             // Comment out until insurance field is added to schema
         }
 
-        // Fetch filtered results
-        $doctors = $query->get();
+        // Fetch filtered results with pagination
+        $doctors = $query->paginate(6);
 
         // Calculate average rating for each doctor
         foreach ($doctors as $doctor) {

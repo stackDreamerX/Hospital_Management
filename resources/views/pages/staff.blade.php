@@ -1,5 +1,38 @@
 @extends('layout')
 
+@section('styles')
+<style>
+    .custom-pagination .pagination {
+        justify-content: center;
+    }
+    .custom-pagination .page-item.active .page-link {
+        background-color: var(--primary-color);
+        border-color: var(--primary-color);
+        color: white;
+        font-weight: normal;
+        text-shadow: none;
+        box-shadow: none;
+    }
+    .custom-pagination .page-link {
+        color: var(--primary-color);
+        padding: 0.5rem 0.75rem;
+        min-width: 38px;
+        text-align: center;
+    }
+    .custom-pagination .page-link:hover {
+        color: var(--primary-dark);
+        background-color: rgba(0, 146, 216, 0.1);
+    }
+    .doctor-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .doctor-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    }
+</style>
+@endsection
+
 @section('content')
     <div class="container my-5">
         <!-- Search Section -->
@@ -37,6 +70,9 @@
 
                         <div class="col-12 text-center">
                             <button type="submit" class="btn btn-primary px-4 py-2">Search Doctors</button>
+                            @if(isset($search) && $search)
+                                <a href="{{ route('staff') }}" class="btn btn-outline-secondary px-4 py-2 ms-2">Clear Search</a>
+                            @endif
                         </div>
                     </div>
                 </form>
@@ -50,6 +86,15 @@
                     <div class="alert alert-info">
                         <h4>No doctors found matching your criteria</h4>
                         <p>Please try different search parameters.</p>
+                    </div>
+                </div>
+            @elseif($doctors->isNotEmpty())
+                <div class="col-12">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h2 class="h4 mb-0">Found {{ $doctors->total() }} doctors</h2>
+                        <div>
+                            <span class="text-muted">Showing {{ $doctors->firstItem() }} - {{ $doctors->lastItem() }} of {{ $doctors->total() }}</span>
+                        </div>
                     </div>
                 </div>
             @endif
@@ -100,17 +145,9 @@
         @if($doctors->isNotEmpty())
         <!-- Pagination -->
         <nav class="mt-5" aria-label="Page navigation">
-            <ul class="pagination justify-content-center">
-                <li class="page-item disabled">
-                    <a class="page-link" href="#" tabindex="-1">Previous</a>
-                </li>
-                <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                <li class="page-item"><a class="page-link" href="#">2</a></li>
-                <li class="page-item"><a class="page-link" href="#">3</a></li>
-                <li class="page-item">
-                    <a class="page-link" href="#">Next</a>
-                </li>
-            </ul>
+            <div class="custom-pagination">
+                {{ $doctors->withQueryString()->links('pagination::bootstrap-4') }}
+            </div>
         </nav>
         @endif
     </div>

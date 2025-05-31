@@ -10,7 +10,7 @@
             <i class="fas fa-tachometer-alt mr-1"></i> Dashboard
         </a>
     </div>
-    
+
     <!-- Filters -->
     <div class="card shadow mb-4">
         <div class="card-header py-3">
@@ -30,7 +30,7 @@
                             <option value="rejected" {{ request('status') == 'rejected' ? 'selected' : '' }}>Rejected</option>
                         </select>
                     </div>
-                    
+
                     <div class="col-md-3 col-sm-6 mb-2">
                         <label for="category" class="small font-weight-bold">Category</label>
                         <select class="form-control form-control-sm" id="category" name="category">
@@ -42,7 +42,7 @@
                             <option value="overall" {{ request('category') == 'overall' ? 'selected' : '' }}>Overall Experience</option>
                         </select>
                     </div>
-                    
+
                     <div class="col-md-3 col-sm-6 mb-2">
                         <label for="rating" class="small font-weight-bold">Rating</label>
                         <select class="form-control form-control-sm" id="rating" name="rating">
@@ -54,11 +54,11 @@
                             @endfor
                         </select>
                     </div>
-                    
+
                     <div class="col-md-3 col-sm-6 mb-2">
                         <label for="search" class="small font-weight-bold">Search</label>
                         <div class="input-group input-group-sm">
-                            <input type="text" class="form-control" id="search" name="search" 
+                            <input type="text" class="form-control" id="search" name="search"
                                 placeholder="Search..." value="{{ request('search') }}">
                             <div class="input-group-append">
                                 <button class="btn btn-primary" type="submit">
@@ -68,11 +68,11 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="row mt-3">
                     <div class="col-md-6">
                         <div class="custom-control custom-checkbox">
-                            <input type="checkbox" class="custom-control-input" id="is_highlighted" 
+                            <input type="checkbox" class="custom-control-input" id="is_highlighted"
                                 name="is_highlighted" value="1" {{ request('is_highlighted') ? 'checked' : '' }}>
                             <label class="custom-control-label" for="is_highlighted">Show only highlighted feedback</label>
                         </div>
@@ -89,7 +89,7 @@
             </form>
         </div>
     </div>
-    
+
     <!-- Feedback Table -->
     <div class="card shadow mb-4">
         <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
@@ -196,10 +196,10 @@
                         </tbody>
                     </table>
                 </div>
-                
+
                 <!-- Pagination -->
-                <div class="d-flex justify-content-center mt-4">
-                    {{ $feedback->appends(request()->query())->links() }}
+                <div>
+                    {{ $feedback->appends(request()->query())->links('vendor.pagination.admin-fix') }}
                 </div>
             @else
                 <div class="alert alert-info">
@@ -209,4 +209,4 @@
         </div>
     </div>
 </div>
-@endsection 
+@endsection

@@ -144,7 +144,7 @@
                                                     <i class="fas fa-times"></i>
                                                 </button>
                                             </div>
-                                            
+
                                             <!-- Approve Modal -->
                                             <div class="modal fade" id="approveModal{{ $feedback->id }}" tabindex="-1" role="dialog" aria-hidden="true">
                                                 <div class="modal-dialog" role="document">
@@ -174,7 +174,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            
+
                                             <!-- Reject Modal -->
                                             <div class="modal fade" id="rejectModal{{ $feedback->id }}" tabindex="-1" role="dialog" aria-hidden="true">
                                                 <div class="modal-dialog" role="document">
@@ -210,8 +210,8 @@
                                 </tbody>
                             </table>
                         </div>
-                        <div class="d-flex justify-content-center mt-4">
-                            {{ $pendingFeedback->links() }}
+                        <div class="admin-custom-pagination">
+                            {{ $pendingFeedback->links('vendor.pagination.admin.bootstrap-4') }}
                         </div>
                     @else
                         <div class="alert alert-info">
@@ -256,7 +256,7 @@
                                 @elseif($feedback->status == 'rejected')
                                     <span class="badge badge-danger">Rejected</span>
                                 @endif
-                                
+
                                 @if($feedback->is_highlighted)
                                     <span class="badge badge-info">Highlighted</span>
                                 @endif
@@ -273,4 +273,4 @@
         </div>
     </div>
 </div>
-@endsection 
+@endsection

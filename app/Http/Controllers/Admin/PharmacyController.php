@@ -14,7 +14,7 @@ class PharmacyController extends Controller
     {
         $prescriptions = Prescription::with(['user', 'doctor.user'])->get(); // Lấy tất cả đơn thuốc
         $medicines = Medicine::with('medicineStock')->get(); // Lấy thông tin thuốc
-        $lowStockCount = MedicineStock::where('Quantity', '<', 10)->count(); // Đếm thuốc sắp hết
+        $lowStockCount = MedicineStock::where('QuantityInStock', '<', 10)->count(); // Đếm thuốc sắp hết
         $todayPrescriptions = Prescription::whereDate('created_at', today())->count(); // Đếm đơn thuốc hôm nay
         $totalPrescriptions = $prescriptions->count(); // Tính tổng số đơn thuốc
 

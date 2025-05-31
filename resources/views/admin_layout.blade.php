@@ -15,6 +15,10 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 <!-- Custom CSS -->
 <link href="{{ asset('css/admin_layout.css') }}" rel="stylesheet">
+<!-- Admin Custom Pagination CSS -->
+<link href="{{ asset('css/admin-custom-pagination.css') }}" rel="stylesheet">
+<!-- Admin Pagination Fix CSS -->
+<link href="{{ asset('css/admin-pagination-fix.css') }}" rel="stylesheet">
 
 <style>
     /* Submenu styles */

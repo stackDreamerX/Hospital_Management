@@ -229,6 +229,7 @@
 </header>
 
 <!-- Banner giới thiệu chatbot AI -->
+@if(!request()->routeIs('chat.ai'))
 <div class="container mt-3">
     <div class="alert alert-info d-flex align-items-center justify-content-between" role="alert">
         <div>
@@ -236,12 +237,13 @@
             <strong>Trợ lý AI thông minh của Medic Hospital!</strong> Trò chuyện ngay để được tư vấn y tế và thông tin bệnh viện.
         </div>
         <div>
-            <button id="banner-chat-btn" class="btn btn-primary">
+            <a href="{{ route('chat.ai') }}" class="btn btn-primary">
                 <i class="fas fa-comments me-1"></i> Chat với AI
-            </button>
+            </a>
         </div>
     </div>
 </div>
+@endif
 
 <!-- header end -->
 
@@ -409,6 +411,20 @@
             const sendBtn = document.getElementById('ai-chatbot-send');
             const input = document.getElementById('ai-chatbot-input');
             const messagesContainer = document.getElementById('ai-chatbot-messages');
+
+            // Banner chat button
+            const bannerChatBtn = document.querySelector('.alert a.btn-primary');
+            if (bannerChatBtn) {
+                bannerChatBtn.addEventListener('click', function(e) {
+                    // If chatbot is available on the page, show it instead of navigating
+                    if (toggleBtn && chatbot) {
+                        e.preventDefault();
+                        chatbot.classList.add('active');
+                        toggleBtn.classList.add('hidden');
+                    }
+                    // Otherwise, let the default navigation happen
+                });
+            }
 
             if (!toggleBtn || !chatbot || !closeBtn || !minimizeBtn || !clearBtn || !sendBtn || !input || !messagesContainer) {
                 console.error('Một hoặc nhiều thành phần chatbot không tìm thấy.');
@@ -605,15 +621,6 @@
                 })
                 .catch(error => {
                     console.error('Error clearing chat history:', error);
-                });
-            }
-
-            // Connect banner button
-            const bannerChatBtn = document.getElementById('banner-chat-btn');
-            if (bannerChatBtn) {
-                bannerChatBtn.addEventListener('click', function() {
-                    chatbot.classList.add('active');
-                    toggleBtn.classList.add('hidden');
                 });
             }
         }, 500); // Đợi 500ms để đảm bảo trang đã tải xong

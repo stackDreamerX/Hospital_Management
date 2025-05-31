@@ -97,7 +97,7 @@
                                             $from = new DateTime($record->FromDate);
                                             $to = $record->ToDate ? new DateTime($record->ToDate) : new DateTime();
                                             $interval = $from->diff($to);
-                                            
+
                                             if ($interval->days > 0) {
                                                 echo $interval->format('%a days, %h hrs');
                                             } else {
@@ -123,8 +123,8 @@
                         </table>
                     </div>
 
-                    <div class="mt-3">
-                        {{ $history->appends(request()->query())->links() }}
+                    <div class="admin-custom-pagination">
+                        {{ $history->appends(request()->query())->links('vendor.pagination.admin.bootstrap-4') }}
                     </div>
 
                     <div class="card mt-4">
@@ -159,4 +159,4 @@
         </div>
     </div>
 </div>
-@endsection 
+@endsection

@@ -97,8 +97,8 @@
                         </table>
                     </div>
 
-                    <div class="mt-3">
-                        {{ $allocations->appends(request()->query())->links() }}
+                    <div>
+                        {{ $allocations->appends(request()->query())->links('vendor.pagination.admin-fix') }}
                     </div>
 
                     <div class="card mt-4">
@@ -127,4 +127,4 @@
         </div>
     </div>
 </div>
-@endsection 
+@endsection

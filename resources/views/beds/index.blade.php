@@ -104,8 +104,8 @@
                         </table>
                     </div>
 
-                    <div class="mt-3">
-                        {{ $beds->appends(request()->query())->links() }}
+                    <div class="admin-custom-pagination">
+                        {{ $beds->appends(request()->query())->links('vendor.pagination.admin.bootstrap-4') }}
                     </div>
 
                     <div class="card mt-4">
@@ -140,4 +140,4 @@
         </div>
     </div>
 </div>
-@endsection 
+@endsection

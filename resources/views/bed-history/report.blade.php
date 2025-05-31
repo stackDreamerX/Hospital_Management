@@ -19,12 +19,12 @@
                             <form action="{{ route('bed-history.report') }}" method="GET" class="row g-3">
                                 <div class="col-md-3">
                                     <label for="from_date" class="form-label">From Date</label>
-                                    <input type="date" name="from_date" id="from_date" class="form-control" 
+                                    <input type="date" name="from_date" id="from_date" class="form-control"
                                         value="{{ $fromDate }}">
                                 </div>
                                 <div class="col-md-3">
                                     <label for="to_date" class="form-label">To Date</label>
-                                    <input type="date" name="to_date" id="to_date" class="form-control" 
+                                    <input type="date" name="to_date" id="to_date" class="form-control"
                                         value="{{ $toDate }}">
                                 </div>
                                 <div class="col-md-3">
@@ -48,7 +48,7 @@
                     <div class="row mb-4">
                         <div class="col-md-12">
                             <h5>Report Summary ({{ $fromDate }} to {{ $toDate }})</h5>
-                            
+
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="card">
@@ -93,7 +93,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                
+
                                 <div class="col-md-6">
                                     <div class="card">
                                         <div class="card-header">
@@ -220,7 +220,7 @@
                                                     $from = new DateTime($record->FromDate);
                                                     $to = $record->ToDate ? new DateTime($record->ToDate) : new DateTime();
                                                     $interval = $from->diff($to);
-                                                    
+
                                                     if ($interval->days > 0) {
                                                         echo $interval->format('%a days, %h hrs');
                                                     } else {
@@ -237,8 +237,8 @@
                                     </tbody>
                                 </table>
                             </div>
-                            <div class="mt-3">
-                                {{ $recentHistory->appends(request()->query())->links() }}
+                            <div class="admin-custom-pagination">
+                                {{ $recentHistory->appends(request()->query())->links('vendor.pagination.admin.bootstrap-4') }}
                             </div>
                         </div>
                     </div>
@@ -247,4 +247,4 @@
         </div>
     </div>
 </div>
-@endsection 
+@endsection
