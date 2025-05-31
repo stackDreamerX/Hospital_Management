@@ -166,7 +166,7 @@ Route::prefix('doctor')->middleware('auth')->group(function () {
     Route::get('/pharmacy/details/{id}', [App\Http\Controllers\Doctor\PharmacyController::class, 'show'])->name('doctor.pharmacy.show');
     Route::get('/pharmacy/download-pdf/{id}', [App\Http\Controllers\Doctor\PharmacyController::class, 'downloadPdf'])->name('doctor.pharmacy.download-pdf');
     Route::delete('/pharmacy/{id}/delete', [App\Http\Controllers\Doctor\PharmacyController::class, 'destroy'])->name('doctor.pharmacy.destroy');
-    Route::put('/pharmacy/{id}/updatePharmacy', [App\Http\Controllers\Doctor\PharmacyController::class, 'update'])->name('doctor.treatments.update');
+    Route::put('/pharmacy/{id}/updatePharmacy', [App\Http\Controllers\Doctor\PharmacyController::class, 'update'])->name('doctor.pharmacy.update');
     Route::delete('/pharmacy/{id}/cancel', [App\Http\Controllers\Doctor\PharmacyController::class, 'cancel'])->name('doctor.pharmacy.cancel');
 
 

@@ -410,7 +410,6 @@ function createPrescription(shouldPrint = false) {
     const createPrescriptionUrl = "{{ route('doctor.pharmacy.create') }}";
 
     // Log URL
-    console.log('Prescription creation URL:', createPrescriptionUrl);
 
     const medicines = [];
     document.querySelectorAll('.medicine-item').forEach((item, index) => {
@@ -430,7 +429,6 @@ function createPrescription(shouldPrint = false) {
             quantity: quantity,
         };
 
-        console.log(`Medicine ${index + 1}:`, medicineName, medicineData);
         medicines.push(medicineData);
     });
 
@@ -452,7 +450,6 @@ function createPrescription(shouldPrint = false) {
     };
 
     // Log full request data
-    console.log('Full prescription data being sent:', data);
 
     // Validate required fields
     if (!data.patient_id) {
@@ -468,7 +465,6 @@ function createPrescription(shouldPrint = false) {
         Swal.fire('Lỗi', 'Không tìm thấy token bảo mật', 'error');
         return;
     }
-    console.log('CSRF Token found:', csrfToken.substring(0, 10) + '...');
 
     // Show loading state
     const loadingSwal = Swal.fire({
@@ -489,8 +485,6 @@ function createPrescription(shouldPrint = false) {
         body: JSON.stringify(data),
     })
         .then(response => {
-            console.log('Response status:', response.status);
-            console.log('Response headers:', [...response.headers.entries()]);
 
             if (!response.ok) {
                 throw new Error(`HTTP error! Status: ${response.status}`);
@@ -501,7 +495,6 @@ function createPrescription(shouldPrint = false) {
             // Close loading dialog
             loadingSwal.close();
 
-            console.log('Server response:', result);
 
             if (result.success) {
                 Swal.fire({
@@ -564,7 +557,6 @@ function viewPrescription(id) {
             loadingSwal.close();
 
             // Log the response for debugging
-            console.log('Prescription data:', data);
 
             const details = document.getElementById('prescriptionDetails');
             // Set the prescription ID as data attribute

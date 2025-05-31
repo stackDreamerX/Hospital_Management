@@ -7,7 +7,7 @@
         <span>Trợ lý Medic</span>
       </div>
       <div v-else class="chatbot-icon-container">
-        <img src="/images/logo.png" alt="Medic Hospital" class="chatbot-icon">
+        <img src="/images/IconChatbot.png" alt="Medic Hospital" class="chatbot-icon">
       </div>
       <button v-if="isChatOpen" class="chatbot-minimize-btn">
         <i class="fas fa-minus"></i>
@@ -214,6 +214,8 @@ function generateSessionId() {
   width: 70px;
   height: 70px;
   border-radius: 50%;
+  background: transparent;
+  box-shadow: none;
 }
 
 .chatbot-header {
@@ -225,6 +227,13 @@ function generateSessionId() {
   align-items: center;
   justify-content: space-between;
   cursor: pointer;
+}
+
+.chatbot-minimized .chatbot-header {
+  background: transparent;
+  padding: 0;
+  width: 100%;
+  height: 100%;
 }
 
 .chatbot-title {
@@ -248,8 +257,11 @@ function generateSessionId() {
 }
 
 .chatbot-icon {
-  width: 40px;
-  height: 40px;
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  object-fit: cover;
+  box-shadow: 0 5px 25px rgba(0, 0, 0, 0.1);
 }
 
 .chatbot-body {

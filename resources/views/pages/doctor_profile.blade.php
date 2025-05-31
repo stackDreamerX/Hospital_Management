@@ -541,10 +541,8 @@
 @section('scripts')
 <script>
     // Hiển thị console log ngay khi file được load
-    console.log("Doctor profile script loading...");
 
     document.addEventListener('DOMContentLoaded', function() {
-        console.log("DOM loaded - Initializing doctor profile script");
 
         // Đảm bảo dropdown hoạt động đúng với Bootstrap 5
         var dropdownElementList = [].slice.call(document.querySelectorAll('.dropdown-toggle'));
@@ -556,12 +554,8 @@
         const dateOptions = document.querySelectorAll('.date-option');
         const selectedDateText = document.getElementById('selected-date-text');
         const dateDropdownButton = document.getElementById('dateDropdownButton');
-        console.log("Found date options:", dateOptions.length);
 
-        // Debug - hiển thị các ngày có sẵn
-        dateOptions.forEach((option, index) => {
-            console.log(`Option ${index}: ${option.getAttribute('data-date')} - ${option.getAttribute('data-formatted')}`);
-        });
+
 
         // Handle time slot selection
         function setupTimeSlotSelection() {
@@ -585,7 +579,6 @@
 
         // Hàm hiển thị time slots cho ngày đã chọn
         function showTimeSlots(dateString) {
-            console.log("Showing time slots for date:", dateString);
 
             // Hiển thị loading spinner
             const timeSelectionContainer = document.querySelector('.time-selection');
@@ -611,14 +604,12 @@
 
                 // Hiển thị container cho ngày đã chọn
                 const selectedContainer = document.getElementById('slots-' + dateString);
-                console.log("Looking for container with ID:", 'slots-' + dateString);
 
                 // Xóa loading spinner
                 const spinner = document.getElementById('loading-spinner');
                 if (spinner) spinner.remove();
 
                 if (selectedContainer) {
-                    console.log("Found container, showing time slots");
                     selectedContainer.style.display = 'block';
 
                     // Hiện thông báo nếu không có time slots
@@ -634,7 +625,6 @@
                     console.error("Container for date not found:", dateString);
                     // Hiển thị các container có sẵn để debug
                     const containers = document.querySelectorAll('.time-slots-container');
-                    console.log("Available containers:", containers.length);
                     containers.forEach(c => console.log(" - " + c.id));
 
                     // Hiển thị thông báo lỗi
@@ -669,7 +659,6 @@
                 // Lấy thông tin ngày
                 const formattedDate = this.getAttribute('data-formatted');
                 const dateString = this.getAttribute('data-date');
-                console.log(`Selected: ${dateString} (${formattedDate})`);
 
                 // Cập nhật text trong dropdown button
                 if (selectedDateText) {
@@ -683,7 +672,6 @@
 
         // Hiển thị ngày đầu tiên khi trang load xong
         if (dateOptions.length > 0) {
-            console.log("Selecting first date option");
             const firstOption = dateOptions[0];
             const firstDate = firstOption.getAttribute('data-date');
             const firstFormattedDate = firstOption.getAttribute('data-formatted');
@@ -707,7 +695,6 @@
             stars.forEach(star => {
                 star.addEventListener('change', function() {
                     const rating = this.value;
-                    console.log(`Selected rating: ${rating}`);
                 });
             });
         }
@@ -893,11 +880,8 @@
         }
 
         // Immediately initialize Load More button
-        console.log("DEBUG: Checking for Load More button");
         const loadMoreBtn = document.getElementById('load-more-reviews');
         if (loadMoreBtn) {
-            console.log("DEBUG: Found Load More button, doctor ID:", loadMoreBtn.getAttribute('data-doctor'));
-            console.log("DEBUG: Current page:", loadMoreBtn.getAttribute('data-page'));
 
             // Add click handler for the Load More button
             loadMoreBtn.addEventListener('click', function() {
@@ -906,7 +890,6 @@
                 const nextPage = page + 1;
                 const loadingSpinner = document.getElementById('loading-spinner');
 
-                console.log(`CLICK DETECTED: Loading more reviews for doctor ${doctorId}, page ${nextPage}`);
 
                 // Show loading spinner
                 loadMoreBtn.classList.add('d-none');
@@ -914,7 +897,6 @@
                 // Create loading spinner if it doesn't exist
                 let spinner = loadingSpinner;
                 if (!spinner) {
-                    console.log('DEBUG: Creating loading spinner as it does not exist');
                     spinner = document.createElement('div');
                     spinner.id = 'loading-spinner';
                     spinner.className = 'spinner-border text-primary';
@@ -933,25 +915,18 @@
 
                 // Make AJAX request to get more reviews
                 const apiUrl = `/api/doctor/${doctorId}/reviews?page=${nextPage}`;
-                console.log(`DEBUG: Fetching from URL: ${apiUrl}`);
-                console.log(`DEBUG: Full URL: ${window.location.origin}${apiUrl}`);
 
                 // Use the full URL with domain name
                 fetch(`${window.location.origin}${apiUrl}`)
                     .then(response => {
-                        console.log('DEBUG: Response status:', response.status);
-                        console.log('DEBUG: Response headers:', Object.fromEntries([...response.headers]));
                         return response.json();
                     })
                     .then(data => {
-                        console.log('DEBUG: Data received:', data);
 
                         if (data.success) {
-                            console.log(`DEBUG: Success! Received ${data.reviews.length} reviews`);
 
                             // Check if we actually got any reviews
                             if (data.reviews.length === 0) {
-                                console.log('DEBUG: No reviews received despite success response');
 
                                 // Show message to user if appropriate
                                 Swal.fire({
@@ -989,7 +964,6 @@
                                     userName = review.user_name;
                                 }
 
-                                console.log(`DEBUG: Processing review by ${userName}`);
 
                                 // Create star rating HTML
                                 let starsHtml = '';
@@ -1024,10 +998,8 @@
                             // Show/hide Load More button based on if there are more reviews
                             if (data.has_more) {
                                 loadMoreBtn.classList.remove('d-none');
-                                console.log('DEBUG: More reviews available, showing Load More button');
                             } else {
                                 // No more reviews to load
-                                console.log('DEBUG: No more reviews available, removing Load More button');
                                 document.getElementById('load-more-container').remove();
                             }
                         } else {
@@ -1060,20 +1032,16 @@
             });
         } else {
             console.warn("DEBUG: Load More button not found!");
-            console.log("DEBUG: All buttons on page:", document.querySelectorAll('button').length);
         }
     });
 
     // Additional initialization outside the DOMContentLoaded event
     window.addEventListener('load', function() {
-        console.log('DEBUG: Window fully loaded, adding extra handlers');
 
         // Add click handler for Write a Review button
         const writeReviewBtn = document.querySelector('button[data-bs-toggle="modal"][data-bs-target="#writeReviewModal"]');
         if (writeReviewBtn) {
-            console.log('DEBUG: Found Write Review button, adding click handler');
             writeReviewBtn.addEventListener('click', function() {
-                console.log('DEBUG: Opening review modal');
             });
         }
     });

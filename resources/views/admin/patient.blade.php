@@ -115,13 +115,13 @@
     body .modal-backdrop.show {
         opacity: 0.5 !important;
     }
-    
+
     /* Additional CSS to ensure modals appear correctly */
     body.modal-open {
         overflow: hidden !important;
         padding-right: 15px !important;
     }
-    
+
     /* Force modal display when .show-force is applied */
     body .modal.show-force {
         display: block !important;
@@ -130,7 +130,7 @@
         overflow-x: hidden !important;
         overflow-y: auto !important;
     }
-    
+
     /* Force backdrop to display */
     body .modal-backdrop-force {
         position: fixed !important;
@@ -142,39 +142,39 @@
         background-color: rgba(0, 0, 0, 0.5) !important;
         opacity: 0.5 !important;
     }
-    
+
     /* Enhanced form controls */
     body .form-control {
         border-radius: 0.25rem !important;
         border: 1px solid #ced4da !important;
         transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out !important;
     }
-    
+
     body .form-control:focus {
         border-color: #86b7fe !important;
         outline: 0 !important;
         box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25) !important;
     }
-    
+
     body .form-label {
         margin-bottom: 0.5rem !important;
         font-weight: 500 !important;
         color: #212529 !important;
     }
-    
+
     /* Button styling */
     body .btn-primary {
         background: linear-gradient(135deg, #2bb0ed 0%, #3f8cff 100%) !important;
         border: none !important;
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
     }
-    
+
     body .btn-primary:hover {
         background: linear-gradient(135deg, #1a9fd6 0%, #2e75e0 100%) !important;
         transform: translateY(-1px) !important;
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1) !important;
     }
-    
+
     /* Card styling improvements */
     .card {
         border: none !important;
@@ -182,11 +182,11 @@
         box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075) !important;
         transition: box-shadow 0.3s ease-in-out !important;
     }
-    
+
     .card:hover {
         box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1) !important;
     }
-    
+
     .card-header {
         background: #f8f9fa !important;
         border-bottom: 1px solid rgba(0,0,0,0.05) !important;
@@ -200,7 +200,7 @@
 
 <div class="container" style="padding: 20px;">
     <h2 style="color: #333; margin-bottom: 20px;">User Management</h2>
-        
+
 
     <!-- User List -->
     <div class="card mb-4" style="box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
@@ -260,7 +260,7 @@
                         <th style="padding: 12px;">Full Name</th>
                         <th style="padding: 12px;">Email</th>
                         <th style="padding: 12px;">Phone</th>
-                        <th style="padding: 12px;">Gender</th>                    
+                        <th style="padding: 12px;">Gender</th>
                         <th style="padding: 12px;">Role</th>
                         <th style="padding: 12px;">Actions</th>
                     </tr>
@@ -272,7 +272,7 @@
                         <td style="padding: 12px;">{{ $user->FullName }}</td>
                         <td style="padding: 12px;">{{ $user->Email }}</td>
                         <td style="padding: 12px;">{{ $user->PhoneNumber }}</td>
-                        <td style="padding: 12px;">Male</td>                        
+                        <td style="padding: 12px;">Male</td>
                         <td style="padding: 12px;">{{ $user->RoleID }}</td>
                         <td style="padding: 12px;">
                             <button class="btn btn-primary btn-sm edit-user" data-user='{!! json_encode($user) !!}' style="margin-right: 5px;">
@@ -354,51 +354,45 @@
 <script>
     // Helper function to show modal reliably
     function showModalReliably(modalElement, modalInstance) {
-        console.log('Showing modal reliably:', modalElement.id);
-        
+
         try {
             // First attempt: Bootstrap modal method
             if (modalInstance && typeof modalInstance.show === 'function') {
                 modalInstance.show();
-                console.log('Modal shown via Bootstrap API');
                 return true;
             }
         } catch (error) {
             console.warn('Error showing modal via Bootstrap API:', error);
         }
-        
+
         try {
             // Second attempt: jQuery if available
             if (typeof $ !== 'undefined') {
                 $(modalElement).modal('show');
-                console.log('Modal shown via jQuery');
                 return true;
             }
         } catch (error) {
             console.warn('Error showing modal via jQuery:', error);
         }
-        
+
         // Final attempt: Direct DOM manipulation
         try {
-            console.log('Trying direct DOM manipulation for modal');
             // Add classes to modal
             modalElement.classList.add('show', 'show-force');
             modalElement.style.display = 'block';
             modalElement.setAttribute('aria-modal', 'true');
             modalElement.removeAttribute('aria-hidden');
-            
+
             // Add class to body
             document.body.classList.add('modal-open');
-            
+
             // Create backdrop if needed
             if (!document.querySelector('.modal-backdrop')) {
                 const backdrop = document.createElement('div');
                 backdrop.className = 'modal-backdrop fade show modal-backdrop-force';
                 document.body.appendChild(backdrop);
-                console.log('Modal backdrop created');
             }
-            
-            console.log('Modal shown via direct DOM manipulation');
+
             return true;
         } catch (error) {
             console.error('All methods to show modal failed:', error);
@@ -409,7 +403,7 @@
     document.addEventListener('DOMContentLoaded', function() {
         // Initialize modals
         const userModal = new bootstrap.Modal(document.getElementById('userModal'));
-        
+
         // Add event listeners to edit user buttons
         document.querySelectorAll('.edit-user').forEach(button => {
             button.addEventListener('click', function() {
@@ -426,7 +420,7 @@
                 }
             });
         });
-        
+
         // Add event listeners to delete user buttons
         document.querySelectorAll('.delete-user').forEach(button => {
             button.addEventListener('click', function() {
@@ -434,7 +428,7 @@
                 deleteUser(id);
             });
         });
-        
+
         // Connect save button event handler
         document.getElementById('saveUserBtn').addEventListener('click', function() {
             const userId = document.getElementById('edit_user_id').value;
@@ -447,7 +441,7 @@
             const searchValue = this.value.toLowerCase().trim();
             const table = document.querySelector('table');
             const rows = table.querySelectorAll('tbody tr');
-            
+
             rows.forEach(row => {
                 const text = row.textContent.toLowerCase();
                 if (text.includes(searchValue)) {
@@ -463,7 +457,7 @@
         e.preventDefault();
 
         const formData = new FormData(this);
-        
+
         Swal.fire({
             title: 'Adding User...',
             text: 'Please wait while we create the user',
@@ -506,16 +500,16 @@
         document.getElementById('edit_name').value = user.FullName || '';
         document.getElementById('edit_email').value = user.Email || '';
         document.getElementById('edit_phone').value = user.PhoneNumber || '';
-        
+
         // Set optional fields if available
         if (user.Gender) {
             document.getElementById('edit_gender').value = user.Gender.toLowerCase();
         }
-        
+
         if (user.DateOfBirth) {
             document.getElementById('edit_date_of_birth').value = user.DateOfBirth;
         }
-        
+
         if (user.RoleID) {
             const roleMap = {
                 '1': 'admin',
@@ -524,7 +518,7 @@
             };
             document.getElementById('edit_role').value = roleMap[user.RoleID] || 'patient';
         }
-        
+
         if (user.Address) {
             document.getElementById('edit_address').value = user.Address;
         }
@@ -538,7 +532,7 @@
     function updateUser(userId) {
         // Get form data
         const formData = new FormData(document.getElementById('editUserForm'));
-        
+
         Swal.fire({
             title: 'Updating...',
             text: 'Please wait while we update the user',
@@ -547,11 +541,10 @@
                 Swal.showLoading();
             }
         });
-        
+
         // Create the URL with the user ID
     //   const url = `/admin/patient/${userId}`;
         const url = `{{ route('admin.patient.update', ['id' => '__id__']) }}`.replace('__id__', userId);
-       console.log(url);
         fetch(url, {
             method: 'POST', // Use POST as defined in the routes
             headers: {
@@ -601,7 +594,7 @@
         }).then((result) => {
             if (result.isConfirmed) {
                 const url = `{{ route('admin.patient.destroy', ['id' => '__id__']) }}`.replace('__id__', id);
-                
+
                 Swal.fire({
                     title: 'Deleting...',
                     text: 'Please wait while we delete the user',
@@ -610,7 +603,7 @@
                         Swal.showLoading();
                     }
                 });
-                
+
                 fetch(url, {
                     method: 'DELETE',
                     headers: {

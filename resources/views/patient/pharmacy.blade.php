@@ -117,13 +117,13 @@
     body .modal-backdrop.show {
         opacity: 0.5 !important;
     }
-    
+
     /* Additional CSS to ensure modals appear correctly */
     body.modal-open {
         overflow: hidden !important;
         padding-right: 15px !important;
     }
-    
+
     /* Force modal display when .show-force is applied */
     body .modal.show-force {
         display: block !important;
@@ -132,7 +132,7 @@
         overflow-x: hidden !important;
         overflow-y: auto !important;
     }
-    
+
     /* Force backdrop to display */
     body .modal-backdrop-force {
         position: fixed !important;
@@ -144,7 +144,7 @@
         background-color: rgba(0, 0, 0, 0.5) !important;
         opacity: 0.5 !important;
     }
-    
+
     /* Better badge styling */
     body .modal-body .badge {
         padding: 0.4rem 0.6rem !important;
@@ -152,7 +152,7 @@
         display: inline-block !important;
         margin-left: 0.5rem !important;
     }
-    
+
     /* Detail item styling */
     body .modal-body .mb-3 {
         display: flex !important;
@@ -163,36 +163,36 @@
         border-radius: 8px !important;
         border-left: 4px solid #3f8cff !important;
     }
-    
+
     body .modal-body .mb-3 strong {
         font-weight: 600 !important;
         color: #212529 !important; /* Darker text for labels */
         margin-bottom: 0.3rem !important;
         display: block !important;
     }
-    
+
     body .modal-body .mb-3 span {
         color: #212529 !important; /* Ensure text is black */
         font-size: 1rem !important;
     }
-    
+
     /* Style for medicine list */
     body .modal-body ul {
         list-style-type: none;
         padding-left: 0;
         margin-bottom: 0;
     }
-    
+
     body .modal-body ul li {
         padding: 0.5rem 0;
         border-bottom: 1px solid #eee;
         color: #212529;
     }
-    
+
     body .modal-body ul li:last-child {
         border-bottom: none;
     }
-    
+
     /* Ensure icons are visible but not too prominent */
     body .modal-body .fas {
         color: #3f8cff !important;
@@ -329,7 +329,7 @@ let detailsModal;
 
 document.addEventListener('DOMContentLoaded', function() {
     detailsModal = new bootstrap.Modal(document.getElementById('detailsModal'));
-    
+
     // Add event listeners to view buttons
     document.querySelectorAll('.view-prescription').forEach(button => {
         button.addEventListener('click', function() {
@@ -350,51 +350,45 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // Helper function to show modal reliably
 function showModalReliably(modalElement, modalInstance) {
-    console.log('Showing modal reliably:', modalElement.id, modalInstance);
-    
+
     try {
         // First attempt: Bootstrap modal method
         if (modalInstance && typeof modalInstance.show === 'function') {
             modalInstance.show();
-            console.log('Modal shown via Bootstrap API');
             return true;
         }
     } catch (error) {
         console.warn('Error showing modal via Bootstrap API:', error);
     }
-    
+
     try {
         // Second attempt: jQuery if available
         if (typeof $ !== 'undefined') {
             $(modalElement).modal('show');
-            console.log('Modal shown via jQuery');
             return true;
         }
     } catch (error) {
         console.warn('Error showing modal via jQuery:', error);
     }
-    
+
     // Final attempt: Direct DOM manipulation
     try {
-        console.log('Trying direct DOM manipulation for modal');
         // Add classes to modal
         modalElement.classList.add('show', 'show-force');
         modalElement.style.display = 'block';
         modalElement.setAttribute('aria-modal', 'true');
         modalElement.removeAttribute('aria-hidden');
-        
+
         // Add class to body
         document.body.classList.add('modal-open');
-        
+
         // Create backdrop if needed
         if (!document.querySelector('.modal-backdrop')) {
             const backdrop = document.createElement('div');
             backdrop.className = 'modal-backdrop fade show modal-backdrop-force';
             document.body.appendChild(backdrop);
-            console.log('Modal backdrop created');
         }
-        
-        console.log('Modal shown via direct DOM manipulation');
+
         return true;
     } catch (error) {
         console.error('All methods to show modal failed:', error);
@@ -403,8 +397,7 @@ function showModalReliably(modalElement, modalInstance) {
 }
 
 function viewDetails(prescription) {
-    console.log('Prescription data:', prescription); // Log the data for debugging
-    
+
     // Format the status badge
     const statusBadge = `
         <span class="badge bg-${
@@ -413,19 +406,19 @@ function viewDetails(prescription) {
             ${prescription.Status || 'Unknown'}
         </span>
     `;
-    
+
     // Format the payment badge
     const paymentBadge = `
         <span class="badge bg-${prescription.PaymentStatus === 'Paid' ? 'success' : 'warning'}">
             ${prescription.PaymentStatus || 'Unknown'}
         </span>
     `;
-    
+
     // Generate list of medicine items
-    const medicineItems = prescription.Items.map(item => 
+    const medicineItems = prescription.Items.map(item =>
         `<li><i class="fas fa-pills me-2"></i>${item.Name} - ${item.Dosage} x ${item.Quantity}</li>`
     ).join('');
-    
+
     // Create nicely formatted content
     const content = document.getElementById('detailsContent');
     content.innerHTML = `
@@ -434,40 +427,40 @@ function viewDetails(prescription) {
                 <strong><i class="fas fa-calendar me-2"></i>Date</strong>
                 <span>${prescription.Date || 'Not specified'}</span>
             </div>
-            
+
             <div class="mb-3">
                 <strong><i class="fas fa-user-md me-2"></i>Doctor</strong>
                 <span>${prescription.DoctorName || 'Not assigned'}</span>
             </div>
-            
+
             <div class="mb-3">
                 <strong><i class="fas fa-info-circle me-2"></i>Status</strong>
                 <span>${prescription.Status || 'Unknown'} ${statusBadge}</span>
             </div>
-            
+
             <div class="mb-3">
                 <strong><i class="fas fa-money-bill-wave me-2"></i>Payment</strong>
                 <span>${prescription.PaymentStatus || 'Unknown'} ${paymentBadge}</span>
             </div>
-            
+
             <div class="mb-3">
                 <strong><i class="fas fa-pills me-2"></i>Medicines</strong>
                 <ul>${medicineItems}</ul>
             </div>
-            
+
             <div class="mb-3">
                 <strong><i class="fas fa-dollar-sign me-2"></i>Total Amount</strong>
                 <span>${number_format(prescription.TotalAmount) || '0'}</span>
             </div>
         </div>
     `;
-    
+
     // Ensure the modal element exists
     const modalElement = document.getElementById('detailsModal');
     if (!modalElement) {
         throw new Error('Modal element not found');
     }
-    
+
     // Show the modal with our reliable function
     setTimeout(() => {
         const shown = showModalReliably(modalElement, detailsModal);

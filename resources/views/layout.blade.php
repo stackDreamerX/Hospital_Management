@@ -66,6 +66,16 @@
         width: 20px;
         text-align: center;
     }
+    .nav-pills .nav-link {
+        padding-left: 10px;
+        padding-right: 10px;
+        font-size: 0.95rem;
+        white-space: nowrap;
+    }
+    .nav-pills .dropdown-toggle {
+        padding-left: 10px;
+        padding-right: 10px;
+    }
     .temp-chatbot-btn {
         position: fixed;
         bottom: 20px;
@@ -370,46 +380,7 @@
 <!-- Chatbot Component -->
 <div id="chatbot-app"></div>
 
-<!-- Chatbot Popup -->
-<div id="ai-chatbot" class="ai-chatbot-container">
-    <div class="ai-chatbot-header">
-        <div class="ai-chatbot-title">
-            <img src="{{ asset('images/IconChatbot.png') }}" alt="AI" class="ai-chatbot-avatar">
-            <h5>Trợ lý AI</h5>
-        </div>
-        <div class="ai-chatbot-actions">
-            <button id="ai-chatbot-clear" class="btn btn-sm btn-link text-light" title="Xóa lịch sử"><i class="fas fa-trash-alt"></i></button>
-            <button id="ai-chatbot-minimize" class="btn btn-sm btn-link text-light"><i class="fas fa-minus"></i></button>
-            <button id="ai-chatbot-close" class="btn btn-sm btn-link text-light"><i class="fas fa-times"></i></button>
-        </div>
-    </div>
-    <div class="ai-chatbot-body">
-        <div id="ai-chatbot-messages" class="ai-chatbot-messages">
-            <div class="ai-chatbot-message ai-message">
-                <div class="ai-chatbot-avatar">
-                    <img src="{{ asset('images/IconChatbot.png') }}" alt="AI">
-                </div>
-                <div class="ai-chatbot-bubble">
-                    <p>Xin chào! Tôi là trợ lý AI của Medic Hospital. Tôi có thể giúp gì cho bạn hôm nay?</p>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="ai-chatbot-footer">
-        <input type="text" id="ai-chatbot-input" class="ai-chatbot-input" placeholder="Nhập câu hỏi của bạn...">
-        <button id="ai-chatbot-send" class="ai-chatbot-send">
-            <i class="fas fa-paper-plane"></i>
-        </button>
-    </div>
-</div>
 
-<!-- Nút mở chatbot -->
-<div class="ai-chatbot-toggle">
-    <button id="ai-chatbot-toggle-btn" class="ai-chatbot-toggle-btn">
-        <img src="{{ asset('images/IconChatbot.png') }}" alt="Chat với AI">
-        <span class="ai-chatbot-badge">AI</span>
-    </button>
-</div>
 
 <script>
     // Khởi tạo trang khi DOM đã sẵn sàng
@@ -628,7 +599,6 @@
                 })
                 .then(response => response.json())
                 .then(data => {
-                    console.log('Chat history cleared:', data);
                     // Generate new session ID
                     sessionId = crypto.randomUUID();
                     localStorage.setItem('ai_chat_session_id', sessionId);
@@ -806,8 +776,8 @@
     }
 
     .ai-chatbot-toggle-btn img {
-        width: 35px;
-        height: 35px;
+        width: 200px;
+        height: 200px;
     }
 
     .ai-chatbot-badge {

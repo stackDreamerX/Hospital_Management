@@ -221,19 +221,14 @@
                             const form = document.getElementById('bookingForm');
 
                             if (form) {
-                                console.log('Booking form found');
 
                                 // Log form data that will be submitted
                                 const doctorId = document.querySelector('input[name="doctor_id"]').value;
                                 const slotId = document.querySelector('input[name="slot_id"]').value;
-                                console.log('Form will submit with:', {
-                                    doctorId: doctorId,
-                                    slotId: slotId
-                                });
+
 
                                 // Add submit event listener
                                 form.addEventListener('submit', function(e) {
-                                    console.log('Form submission attempted');
 
                                     // Check for issue with slot_id
                                     const slotIdField = document.querySelector('input[name="slot_id"]');
@@ -282,7 +277,6 @@
                                         }
                                     }
 
-                                    console.log('Form validation passed, submitting...');
                                 });
                             } else {
                                 console.error('Booking form not found!');

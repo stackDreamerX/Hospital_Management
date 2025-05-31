@@ -118,13 +118,13 @@
     body .modal-backdrop.show {
         opacity: 0.5 !important;
     }
-    
+
     /* Additional CSS to ensure modals appear correctly */
     body.modal-open {
         overflow: hidden !important;
         padding-right: 15px !important;
     }
-    
+
     /* Force modal display when .show-force is applied */
     body .modal.show-force {
         display: block !important;
@@ -133,7 +133,7 @@
         overflow-x: hidden !important;
         overflow-y: auto !important;
     }
-    
+
     /* Force backdrop to display */
     body .modal-backdrop-force {
         position: fixed !important;
@@ -145,39 +145,39 @@
         background-color: rgba(0, 0, 0, 0.5) !important;
         opacity: 0.5 !important;
     }
-    
+
     /* Enhanced form controls */
     body .form-control {
         border-radius: 0.25rem !important;
         border: 1px solid #ced4da !important;
         transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out !important;
     }
-    
+
     body .form-control:focus {
         border-color: #86b7fe !important;
         outline: 0 !important;
         box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25) !important;
     }
-    
+
     body .form-label {
         margin-bottom: 0.5rem !important;
         font-weight: 500 !important;
         color: #212529 !important;
     }
-    
+
     /* Button styling */
     body .btn-primary {
         background: linear-gradient(135deg, #2bb0ed 0%, #3f8cff 100%) !important;
         border: none !important;
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
     }
-    
+
     body .btn-primary:hover {
         background: linear-gradient(135deg, #1a9fd6 0%, #2e75e0 100%) !important;
         transform: translateY(-1px) !important;
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1) !important;
     }
-    
+
     /* Card styling improvements */
     .card {
         border: none !important;
@@ -185,17 +185,17 @@
         box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075) !important;
         transition: box-shadow 0.3s ease-in-out !important;
     }
-    
+
     .card:hover {
         box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1) !important;
     }
-    
+
     .card-header {
         background: #f8f9fa !important;
         border-bottom: 1px solid rgba(0,0,0,0.05) !important;
         font-weight: 600 !important;
     }
-    
+
     /* Modal content styling */
     #labDetails p {
         padding: 0.8rem !important;
@@ -204,7 +204,7 @@
         border-left: 4px solid #3f8cff !important;
         margin-bottom: 0.8rem !important;
     }
-    
+
     #labDetails p strong {
         display: block !important;
         color: #212529 !important;
@@ -326,7 +326,7 @@
 <div>
     <br>
 </div>
-    
+
     <!-- Create New Laboratory Assignment -->
     <div class="card mb-4">
         <div class="card-header bg-light">
@@ -520,72 +520,66 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.3/dist/sweetalert2.all.min.js"></script>
 
 <script>
-   
+
    // Helper function to show modal reliably
    function showModalReliably(modalElement, modalInstance) {
-       console.log('Showing modal reliably:', modalElement.id);
-       
+
        try {
            // First attempt: Bootstrap modal method
            if (modalInstance && typeof modalInstance.show === 'function') {
                modalInstance.show();
-               console.log('Modal shown via Bootstrap API');
                return true;
            }
        } catch (error) {
            console.warn('Error showing modal via Bootstrap API:', error);
        }
-       
+
        try {
            // Second attempt: jQuery if available
            if (typeof $ !== 'undefined') {
                $(modalElement).modal('show');
-               console.log('Modal shown via jQuery');
                return true;
            }
        } catch (error) {
            console.warn('Error showing modal via jQuery:', error);
        }
-       
+
        // Final attempt: Direct DOM manipulation
        try {
-           console.log('Trying direct DOM manipulation for modal');
            // Add classes to modal
            modalElement.classList.add('show', 'show-force');
            modalElement.style.display = 'block';
            modalElement.setAttribute('aria-modal', 'true');
            modalElement.removeAttribute('aria-hidden');
-           
+
            // Add class to body
            document.body.classList.add('modal-open');
-           
+
            // Create backdrop if needed
            if (!document.querySelector('.modal-backdrop')) {
                const backdrop = document.createElement('div');
                backdrop.className = 'modal-backdrop fade show modal-backdrop-force';
                document.body.appendChild(backdrop);
-               console.log('Modal backdrop created');
            }
-           
-           console.log('Modal shown via direct DOM manipulation');
+
            return true;
        } catch (error) {
            console.error('All methods to show modal failed:', error);
            return false;
        }
    }
-   
+
    // Initialize all modals and event listeners
    document.addEventListener('DOMContentLoaded', function() {
        // Initialize modals
        const viewModal = new bootstrap.Modal(document.getElementById('viewModal'));
        const editModal = new bootstrap.Modal(document.getElementById('editModal'));
        const labTypeModal = new bootstrap.Modal(document.getElementById('labTypeModal'));
-       
+
        // Connect button event handlers
        document.getElementById('saveLabTypeBtn').addEventListener('click', saveLabType);
        document.getElementById('updateLabBtn').addEventListener('click', updateLab);
-       
+
        // Add event listeners for view details buttons
        document.querySelectorAll('.view-details').forEach(button => {
            button.addEventListener('click', function() {
@@ -593,7 +587,7 @@
                viewDetails(id);
            });
        });
-       
+
        // Add event listeners for edit lab type buttons
        document.querySelectorAll('.edit-lab-type').forEach(button => {
            button.addEventListener('click', function() {
@@ -610,7 +604,7 @@
                }
            });
        });
-       
+
        // Add event listeners for delete lab type buttons
        document.querySelectorAll('.delete-lab-type').forEach(button => {
            button.addEventListener('click', function() {
@@ -618,7 +612,7 @@
                deleteLabType(id);
            });
        });
-       
+
        // Add event listeners for edit lab buttons
        document.querySelectorAll('.edit-lab').forEach(button => {
            button.addEventListener('click', function() {
@@ -635,7 +629,7 @@
                }
            });
        });
-       
+
        // Add event listeners for delete lab buttons
        document.querySelectorAll('.delete-lab').forEach(button => {
            button.addEventListener('click', function() {
@@ -643,18 +637,18 @@
                deleteLab(id);
            });
        });
-       
+
        // Connect lab type price to price field
        document.getElementById('lab_type').addEventListener('change', function () {
            const selectedOption = this.options[this.selectedIndex];
            const price = selectedOption.getAttribute('data-price');
            document.getElementById('price').value = price ? price : '';
        });
-       
+
        // Handle lab form submission
        document.getElementById('createLabForm').addEventListener('submit', function (event) {
            event.preventDefault();
-           
+
            const lab_type = document.getElementById('lab_type').value;
            const user_id = document.getElementById('user_id').value;
            const doctor_id = document.getElementById('doctor_id').value;
@@ -662,7 +656,7 @@
            const lab_time = document.getElementById('lab_time').value;
            const price = document.getElementById('price').value;
            const createLabUrl = "{{ route('admin.lab.create') }}";
-           
+
            Swal.fire({
                title: 'Creating...',
                text: 'Please wait while we create the laboratory assignment',
@@ -671,7 +665,7 @@
                    Swal.showLoading();
                }
            });
-           
+
            fetch(createLabUrl, {
                method: 'POST',
                headers: {
@@ -717,7 +711,7 @@
                 Swal.showLoading();
             }
         });
-        
+
         const url =  `{{ route('admin.lab.details', ['id' => '__id__']) }}`.replace('__id__', id);
         fetch(url)
             .then(response => {
@@ -728,7 +722,7 @@
             })
             .then(data => {
                 Swal.close();
-                
+
                 if (!data || !data.labType || !data.patientName || !data.doctorName) {
                     throw new Error('Incomplete data received from the server.');
                 }
@@ -826,7 +820,7 @@
         // Split date and time if needed
         const [date, time] = lab.LaboratoryDate.split(' ');
         document.getElementById('edit_date').value = date;
-        
+
         // Set time if available
         if (lab.LaboratoryTime) {
             document.getElementById('edit_time').value = lab.LaboratoryTime;
@@ -850,7 +844,7 @@
         const labDate = document.getElementById('edit_date').value || null;
         const labTime = document.getElementById('edit_time').value || null;
         const price = document.getElementById('edit_price').value || null;
-        
+
         Swal.fire({
             title: 'Updating...',
             text: 'Please wait while we update the laboratory assignment',
@@ -909,7 +903,7 @@
         }).then((result) => {
             if (result.isConfirmed) {
                 const url = `{{ route('admin.lab.delete', ['id' => '__id__']) }}`.replace('__id__', id);
-                
+
                 Swal.fire({
                     title: 'Deleting...',
                     text: 'Please wait while we delete the laboratory assignment',
@@ -966,7 +960,7 @@
         }).then((result) => {
             if (result.isConfirmed) {
                 const url = `{{ route('admin.deleteLabType', ['id' => '__id__']) }}`.replace('__id__', id);
-                
+
                 Swal.fire({
                     title: 'Deleting...',
                     text: 'Please wait while we delete the laboratory type',

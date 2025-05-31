@@ -291,7 +291,6 @@
     let detailsModal, editModal;
 
     document.addEventListener('DOMContentLoaded', function() {
-        console.log('DOM fully loaded');
 
         // Initialize Bootstrap modals
         detailsModal = new bootstrap.Modal(document.getElementById('detailsModal'));

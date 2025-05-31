@@ -246,7 +246,7 @@
                     <p><strong>Total Price:</strong> ${data.TotalPrice}</p>
                     <p><strong>Status:</strong>
                         <span class="badge bg-${data.Status === 'Completed' ? 'success' : 'warning'}">
-                            ${data.Status} 
+                            ${data.Status}
                         </span>
                     </p>
                     <p><strong>Items:</strong></p>

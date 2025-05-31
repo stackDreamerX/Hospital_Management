@@ -422,7 +422,6 @@
     let detailsModal, editModal, ratingModal;
 
     document.addEventListener('DOMContentLoaded', function() {
-        console.log('DOM fully loaded');
 
         // Initialize Bootstrap modals
         detailsModal = new bootstrap.Modal(document.getElementById('detailsModal'));
@@ -543,7 +542,6 @@
             data.is_anonymous = false;
         }
 
-        console.log('Submitting rating data:', data);
 
         // Show loading state
         const loadingSwal = Swal.fire({
@@ -565,8 +563,6 @@
             body: JSON.stringify(data)
         })
         .then(response => {
-            console.log('Response status:', response.status);
-            console.log('Response headers:', Object.fromEntries([...response.headers]));
 
             // First, check if the response is ok (status in the range 200-299)
             if (!response.ok) {
@@ -592,7 +588,6 @@
         })
         .then(result => {
             loadingSwal.close();
-            console.log('Rating submission result:', result);
 
             if (result.success) {
                 ratingModal.hide();

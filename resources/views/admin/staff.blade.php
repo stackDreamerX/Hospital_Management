@@ -116,13 +116,13 @@
     body .modal-backdrop.show {
         opacity: 0.5 !important;
     }
-    
+
     /* Additional CSS to ensure modals appear correctly */
     body.modal-open {
         overflow: hidden !important;
         padding-right: 15px !important;
     }
-    
+
     /* Force modal display when .show-force is applied */
     body .modal.show-force {
         display: block !important;
@@ -131,7 +131,7 @@
         overflow-x: hidden !important;
         overflow-y: auto !important;
     }
-    
+
     /* Force backdrop to display */
     body .modal-backdrop-force {
         position: fixed !important;
@@ -148,53 +148,53 @@
         cursor: pointer;
         transition: background-color 0.2s;
     }
-    
+
     .table tbody tr:hover {
         background-color: rgba(0,0,0,0.02);
     }
-    
+
     /* Form enhancements */
     body .form-control {
         border-radius: 0.25rem !important;
         border: 1px solid #ced4da !important;
         transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out !important;
     }
-    
+
     body .form-control:focus {
         border-color: #86b7fe !important;
         outline: 0 !important;
         box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25) !important;
     }
-    
+
     body .form-label {
         margin-bottom: 0.5rem !important;
         font-weight: 500 !important;
         color: #212529 !important;
     }
-    
+
     /* Button styling */
     body .btn-primary {
         background: linear-gradient(135deg, #2bb0ed 0%, #3f8cff 100%) !important;
         border: none !important;
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
     }
-    
+
     body .btn-primary:hover {
         background: linear-gradient(135deg, #1a9fd6 0%, #2e75e0 100%) !important;
         transform: translateY(-1px) !important;
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1) !important;
     }
-    
+
     body .btn-secondary {
         background-color: #6c757d !important;
         border: none !important;
     }
-    
+
     body .btn-danger {
         background-color: #dc3545 !important;
         border: none !important;
     }
-    
+
     body .btn-danger:hover {
         background-color: #bb2d3b !important;
         transform: translateY(-1px) !important;
@@ -366,7 +366,7 @@
                             <td>{{ $doctor->Title }}</td>
                             <td>
                                 <!-- Nút Edit -->
-                                <button class="btn btn-primary btn-sm edit-doctor" 
+                                <button class="btn btn-primary btn-sm edit-doctor"
                                         style="margin-right: 5px;"
                                         data-doctor='{!! json_encode($doctor) !!}'>
                                     <i class="fa fa-edit"></i> Edit
@@ -376,7 +376,7 @@
                                         data-id="{!! $doctor->DoctorID !!}">
                                     <i class="fa fa-trash"></i> Delete
                                 </button>
-                               
+
                             </td>
                         </tr>
                     @endforeach
@@ -496,7 +496,7 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
     let editModal;
-    
+
     document.addEventListener('DOMContentLoaded', function () {
         const modalElement = document.getElementById('editModal');
         if (modalElement) {
@@ -508,7 +508,7 @@
         // Password fields
         const passwordField = document.getElementById('password');
         const confirmPasswordField = document.getElementById('confirm_password');
-        
+
         // Add input event for password field to trigger validation
         if (passwordField) {
             passwordField.addEventListener('input', validatePasswords);
@@ -530,7 +530,7 @@
                 }
             });
         });
-        
+
         // Add event listeners to delete buttons
         document.querySelectorAll('.delete-doctor').forEach(button => {
             button.addEventListener('click', function() {
@@ -538,7 +538,7 @@
                 deleteDoctor(doctorId);
             });
         });
-        
+
         // Save changes button
         document.getElementById('saveChangesBtn').addEventListener('click', updateDoctor);
 
@@ -570,7 +570,7 @@
     function togglePasswordVisibility(button) {
         const input = button.previousElementSibling;
         const icon = button.querySelector('i');
-        
+
         if (input.type === 'password') {
             input.type = 'text';
             icon.classList.remove('fa-eye');
@@ -581,15 +581,15 @@
             icon.classList.add('fa-eye');
         }
     }
-    
+
     // Function to validate password matching
     function validatePasswords() {
         const password = document.getElementById('password');
         const confirmPassword = document.getElementById('confirm_password');
         const feedback = document.getElementById('confirm-password-feedback');
-        
+
         if (!password || !confirmPassword || !feedback) return;
-        
+
         // Check if passwords match when both fields have values
         if (confirmPassword.value && password.value !== confirmPassword.value) {
             confirmPassword.classList.add('is-invalid');
@@ -612,14 +612,12 @@
     }
 
     function editDoctor(doctor) {
-        console.log('Doctor data:', doctor);
 
         const user = doctor.user;
         if (!user) {
             console.error('User data not found!');
             return;
         }
-        console.log('user data:', user);
         setValueSafe('edit_id', doctor.DoctorID);
         setValueSafe('edit_fullname', user.FullName);
         setValueSafe('edit_username', user.username);
@@ -627,58 +625,52 @@
         setValueSafe('edit_phone', user.PhoneNumber);
         setValueSafe('edit_speciality', doctor.Speciality);
         setValueSafe('edit_title', doctor.Title);
-        
+
         // Show the modal with our reliable function
         showModalReliably(document.getElementById('editModal'), editModal);
     }
 
     // Helper function to show modal reliably
     function showModalReliably(modalElement, modalInstance) {
-        console.log('Showing modal reliably:', modalElement.id);
-        
+
         try {
             // First attempt: Bootstrap modal method
             if (modalInstance && typeof modalInstance.show === 'function') {
                 modalInstance.show();
-                console.log('Modal shown via Bootstrap API');
                 return true;
             }
         } catch (error) {
             console.warn('Error showing modal via Bootstrap API:', error);
         }
-        
+
         try {
             // Second attempt: jQuery if available
             if (typeof $ !== 'undefined') {
                 $(modalElement).modal('show');
-                console.log('Modal shown via jQuery');
                 return true;
             }
         } catch (error) {
             console.warn('Error showing modal via jQuery:', error);
         }
-        
+
         // Final attempt: Direct DOM manipulation
         try {
-            console.log('Trying direct DOM manipulation for modal');
             // Add classes to modal
             modalElement.classList.add('show', 'show-force');
             modalElement.style.display = 'block';
             modalElement.setAttribute('aria-modal', 'true');
             modalElement.removeAttribute('aria-hidden');
-            
+
             // Add class to body
             document.body.classList.add('modal-open');
-            
+
             // Create backdrop if needed
             if (!document.querySelector('.modal-backdrop')) {
                 const backdrop = document.createElement('div');
                 backdrop.className = 'modal-backdrop fade show modal-backdrop-force';
                 document.body.appendChild(backdrop);
-                console.log('Modal backdrop created');
             }
-            
-            console.log('Modal shown via direct DOM manipulation');
+
             return true;
         } catch (error) {
             console.error('All methods to show modal failed:', error);
@@ -786,14 +778,14 @@
                 Swal.showLoading();
             }
         });
-        
+
         // Gọi API lấy dữ liệu mới
         fetch("{{ route('admin.getDoctorsList') }}")
             .then(response => response.json())
             .then(data => {
                 const tableBody = document.querySelector('#doctorsTable tbody');
                 tableBody.innerHTML = ''; // Xóa dữ liệu cũ
-                
+
                 data.forEach(doctor => {
                     const row = document.createElement('tr');
                     row.innerHTML = `
@@ -805,7 +797,7 @@
                         <td>${doctor.Speciality}</td>
                         <td>${doctor.Title}</td>
                         <td>
-                            <button class="btn btn-primary btn-sm edit-doctor" 
+                            <button class="btn btn-primary btn-sm edit-doctor"
                                     style="margin-right: 5px;"
                                     data-doctor='${JSON.stringify(doctor)}'>
                                 <i class="fa fa-edit"></i> Edit
@@ -817,7 +809,7 @@
                         </td>
                     `;
                     tableBody.appendChild(row);
-                    
+
                     // Re-attach event listeners to new buttons
                     row.querySelector('.edit-doctor').addEventListener('click', function() {
                         try {
@@ -832,13 +824,13 @@
                             });
                         }
                     });
-                    
+
                     row.querySelector('.delete-doctor').addEventListener('click', function() {
                         const id = this.getAttribute('data-id');
                         deleteDoctor(id);
                     });
                 });
-                
+
                 Swal.fire({
                     icon: 'success',
                     title: 'Success',
@@ -874,7 +866,7 @@
         const confirm_password = document.getElementById('confirm_password').value;
         const speciality = document.getElementById('speciality').value;
         const title = document.getElementById('title').value;
-        
+
         Swal.fire({
             title: 'Creating...',
             text: 'Please wait while we create the new doctor',

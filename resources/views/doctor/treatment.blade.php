@@ -14,11 +14,11 @@
         background: rgba(0, 0, 0, 0.5);
         z-index: 1050;
     }
-    
+
     .modal-backdrop {
         z-index: 1040;
     }
-    
+
     .modal-dialog {
         z-index: 1060;
         margin: 30px auto;
@@ -428,14 +428,14 @@
         e.preventDefault();
         createTreatment();
     });
-    
+
     // Add event listener for save edit button
     document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('saveEditBtn').addEventListener('click', function() {
             saveEdit();
         });
     });
-    
+
     // Tạo treatment
     function createTreatment() {
         const patientIdElement = document.getElementById('patient_id');
@@ -460,9 +460,8 @@
             notes: notesElement.value,
             total_price: total_price.value
         };
-        
+
         const createLabUrl = "{{ route('doctor.treatment.store') }}";
-        console.log(createLabUrl);
         fetch(createLabUrl, {
             method: 'POST',
             headers: {
@@ -501,7 +500,7 @@
             .then(data => {
                 // Parse the status to set the correct value in dropdown
                 let progressValue = '0';
-                
+
                 if (data.Status === 'Completed') {
                     progressValue = 'Completed';
                 } else if (data.Status === 'Scheduled') {
@@ -511,7 +510,7 @@
                     const match = data.Status.match(/(\d+)/);
                     progressValue = match ? match[0] : '0';
                 }
-                
+
                 document.getElementById('editStatus').value = progressValue;
                 document.getElementById('saveEditBtn').setAttribute('data-id', id);
 
@@ -528,7 +527,7 @@
     function saveEdit() {
         const id = document.getElementById('saveEditBtn').getAttribute('data-id');
         const progress = document.getElementById('editStatus').value;
-        
+
         // Format the status to prevent SQL truncation issues
         let status;
         if (progress === 'Completed') {
@@ -539,8 +538,8 @@
             // Format the progress percentage without parentheses to avoid truncation
             status = `Progress ${progress}%`;
         }
-        
-        // Display processing message             
+
+        // Display processing message
         Swal.fire({
             title: 'Processing...',
             text: 'Updating treatment status',
@@ -549,21 +548,16 @@
                 Swal.showLoading();
             }
         });
-                     
+
         // Use the direct URL path approach instead of route helper
         const url = `/Hospital_Management/doctor/treatments/${id}/updateTreatment`;
-        console.log('Sending update request to:', url);
-        console.log('Status value:', status);
 
         // Create form data
         const formData = new FormData();
         formData.append('status', status);
         formData.append('_token', document.querySelector('meta[name="csrf-token"]').content);
 
-        // For debugging
-        for (let pair of formData.entries()) {
-            console.log(pair[0] + ': ' + pair[1]);
-        }
+
 
         fetch(url, {
             method: 'POST',
@@ -574,18 +568,15 @@
             body: formData,
         })
             .then(response => {
-                console.log('Response status:', response.status);
-                
+
                 if (!response.ok) {
                     return response.text().then(text => {
-                        console.log('Error response text:', text);
                         throw new Error(`Server returned ${response.status}: ${text}`);
                     });
                 }
                 return response.json();
             })
             .then(data => {
-                console.log('Success response:', data);
                 Swal.fire('Success', data.message, 'success').then(() => {
                     window.location.reload();
                 });
@@ -597,9 +588,9 @@
     }
 
 
-   
 
-    function viewTreatment(id) {       
+
+    function viewTreatment(id) {
         const url = `{{ route('doctor.treatments.show', ['id' => '__id__']) }}`.replace('__id__', id);
 
         fetch(url)
@@ -630,7 +621,7 @@
                 alert('Failed to load treatment details.');
             });
     }
-    
+
     function getStatusColor(status) {
         if (status === 'Completed') return 'success';
         if (status === 'Scheduled') return 'info';

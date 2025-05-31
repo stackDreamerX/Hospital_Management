@@ -397,7 +397,6 @@
             stars.forEach(star => {
                 star.addEventListener('change', function() {
                     const rating = this.value;
-                    console.log(`Selected rating: ${rating}`);
                 });
             });
         }
