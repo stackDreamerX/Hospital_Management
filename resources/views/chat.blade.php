@@ -58,7 +58,16 @@
         const chatContainer = document.getElementById('chatContainer');
         const clearChatButton = document.getElementById('clearChat');
 
-        let sessionId = localStorage.getItem('ai_chat_session_id') || crypto.randomUUID();
+        // Hàm tạo UUID tương thích với nhiều trình duyệt hơn
+        function generateUUID() {
+            return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+                const r = Math.random() * 16 | 0;
+                const v = c === 'x' ? r : (r & 0x3 | 0x8);
+                return v.toString(16);
+            });
+        }
+
+        let sessionId = localStorage.getItem('ai_chat_session_id') || generateUUID();
         localStorage.setItem('ai_chat_session_id', sessionId);
 
         // Thêm event listener cho phím Enter
@@ -148,7 +157,7 @@
                 displayMessage('Xin chào! Tôi là trợ lý AI của Medic Hospital. Tôi có thể giúp gì cho bạn hôm nay?', 'ai');
 
                 // Tạo session ID mới
-                sessionId = crypto.randomUUID();
+                sessionId = generateUUID();
                 localStorage.setItem('ai_chat_session_id', sessionId);
             })
             .catch(error => {

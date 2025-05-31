@@ -406,32 +406,25 @@
             const input = document.getElementById('ai-chatbot-input');
             const messagesContainer = document.getElementById('ai-chatbot-messages');
 
-            // Kiểm tra từng phần tử và log ra để debug
-            console.log('toggleBtn:', toggleBtn);
-            console.log('chatbot:', chatbot);
-            console.log('closeBtn:', closeBtn);
-            console.log('minimizeBtn:', minimizeBtn);
-            console.log('clearBtn:', clearBtn);
-            console.log('sendBtn:', sendBtn);
-            console.log('input:', input);
-            console.log('messagesContainer:', messagesContainer);
+
 
             if (!toggleBtn || !chatbot || !closeBtn || !minimizeBtn || !clearBtn || !sendBtn || !input || !messagesContainer) {
                 console.error('Một hoặc nhiều thành phần chatbot không tìm thấy.');
-                // Log cụ thể phần tử nào bị thiếu
-                if (!toggleBtn) console.error('toggleBtn không tìm thấy');
-                if (!chatbot) console.error('chatbot không tìm thấy');
-                if (!closeBtn) console.error('closeBtn không tìm thấy');
-                if (!minimizeBtn) console.error('minimizeBtn không tìm thấy');
-                if (!clearBtn) console.error('clearBtn không tìm thấy');
-                if (!sendBtn) console.error('sendBtn không tìm thấy');
-                if (!input) console.error('input không tìm thấy');
-                if (!messagesContainer) console.error('messagesContainer không tìm thấy');
+
                 return;
             }
 
+            // Hàm tạo UUID tương thích với nhiều trình duyệt hơn
+            function generateUUID() {
+                return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+                    const r = Math.random() * 16 | 0;
+                    const v = c === 'x' ? r : (r & 0x3 | 0x8);
+                    return v.toString(16);
+                });
+            }
+
             // Tạo sessionId mới mỗi khi tải trang
-            let sessionId = crypto.randomUUID();
+            let sessionId = generateUUID();
             localStorage.setItem('ai_chat_session_id', sessionId);
 
             // Toggle chatbot visibility
@@ -615,7 +608,7 @@
                 .then(response => response.json())
                 .then(data => {
                     // Generate new session ID
-                    sessionId = crypto.randomUUID();
+                    sessionId = generateUUID();
                     localStorage.setItem('ai_chat_session_id', sessionId);
                 })
                 .catch(error => {
